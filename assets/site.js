@@ -46,25 +46,41 @@
   /* fleet carousel */
   var track=$('#fleetTrack');
   if(track){
-    var dots=$('#fleetDots');
-    function step(){ var a=track.querySelector('article'); return a?a.offsetWidth+24:320; }
-    function pages(){ return Math.max(1,Math.ceil(track.scrollWidth/track.clientWidth)); }
-    function build(){
-      dots.innerHTML='';
-      for(var i=0;i<pages();i++){ (function(i){
-        var d=document.createElement('i');
-        d.addEventListener('click',function(){ track.scrollTo({left:i*track.clientWidth,behavior:'smooth'}); });
-        dots.appendChild(d);
-      })(i); }
-      sync();
+    var dots=$('#fleetDots'), fprev=$('#fleetPrev'), fnext=$('#fleetNext');
+    function cards(){ return $$('article',track); }
+    function idx(){
+      var l=track.scrollLeft, best=0, bd=1e9;
+      cards().forEach(function(a,i){ var d=Math.abs(a.offsetLeft-track.offsetLeft-l);
+        if(d<bd){bd=d;best=i;} });
+      return best;
+    }
+    function atEnd(){ return track.scrollLeft >= track.scrollWidth-track.clientWidth-2; }
+    function goTo(i,instant){
+      var a=cards()[i]; if(!a) return;
+      track.scrollTo({left:a.offsetLeft-track.offsetLeft,behavior:instant?'auto':'smooth'});
     }
     function sync(){
-      var i=Math.round(track.scrollLeft/track.clientWidth);
+      var i=idx();
       $$('i',dots).forEach(function(d,n){ d.classList.toggle('on',n===i); });
+      fprev.disabled = track.scrollLeft<=2;
+      fnext.classList.toggle('wrap', atEnd());
+      fnext.setAttribute('aria-label', atEnd()?'Back to the first aircraft':'Next aircraft');
     }
-    $('#fleetPrev').addEventListener('click',function(){ track.scrollBy({left:-step(),behavior:'smooth'}); });
-    $('#fleetNext').addEventListener('click',function(){ track.scrollBy({left:step(),behavior:'smooth'}); });
-    track.addEventListener('scroll',function(){ clearTimeout(track._t); track._t=setTimeout(sync,90); },{passive:true});
+    function build(){
+      dots.innerHTML='';
+      cards().forEach(function(a,i){
+        var d=document.createElement('i');
+        d.addEventListener('click',function(){ goTo(i); });
+        dots.appendChild(d);
+      });
+      sync();
+    }
+    fprev.addEventListener('click',function(){ if(!fprev.disabled) goTo(Math.max(0,idx()-1)); });
+    fnext.addEventListener('click',function(){
+      if(atEnd()) goTo(0);                 /* last card -> back to the first */
+      else goTo(Math.min(cards().length-1, idx()+1));
+    });
+    track.addEventListener('scroll',function(){ clearTimeout(track._t); track._t=setTimeout(sync,80); },{passive:true});
     window.addEventListener('resize',build); build();
   }
 
@@ -103,6 +119,7 @@
       $$('.card',st).forEach(function(c){ c.classList.toggle('is-active',c===best); });
       var vs=visible(), i=vs.indexOf(best);
       $$('i',sdots).forEach(function(d,n){ d.classList.toggle('on',n===i); });
+      arrows();
     }
     function centre(c,instant){
       st.scrollTo({left:c.offsetLeft-(st.clientWidth-c.offsetWidth)/2,
@@ -126,13 +143,22 @@
     $$('.card',st).forEach(function(c){
       c.addEventListener('click',function(e){ if(e.target.closest('a')) return; centre(c); });
     });
+    var sprev=$('#svcPrev'), snext=$('#svcNext');
+    function arrows(){
+      var vs=visible(), cur=vs.findIndex(function(c){return c.classList.contains('is-active')});
+      sprev.disabled = cur<=0;
+      var last = cur>=vs.length-1;
+      snext.classList.toggle('wrap', last);
+      snext.setAttribute('aria-label', last?'Back to the first service':'Next service');
+    }
     function move(dir){
       var vs=visible(), cur=vs.findIndex(function(c){return c.classList.contains('is-active')});
+      if(dir>0 && cur>=vs.length-1){ centre(vs[0]); return; }   /* last -> first */
       var nx=vs[Math.min(vs.length-1,Math.max(0,cur+dir))];
       if(nx) centre(nx);
     }
-    $('#svcPrev').addEventListener('click',function(){ move(-1); });
-    $('#svcNext').addEventListener('click',function(){ move(1); });
+    sprev.addEventListener('click',function(){ if(!sprev.disabled) move(-1); });
+    snext.addEventListener('click',function(){ move(1); });
     $$('.fbtn').forEach(function(b){
       b.addEventListener('click',function(){ setTimeout(function(){ dots(); rest(); },30); });
     });

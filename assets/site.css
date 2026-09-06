@@ -687,6 +687,17 @@
   .maplegend .k.cis{background:#7FB2FF}
   .maplegend .k.me{background:var(--sand)}
 
+  /* carousel controls: disabled at the start, wrap-around at the end */
+  .cnav[disabled]{opacity:.3;cursor:default;pointer-events:none;box-shadow:none}
+  .cnav.wrap{border-color:var(--gold);color:var(--gold)}
+  .cnav.wrap:hover{background:var(--gold);color:var(--navy-x);border-color:var(--gold)}
+
+  /* keep horizontal movement locked to the carousels themselves */
+  html,body{overflow-x:clip}
+  .ctrack,.cards{overscroll-behavior-x:contain;scroll-snap-stop:always;
+    -webkit-overflow-scrolling:touch;touch-action:pan-x pan-y}
+  .ctrack>article,.card{scroll-snap-stop:always}
+
   footer{background:var(--navy-x);color:#9FB4C6;font-size:15.5px}
   .fgrid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:44px;padding-block:56px 40px}
   @media(max-width:860px){.fgrid{grid-template-columns:1fr;gap:30px}}
@@ -734,8 +745,8 @@
   .hero .lede{font-size:17px;margin-top:20px}
   .hero .acts{gap:10px;margin-top:28px}
   .hero .acts .btn{width:100%;min-height:52px;font-size:14px}
-  .hero .plane{display:block;position:absolute;left:16px;right:auto;top:auto;bottom:26px;
-    width:118%;max-width:none;opacity:.26;transform:none;
+  .hero .plane{display:block;position:absolute;left:20px;right:auto;top:auto;bottom:24px;
+    width:112%;max-width:none;opacity:.26;transform:none;
     -webkit-mask-image:linear-gradient(90deg,#000 0,#000 44%,transparent 94%);
     mask-image:linear-gradient(90deg,#000 0,#000 44%,transparent 94%)}
   .hero .wrap{padding-bottom:132px}
@@ -927,6 +938,17 @@
   .fgrid > div:first-child p:first-of-type{display:none}
   .fgrid > div:first-child{margin-bottom:2px}
   footer h4{font-size:15px}
+
+/* ---- Academy: centred stack, matching caw-academy.com ---- */
+  .academy .agrid{display:flex;flex-direction:column;align-items:center;text-align:center;gap:0}
+  .academy .agrid > div:first-child{display:contents}
+  .academy h2.caw-h{order:1;margin:0 auto}
+  .academy .agrid .sub{order:2;margin:16px auto 0;text-align:center}
+  .academy .agrid > div:last-child{order:3;width:100%;margin-top:26px}
+  .academy .stores{order:4;justify-content:center;margin-top:22px}
+  .store{flex:0 1 auto;min-width:46%}
+  .cawtop{justify-content:center;margin:34px 0 22px}
+  .ticks{display:grid;grid-template-columns:1fr;justify-items:center;text-align:left;gap:10px;margin-bottom:22px}
 }
 
 @media (min-width:641px) and (max-width:1180px){
@@ -1030,11 +1052,11 @@
   /* hero: in portrait the text column reached 688px and the aircraft began
      at 424px — a 264px overlap. Hidden in portrait, trimmed in landscape */
   @media (orientation:portrait){
-    .hero .plane{display:block;position:absolute;left:auto;right:-8%;top:auto;bottom:34px;
-      width:92%;max-width:none;opacity:.18;transform:none;
-      -webkit-mask-image:linear-gradient(90deg,#000 0,#000 60%,transparent 100%);
-      mask-image:linear-gradient(90deg,#000 0,#000 60%,transparent 100%)}
-    .hero .wrap{padding-bottom:180px}
+    .hero .plane{display:block;position:absolute;left:auto;right:-6%;top:auto;bottom:18px;
+      width:76%;max-width:none;opacity:.17;transform:none;
+      -webkit-mask-image:linear-gradient(90deg,#000 0,#000 58%,transparent 100%);
+      mask-image:linear-gradient(90deg,#000 0,#000 58%,transparent 100%)}
+    .hero .wrap{padding-bottom:255px}
     .hero .col{max-width:none}
     .hero h1{font-size:clamp(42px,7vw,58px)}
   }
@@ -1164,14 +1186,23 @@
   .academy .agrid > div:first-child{display:contents}
   .academy h2.caw-h{order:1;max-width:16ch;margin:0 auto}
   .academy .agrid .sub{order:2;max-width:62ch;margin:20px auto 0;text-align:center}
-  .academy .agrid > div:last-child{order:3;width:100%;margin-top:34px}
+  .academy .agrid > div:last-child{order:3;width:100%;margin-top:30px}
   .academy .stores{order:4;justify-content:center;margin-top:26px}
   .devices{max-width:680px;margin:0 auto}
-  .cawtop{justify-content:center;margin:44px 0 30px}
+  .cawtop{justify-content:center;margin:40px 0 26px}
   .ticks{display:grid;grid-template-columns:1fr 1fr;justify-content:center;gap:16px 32px;
     max-width:760px;margin:0 auto 28px;padding:0}
   .ticks li{font-size:15.5px}
   .trialbar{margin:34px 0 26px}
+
+/* ---- Academy: use the full tablet width, as the real site does ---- */
+  .academy .wrap{max-width:none;padding-inline:36px}
+  .academy h2.caw-h{max-width:none;font-size:clamp(36px,4.6vw,50px)}
+  .academy .agrid .sub{max-width:66ch}
+  .devices{max-width:820px}
+  .ticks{max-width:900px;gap:18px 40px}
+  .anums{max-width:1000px;margin-inline:auto}
+  .trialbar{max-width:1000px;margin-inline:auto}
 }
 
 /* ---------- multi-page additions ---------- */
