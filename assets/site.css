@@ -959,7 +959,7 @@
   .academy .agrid > div:first-child{display:contents}
   .academy h2.caw-h{order:1;margin:0 auto}
   .academy .agrid .sub{order:2;margin:16px auto 0;text-align:center}
-  .academy .agrid > div:last-child{order:3;width:100%;margin-top:26px}
+  .academy .agrid > div:last-child{order:3;width:100%;margin-top:30px}
   .academy .stores{order:4;justify-content:center;margin-top:22px}
   .store{flex:0 1 auto;min-width:46%}
   .cawtop{justify-content:center;margin:34px 0 22px}
@@ -1221,7 +1221,7 @@
   .academy .agrid > div:first-child{display:contents}
   .academy h2.caw-h{order:1;max-width:16ch;margin:0 auto}
   .academy .agrid .sub{order:2;max-width:62ch;margin:20px auto 0;text-align:center}
-  .academy .agrid > div:last-child{order:3;width:100%;margin-top:30px}
+  .academy .agrid > div:last-child{order:3;width:100%;margin-top:38px}
   .academy .stores{order:4;justify-content:center;margin-top:26px}
   .devices{max-width:680px;margin:0 auto}
   .cawtop{justify-content:center;margin:40px 0 26px}
