@@ -680,7 +680,8 @@
   .netmap .r-me .dot{fill:var(--sand)}
   .netmap .arc.r-cis{stroke:#7FB2FF;opacity:.42}
   .netmap .arc.r-me{stroke:var(--sand);opacity:.4}
-  .netmap .code{fill:rgba(255,255,255,.74);font-size:11px;paint-order:stroke;
+  .codes-lg{display:none}
+  .netmap .code{fill:rgba(255,255,255,.74);font-size:inherit;paint-order:stroke;
     stroke:rgba(4,26,36,.85);stroke-width:2.6px;stroke-linejoin:round}
   .netmap .lead{stroke:rgba(255,255,255,.28);stroke-width:.8}
   .netmap .stn:hover .lead,.netmap .stn:focus .lead{stroke:rgba(255,255,255,.6)}
@@ -949,6 +950,30 @@
   .store{flex:0 1 auto;min-width:46%}
   .cawtop{justify-content:center;margin:34px 0 22px}
   .ticks{display:grid;grid-template-columns:1fr;justify-items:center;text-align:left;gap:10px;margin-bottom:22px}
+
+/* ---- map: the 17.5-unit label set, legible at phone scale ---- */
+  .codes-sm{display:none}
+  .codes-lg{display:block}
+  .netmap .code{display:inline;fill:rgba(255,255,255,.85);stroke-width:3.4px}
+  .netmap .lead{display:inline}
+  .maptip{margin-bottom:18px}
+
+/* ---- Academy: left-aligned, as caw-academy.com is on a phone ---- */
+  .academy .agrid{align-items:stretch;text-align:left}
+  .academy h2.caw-h{margin:0;text-align:left}
+  .academy .agrid .sub{margin:16px 0 0;text-align:left}
+  .academy .stores{justify-content:flex-start;gap:12px;margin-top:24px}
+  .store{flex:1 1 0;min-width:0;padding:12px 14px;min-height:62px;gap:10px}
+  .store .sico{width:26px;height:26px}
+  .store em{font-size:11.5px}
+  .store b{font-size:17px}
+  .cawtop{justify-content:flex-start}
+  .ticks{justify-items:start;text-align:left;gap:14px}
+  .ticks li{padding-left:30px}
+
+/* ---- pre-buy: one pill per row, all the same width ---- */
+  .spills{flex-direction:column;align-items:stretch;gap:10px}
+  .spill{width:100%;justify-content:flex-start;padding:14px 20px;text-align:left}
 }
 
 @media (min-width:641px) and (max-width:1180px){
@@ -1203,6 +1228,22 @@
   .ticks{max-width:900px;gap:18px 40px}
   .anums{max-width:1000px;margin-inline:auto}
   .trialbar{max-width:1000px;margin-inline:auto}
+
+/* ---- pre-buy: stacked pills, one width ---- */
+  .spills{flex-direction:column;align-items:center;gap:10px}
+  .spill{width:min(560px,100%);justify-content:flex-start;padding:14px 22px;text-align:left}
+
+/* ---- Academy: headline on one line, badges matched ---- */
+  .academy h2.caw-h{max-width:none;font-size:clamp(34px,4.3vw,48px)}
+  .academy .stores{gap:16px}
+  .store{flex:0 0 auto;width:300px;min-height:66px;justify-content:flex-start;padding:12px 20px}
+  .store b{font-size:19px}
+
+/* ---- hero aircraft: clear of the buttons, tail off the right edge ---- */
+  @media (orientation:portrait){
+    .hero .plane{width:72%;right:-10%;bottom:16px}
+    .hero .wrap{padding-bottom:265px}
+  }
 }
 
 /* ---------- multi-page additions ---------- */
