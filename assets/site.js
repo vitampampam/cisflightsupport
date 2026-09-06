@@ -198,16 +198,6 @@
     blobs.forEach(function(b,i){ b.style.translate='0 '+(y*(i?0.05:-0.04))+'px'; });
   },{passive:true});
 
-  /* theme */
-  var root=document.documentElement, tg=$('#theme');
-  function setTheme(t){
-    root.dataset.theme=t;
-    try{ localStorage.setItem('cis-theme',t); }catch(e){}
-  }
-  var saved=null; try{ saved=localStorage.getItem('cis-theme'); }catch(e){}
-  setTheme(saved || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
-  tg.addEventListener('click',function(){ setTheme(root.dataset.theme==='dark'?'light':'dark'); });
-
   var nums=$$('.stats b, .anums b, .tbig');
   var io2=new IntersectionObserver(function(es){
     es.forEach(function(e){
