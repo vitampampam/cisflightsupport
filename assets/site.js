@@ -123,33 +123,24 @@
   })();
 
 
-  /* card stack: each section rises from below, then pins while the next covers it */
+  /* cards rise into place as they enter; the one behind eases back slightly */
   (function(){
     if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var stack=[].slice.call(document.querySelectorAll('.hero, .sec, .dual'));
-    if(stack.length<2) return;
-    stack.forEach(function(s){ s.classList.add('stk'); });   /* CSS already pins them */
+    var stack=[].slice.call(document.querySelectorAll('.sec, .dual'));
+    if(!stack.length) return;
+    stack.forEach(function(s){ s.classList.add('stk'); });
     function clamp(v){ return v<0?0:v>1?1:v; }
     var ticking=false;
     function frame(){
       ticking=false;
       var vh=innerHeight;
-      for(var i=0;i<stack.length;i++){
-        var el=stack[i], top=el.getBoundingClientRect().top;
-        /* rise: 0 while the card is still below the fold, 1 once it has arrived */
-        var enter = i===0 ? 1 : clamp((vh-top)/(vh*0.45));
-        var ty    = (1-enter)*58;
-        var sc    = 0.955+0.045*enter;
-        /* recede: how much of the next card has slid over this one */
-        var k=0;
-        if(i<stack.length-1){
-          var nt=stack[i+1].getBoundingClientRect().top;
-          k=clamp((vh-nt)/vh);
-          sc=Math.min(sc,1-0.035*k);
-        }
-        el.style.transform='translate3d(0,'+ty.toFixed(1)+'px,0) scale('+sc.toFixed(4)+')';
-        el.style.filter=k?'brightness('+(1-0.13*k).toFixed(3)+')':'';
-      }
+      stack.forEach(function(el){
+        var top=el.getBoundingClientRect().top;
+        var enter=clamp((vh-top)/(vh*0.4));
+        el.style.transform = enter<1
+          ? 'translate3d(0,'+((1-enter)*46).toFixed(1)+'px,0) scale('+(0.975+0.025*enter).toFixed(4)+')'
+          : '';
+      });
     }
     function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(frame); } }
     addEventListener('scroll',onScroll,{passive:true});

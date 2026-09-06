@@ -742,33 +742,26 @@
   }
 
 
-  /* ---------- card stack: pure CSS, so it works without scripts ----------
-     later siblings paint over earlier ones, so no z-index bookkeeping is needed */
-  .hero,.sec,.dual{position:sticky;bottom:0;
+  /* ---------- overlapping cards (no sticky: sections are taller than a
+     viewport, and pinning them all at once collapses the page) ---------- */
+  .sec,.dual{position:relative;background:var(--white);
     border-radius:28px 28px 0 0;
-    box-shadow:0 -26px 50px -18px rgba(4,26,36,.5);
-    overflow:hidden;
-    transform-origin:center top;
-    /* each card is its own stacking context, otherwise the z-index:1 on section
-       children escapes to the root layer and earlier cards paint over later ones */
-    isolation:isolate}
-  .hero{border-radius:0;box-shadow:none}
-  .sec,.dual{margin-top:-28px}
-  .stats{position:relative;z-index:1}          /* thin strip stays in flow */
-  .stk{will-change:transform,filter;backface-visibility:hidden}
+    box-shadow:0 -22px 40px -22px rgba(4,26,36,.45);
+    margin-top:-28px;isolation:isolate;transform-origin:center top}
+  .hero{position:relative;border-radius:0;box-shadow:none}
+  .stats{position:relative}
+  .stk{will-change:transform;backface-visibility:hidden}
   @media (prefers-reduced-motion:reduce){
-    .hero,.sec,.dual{position:relative;box-shadow:none;margin-top:0}
     .stk{transform:none!important;filter:none!important}
   }
   @media(max-width:1180px){
-    .sec,.dual{border-radius:30px 30px 0 0;box-shadow:0 -22px 44px -14px rgba(4,26,36,.55);
-      margin-top:-30px}
-    .hero{border-radius:0}
+    .sec,.dual{border-radius:30px 30px 0 0;margin-top:-30px;
+      box-shadow:0 -18px 34px -18px rgba(4,26,36,.5)}
   }
 
   /* ---------- the hero's grid, carried across the whole site ---------- */
   :root{--net:78px}
-  .helpbar,footer,.stats{position:relative}   /* .sec and .dual are already sticky */
+  .helpbar,footer,.stats{position:relative}
   .sec::before,.dual::before,.helpbar::before,footer::before,.stats::before{
     content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
     background-image:linear-gradient(rgba(6,42,56,.055) 1px,transparent 1px),
