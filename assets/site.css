@@ -1343,11 +1343,9 @@
   @media (orientation:landscape){
     /* landscape tablets have the width for the desktop treatment */
     .intro{grid-template-columns:0.95fr 1.25fr;gap:36px 44px;align-items:start}
-    /* same as desktop: carousel fills its column, bullets span the full width */
-    .intro .gallery{align-self:stretch;display:flex;flex-direction:column}
-    .intro .gallery .gtrack{flex:1;min-height:0}
-    .intro .gallery .gtrack figure{height:100%}
-    .intro .gallery .gtrack img{height:100%;width:100%;aspect-ratio:auto;object-fit:cover}
+    /* rectangular photo, bullets still span the full width */
+    .intro .gallery{align-self:start;display:block}
+    .intro .gallery .gtrack img{height:auto;width:100%;aspect-ratio:3/2;object-fit:cover}
     .intro .checks{grid-column:1 / -1;columns:3;column-gap:34px;margin-top:8px}
     .intro .gallery{margin-top:0}
     .gtrack img{aspect-ratio:3/2;height:auto}
@@ -1402,4 +1400,15 @@
   .seam-caw{height:52px}
   .spanels{min-height:0}
   .academy{padding-top:10px}
+}
+
+
+/* ===== landscape tablets wider than 1180pt fall into the desktop block, where the
+   narrower text column makes a stretched frame turn vertical. Keep it rectangular. ===== */
+@media (min-width:901px) and (orientation:landscape) and (pointer:coarse){
+  .intro .gallery{align-self:start !important;display:block !important}
+  .intro .gallery .gtrack{flex:none}
+  .intro .gallery .gtrack figure{height:auto}
+  .intro .gallery .gtrack img{height:auto !important;width:100%;aspect-ratio:3/2;object-fit:cover}
+  .intro .checks{grid-column:1 / -1 !important;columns:3;column-gap:34px;margin-top:14px}
 }
