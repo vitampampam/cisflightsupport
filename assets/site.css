@@ -746,11 +746,16 @@
 
   /* ---------- card stack: pure CSS, so it works without scripts ----------
      later siblings paint over earlier ones, so no z-index bookkeeping is needed */
+  .sec{background:var(--white)}          /* every card must be opaque to cover the one below */
   .hero,.sec,.dual{position:sticky;bottom:0;
-    border-radius:28px 28px 0 0;
+    border-radius:28px;
     box-shadow:0 -26px 50px -18px rgba(4,26,36,.5);
-    transform-origin:center top}
-  .hero{border-radius:0;box-shadow:none}
+    overflow:hidden;
+    transform-origin:center top;
+    /* each card is its own stacking context, otherwise the z-index:1 on section
+       children escapes to the root layer and earlier cards paint over later ones */
+    isolation:isolate}
+  .hero{border-radius:0 0 28px 28px;box-shadow:none}
   .sec,.dual{margin-top:-28px}
   .stats{position:relative;z-index:1}          /* thin strip stays in flow */
   .stk{will-change:transform,filter;backface-visibility:hidden}
@@ -759,8 +764,9 @@
     .stk{transform:none!important;filter:none!important}
   }
   @media(max-width:1180px){
-    .sec,.dual{border-radius:30px 30px 0 0;box-shadow:0 -22px 44px -14px rgba(4,26,36,.55);
+    .sec,.dual{border-radius:30px;box-shadow:0 -22px 44px -14px rgba(4,26,36,.55);
       margin-top:-30px}
+    .hero{border-radius:0 0 30px 30px}
   }
 
   /* ---------- the hero's grid, carried across the whole site ---------- */
