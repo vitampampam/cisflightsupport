@@ -112,15 +112,16 @@
 
   /* intro */
   .intro{display:grid;grid-template-columns:0.95fr 1.25fr;gap:48px 56px;align-items:start}
-  .intro .checks{grid-column:1 / -1;columns:3;column-gap:44px;margin-top:8px}
-  /* the carousel fills its column instead of leaving a gap under it */
-  .intro .gallery{align-self:stretch;display:flex;flex-direction:column}
-  .intro .gallery .gtrack{flex:1;min-height:0}
-  .intro .gallery .gtrack figure{height:100%}
-  .intro .gallery .gtrack img{height:100%;width:100%;aspect-ratio:auto;object-fit:cover}
+  .intro .checks{grid-column:1 / -1;columns:2;column-gap:40px;margin-top:8px}
   .intro .gallery{margin-top:4px}
   @media(min-width:1181px){
     .intro .gallery{margin-top:0}
+    .intro .checks{grid-column:1 / -1;columns:3;column-gap:44px;margin-top:8px}
+    /* the carousel fills its column rather than leaving a gap beneath it */
+    .intro .gallery{align-self:stretch;display:flex;flex-direction:column}
+    .intro .gallery .gtrack{flex:1;min-height:0}
+    .intro .gallery .gtrack figure{height:100%}
+    .intro .gallery .gtrack img{height:100%;width:100%;aspect-ratio:auto;object-fit:cover}
     /* native 3:2 — a forced height would crop the nose off */
     .gtrack img{aspect-ratio:3/2;height:auto}
   }
@@ -732,7 +733,7 @@
     scrollbar-width:none;overscroll-behavior-x:contain}
   .gtrack::-webkit-scrollbar{display:none}
   .gtrack figure{flex:0 0 100% !important;width:100%;max-width:100%;margin:0;scroll-snap-align:center;scroll-snap-stop:always;position:relative}
-  .gtrack img{width:100%;aspect-ratio:3/2;object-fit:cover;display:block}
+  .gtrack img{width:100%;aspect-ratio:3/2;object-fit:cover;object-position:0% 50%;display:block}
   .gtrack figcaption{position:absolute;left:0;right:0;bottom:0;padding:34px 20px 16px;
     font-size:14.5px;color:#fff;letter-spacing:.01em;
     background:linear-gradient(180deg,rgba(4,26,36,0),rgba(4,26,36,.82))}
@@ -1325,6 +1326,10 @@
 
 /* ---- hero aircraft: clear of the buttons, tail off the right edge ---- */
   @media (orientation:portrait){
+    .intro{grid-template-columns:1fr;gap:30px}
+    .intro .checks{grid-column:1;columns:2;column-gap:30px;margin-top:4px}
+    .intro .gallery{align-self:start;display:block}
+    .intro .gallery .gtrack img{height:auto;aspect-ratio:3/2}
     /* height-based so the aircraft can never grow into the buttons */
     .hero .plane{display:block;position:absolute;left:auto;right:-5%;top:auto;bottom:14px;
       width:auto;height:190px;max-width:none;opacity:.17;transform:none;
@@ -1367,3 +1372,21 @@
   .legal{max-width:74ch}
   .legal h3{font-size:22px;text-transform:uppercase;letter-spacing:.03em;margin:28px 0 10px}
   .legal p{margin:0 0 12px}
+
+
+/* ================= portrait tablets: one column, plain photo card ================= */
+@media (max-width:1180px) and (orientation:portrait){
+  .intro{display:grid !important;grid-template-columns:1fr !important;gap:30px}
+  .intro > div,.intro .gallery,.intro .checks{grid-column:1 !important;width:100%}
+  .intro .checks{columns:2;column-gap:30px;margin-top:4px}
+  .intro .gallery{align-self:start !important;display:block !important;margin-top:4px}
+  .intro .gallery .gtrack{flex:none}
+  .intro .gallery .gtrack figure{height:auto}
+  .intro .gallery .gtrack img{height:auto !important;width:100%;aspect-ratio:3/2;object-fit:cover}
+}
+
+
+/* ================= desktop opens at 90% ================= */
+@media (min-width:1181px){
+  body{zoom:0.9}
+}
