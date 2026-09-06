@@ -287,7 +287,7 @@
       $$('.netmap .stn').forEach(function(x){x.classList.remove('on')});
       g.classList.add('on');
       out.innerHTML='<b>'+g.dataset.n+'</b><span>'+Number(g.dataset.d).toLocaleString('en-US')+
-        ' km from base · '+g.querySelector('.code').textContent+
+        ' km from the office · '+g.querySelector('.code').textContent+
         ({eu:' · Europe',cis:' · CIS',me:' · Middle East'}[g.dataset.r]||'')+'</span>';
     }
     g.addEventListener('pointerenter',showStation); g.addEventListener('focus',showStation);
