@@ -1,4 +1,12 @@
 (function(){
+  /* browsers restore the previous scroll position on refresh — start at the top */
+  if('scrollRestoration' in history) history.scrollRestoration='manual';
+  addEventListener('load',function(){
+    if(!location.hash) scrollTo(0,0);      /* a #link still wins */
+  });
+})();
+
+(function(){
   var $=function(s,c){return (c||document).querySelector(s)},
       $$=function(s,c){return [].slice.call((c||document).querySelectorAll(s))};
 

@@ -9,12 +9,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Source+Sans+3:wght@300;400;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=47">
+<link rel="stylesheet" href="assets/site.css?v=49">
 <style>
 /* critical: gallery works even with a stale external stylesheet */
 .intro{align-items:start}
 .intro .gallery{margin-top:4px}
-@media(min-width:1181px){.intro .gallery{margin-top:0}.gtrack img{aspect-ratio:auto;height:min(62vh,560px)}}
+@media(min-width:1181px){.intro .gallery{margin-top:0}.gtrack img{aspect-ratio:3/2;height:auto}}
 .gallery{position:relative;border-radius:18px;overflow:hidden}
 .gtrack{display:flex!important;flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x mandatory;
   scroll-behavior:smooth;scrollbar-width:none}
@@ -113,19 +113,6 @@
       <hr class="rule">
       <p>For more than twenty years CIS Flight Support has worked for private owners, corporate flight departments and regional operators across Europe — handling and dispatching their flights, advising on maintenance and regulations, arranging charters, and buying and selling the aircraft themselves. We work in small numbers and stay on a file from the first conversation to the last signature.</p>
       <p>What sets the firm apart is the technical side. Records reviews, borescope findings and maintenance forecasts are produced in house by people with maintenance and CAMO backgrounds, rather than bought in at the last minute. The same expertise now runs the CAW Academy training platform.</p>
-      <ul class="checks">
-        <li>Ground handling supervision</li>
-        <li>Passenger and VIP services</li>
-        <li>Crew support, lounges and catering</li>
-        <li>Flight planning, slots and permits</li>
-        <li>Charter sourcing and operator vetting</li>
-        <li>Maintenance scoping and shop-visit oversight</li>
-        <li>Market valuation and needs analysis</li>
-        <li>Aircraft search, listing and negotiation</li>
-        <li>Pre-buy inspection supervision</li>
-        <li>Import, export and registration</li>
-        <li>Regulatory compliance and audit preparation</li>
-      </ul>
     </div>
     <div class="gallery">
         <div class="gtrack" id="galTrack">
@@ -142,7 +129,19 @@
         <button class="cnav next" id="galNext" aria-label="Next photo">&#8250;</button>
         <div class="cdots" id="galDots"></div>
       </div>
-    </div>
+    <ul class="checks">
+      <li>Ground handling supervision</li>
+      <li>Passenger and VIP services</li>
+      <li>Crew support, lounges and catering</li>
+      <li>Flight planning, slots and permits</li>
+      <li>Charter sourcing and operator vetting</li>
+      <li>Maintenance scoping and shop-visit oversight</li>
+      <li>Market valuation and needs analysis</li>
+      <li>Aircraft search, listing and negotiation</li>
+      <li>Pre-buy inspection supervision</li>
+      <li>Import, export and registration</li>
+      <li>Regulatory compliance and audit preparation</li>
+      </ul>
   </div>
 </section>
 
@@ -646,7 +645,7 @@
   <a class="p" href="tel:+491622684626">Call ops</a>
   <a class="s" href="contact.html">Send enquiry</a>
 </nav>
-<script src="assets/site.js?v=47"></script>
+<script src="assets/site.js?v=49"></script>
 <script>
 /* critical: gallery controls, independent of the external bundle */
 (function(){

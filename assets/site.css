@@ -111,15 +111,17 @@
     .stats div:nth-child(2){border-right:0}}
 
   /* intro */
-  .intro{display:grid;grid-template-columns:1.05fr 1.15fr;gap:56px;align-items:start}
+  .intro{display:grid;grid-template-columns:0.95fr 1.25fr;gap:48px 56px;align-items:start}
+  .intro .checks{grid-column:1 / -1;columns:3;column-gap:44px;margin-top:4px}
   .intro .gallery{margin-top:4px}
   @media(min-width:1181px){
     .intro .gallery{margin-top:0}
-    /* bigger, but never taller than the screen */
-    .gtrack img{aspect-ratio:auto;height:min(62vh,560px)}
+    /* native 3:2 — a forced height would crop the nose off */
+    .gtrack img{aspect-ratio:3/2;height:auto}
   }
   @media(max-width:900px){.intro{grid-template-columns:1fr;gap:40px}}
   .checks{list-style:none;margin:26px 0 0;padding:0;columns:2;column-gap:38px}
+  .checks li{break-inside:avoid}
   @media(max-width:640px){.checks{columns:1}}
   .checks li{position:relative;padding:7px 0 7px 30px;break-inside:avoid;font-size:16.5px}
   .checks li:before{content:"";position:absolute;left:2px;top:16px;width:9px;height:9px;background:var(--gold)}
@@ -1330,9 +1332,10 @@
 
   @media (orientation:landscape){
     /* landscape tablets have the width for the desktop treatment */
-    .intro{grid-template-columns:1.05fr 1.15fr;gap:44px;align-items:start}
+    .intro{grid-template-columns:0.95fr 1.25fr;gap:36px 44px;align-items:start}
+    .intro .checks{grid-column:1 / -1;columns:3;column-gap:34px}
     .intro .gallery{margin-top:0}
-    .gtrack img{aspect-ratio:auto;height:min(64vh,470px)}
+    .gtrack img{aspect-ratio:3/2;height:auto}
     .gtrack figcaption{font-size:14px;padding:30px 18px 14px}
   }
 }
