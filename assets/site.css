@@ -42,14 +42,14 @@
   .center hr.rule{margin-left:auto;margin-right:auto}
 
   /* utility bar */
-  .util{background:var(--navy-x);color:#A9C7CB;font-size:14.5px}
+  .util{position:sticky;top:0;z-index:51;background:var(--navy-x);color:#A9C7CB;font-size:14.5px}
   .util .wrap{display:flex;align-items:center;gap:22px;height:40px}
   .util a{color:#fff;text-decoration:none;font-weight:600}
   .util .sp{margin-left:auto}
   @media(max-width:700px){.util .tag{display:none}}
 
   /* header */
-  header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line);
+  header{position:sticky;top:40px;z-index:50;background:#fff;border-bottom:1px solid var(--line);
     box-shadow:0 1px 12px rgba(6,42,56,.06)}
   .bar{display:flex;align-items:center;gap:18px;height:84px;flex-wrap:nowrap}
   .logo{display:flex;align-items:center;text-decoration:none}
@@ -744,7 +744,7 @@
 
   /* ---------- overlapping cards (no sticky: sections are taller than a
      viewport, and pinning them all at once collapses the page) ---------- */
-  .sec,.dual{position:relative;background:var(--white);
+  .sec,.dual{position:relative;
     border-radius:28px 28px 0 0;
     box-shadow:0 -22px 40px -22px rgba(4,26,36,.45);
     margin-top:-28px;isolation:isolate;transform-origin:center top}
@@ -813,6 +813,7 @@
 
   /* header: compact, logo + burger only */
   .util .wrap{height:36px;font-size:13px;gap:12px}
+  header{top:36px}
   .util .sp{display:none}
   .bar{height:64px;gap:12px}
   .logo b{font-size:19px}

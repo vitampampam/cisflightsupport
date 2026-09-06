@@ -45,39 +45,39 @@
   /* fleet carousel */
   var track=$('#fleetTrack');
   if(track){
-    var dots=$('#fleetDots'), fprev=$('#fleetPrev'), fnext=$('#fleetNext');
-    function cards(){ return $$('article',track); }
+    var fdots=$('#fleetDots'), fprev=$('#fleetPrev'), fnext=$('#fleetNext');
+    function fcards(){ return $$('article',track); }
     function idx(){
       var l=track.scrollLeft, best=0, bd=1e9;
-      cards().forEach(function(a,i){ var d=Math.abs(a.offsetLeft-track.offsetLeft-l);
+      fcards().forEach(function(a,i){ var d=Math.abs(a.offsetLeft-track.offsetLeft-l);
         if(d<bd){bd=d;best=i;} });
       return best;
     }
     function atEnd(){ return track.scrollLeft >= track.scrollWidth-track.clientWidth-2; }
     function goTo(i,instant){
-      var a=cards()[i]; if(!a) return;
+      var a=fcards()[i]; if(!a) return;
       track.scrollTo({left:a.offsetLeft-track.offsetLeft,behavior:instant?'auto':'smooth'});
     }
     function sync(){
       var i=idx();
-      $$('i',dots).forEach(function(d,n){ d.classList.toggle('on',n===i); });
+      $$('i',fdots).forEach(function(d,n){ d.classList.toggle('on',n===i); });
       fprev.disabled = track.scrollLeft<=2;
       fnext.classList.toggle('wrap', atEnd());
       fnext.setAttribute('aria-label', atEnd()?'Back to the first aircraft':'Next aircraft');
     }
     function build(){
-      dots.innerHTML='';
-      cards().forEach(function(a,i){
+      fdots.innerHTML='';
+      fcards().forEach(function(a,i){
         var d=document.createElement('i');
         d.addEventListener('click',function(){ goTo(i); });
-        dots.appendChild(d);
+        fdots.appendChild(d);
       });
       sync();
     }
     fprev.addEventListener('click',function(){ if(!fprev.disabled) goTo(Math.max(0,idx()-1)); });
     fnext.addEventListener('click',function(){
       if(atEnd()) goTo(0);                 /* last card -> back to the first */
-      else goTo(Math.min(cards().length-1, idx()+1));
+      else goTo(Math.min(fcards().length-1, idx()+1));
     });
     track.addEventListener('scroll',function(){ clearTimeout(track._t); track._t=setTimeout(sync,80); },{passive:true});
     window.addEventListener('resize',build); build();
@@ -222,7 +222,7 @@
       centre(vs.length>2?vs[1]:vs[0],instant);
       setTimeout(mark,instant?0:220);
     }
-    function dots(){
+    function buildDots(){
       sdots.innerHTML='';
       visible().forEach(function(c){
         var d=document.createElement('i');
@@ -264,7 +264,7 @@
     $$('.fbtn').forEach(function(b){
       b.addEventListener('click',function(){
         setTimeout(function(){
-          dots();
+          buildDots();
           var vs=visible();
           if(vs.length) centre(b.dataset.f==='all' && vs.length>2 ? vs[1] : vs[0]);
           setTimeout(mark,220);
@@ -274,7 +274,7 @@
     });
     tell(null);
     window.addEventListener('resize',function(){ mark(); arrows(); });
-    dots();
+    buildDots();
     /* open on a centred, enlarged card rather than a flat row */
     requestAnimationFrame(function(){ rest(true); setTimeout(mark,60); });
     window.addEventListener('load',function(){ rest(true); setTimeout(mark,60); });
@@ -283,15 +283,15 @@
   /* station map interaction */
   var out=$('#mapout');
   $$('.netmap .stn').forEach(function(g){
-    function show(){
+    function showStation(){
       $$('.netmap .stn').forEach(function(x){x.classList.remove('on')});
       g.classList.add('on');
       out.innerHTML='<b>'+g.dataset.n+'</b><span>'+Number(g.dataset.d).toLocaleString('en-US')+
         ' km from base · '+g.querySelector('.code').textContent+
         ({eu:' · Europe',cis:' · CIS',me:' · Middle East'}[g.dataset.r]||'')+'</span>';
     }
-    g.addEventListener('pointerenter',show); g.addEventListener('focus',show);
-    g.addEventListener('click',show);
+    g.addEventListener('pointerenter',showStation); g.addEventListener('focus',showStation);
+    g.addEventListener('click',showStation);
   });
   /* gantt bars grow when the panel scrolls in */
   var g=$('.gantt');
