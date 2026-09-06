@@ -112,7 +112,7 @@
 
   /* intro */
   .intro{display:grid;grid-template-columns:0.95fr 1.25fr;gap:48px 56px;align-items:start}
-  .intro .checks{grid-column:1 / -1;columns:3;column-gap:44px;margin-top:4px}
+  .intro .checks{grid-column:2;columns:2;column-gap:34px;margin-top:30px;align-self:start}
   .intro .gallery{margin-top:4px}
   @media(min-width:1181px){
     .intro .gallery{margin-top:0}
@@ -1333,7 +1333,7 @@
   @media (orientation:landscape){
     /* landscape tablets have the width for the desktop treatment */
     .intro{grid-template-columns:0.95fr 1.25fr;gap:36px 44px;align-items:start}
-    .intro .checks{grid-column:1 / -1;columns:3;column-gap:34px}
+    .intro .checks{grid-column:2;columns:2;column-gap:28px;margin-top:24px}
     .intro .gallery{margin-top:0}
     .gtrack img{aspect-ratio:3/2;height:auto}
     .gtrack figcaption{font-size:14px;padding:30px 18px 14px}
