@@ -84,6 +84,109 @@
     window.addEventListener('resize',build); build();
   }
 
+  /* aircraft enquiry buttons — carry the type into the contact form */
+  (function(){
+    var box=document.getElementById('ms'), sel=document.getElementById('sv');
+    function fill(name){
+      if(!box) return false;
+      box.value='Please send more information on the '+name+'.';
+      if(sel) for(var i=0;i<sel.options.length;i++)
+        if(/buying|selling/i.test(sel.options[i].text)){ sel.selectedIndex=i; break; }
+      var form=box.closest('.form')||box;
+      form.scrollIntoView({behavior:'smooth',block:'center'});
+      setTimeout(function(){ box.focus(); },500);
+      return true;
+    }
+    function pick(svcText){
+      if(!sel||!svcText) return;
+      for(var i=0;i<sel.options.length;i++)
+        if(sel.options[i].text.toLowerCase().indexOf(svcText.toLowerCase())>-1){ sel.selectedIndex=i; return; }
+    }
+    function seed(msg,svc){
+      if(!box) return false;
+      if(msg) box.value=msg;
+      pick(svc);
+      (box.closest('.form')||box).scrollIntoView({behavior:'smooth',block:'center'});
+      setTimeout(function(){ box.focus(); },500);
+      return true;
+    }
+    $$('.req').forEach(function(a){
+      a.addEventListener('click',function(e){
+        var n=a.dataset.aircraft;
+        if(n && fill(n)) e.preventDefault();   /* same page: fill in place */
+      });
+    });
+    $$('.ctabtn').forEach(function(a){
+      a.addEventListener('click',function(e){
+        if(seed(a.dataset.msg,a.dataset.service)) e.preventDefault();
+      });
+    });
+    var p=new URLSearchParams(location.search);
+    var q=p.get('aircraft');
+    if(q) fill(q);
+    if(p.get('service')||p.get('msg')) seed(p.get('msg'),p.get('service'));
+  })();
+
+  /* section rail — titles of the stacked cards, for jumping straight to one */
+  (function(){
+    var secs=[].slice.call(document.querySelectorAll('section[id]'));
+    if(secs.length<4) return;
+    var hdr=document.querySelector('header');
+    var rail=document.createElement('nav');
+    rail.className='rail'; rail.setAttribute('aria-label','Sections');
+    var w=document.createElement('div'); w.className='wrap'; rail.appendChild(w);
+    var SHORT={services:'Services',turnaround:'Turnaround',coverage:'Coverage',fleet:'Fleet',
+               prebuy:'Pre-buy',academy:'CAW Academy',team:'Team',contact:'Contact'};
+    var links=secs.map(function(s){
+      var t=s.querySelector('h2');
+      var label=SHORT[s.id] || (t?t.textContent.trim():s.id);
+      if(label.length>26) label=label.slice(0,24).trim()+'…';
+      var a=document.createElement('a');
+      a.href='#'+s.id; a.textContent=label;
+      w.appendChild(a); return a;
+    });
+    hdr.parentNode.insertBefore(rail, hdr.nextSibling);
+    function place(){ document.documentElement.style.setProperty('--hdr', hdr.offsetHeight+'px'); }
+    var cur=-1;
+    function spy(){
+      var line=(hdr.offsetHeight+rail.offsetHeight)+8, idx=0;
+      secs.forEach(function(s,i){ if(s.getBoundingClientRect().top<=line) idx=i; });
+      if(idx===cur) return;
+      cur=idx;
+      links.forEach(function(a,i){ a.classList.toggle('on',i===idx); });
+      var a=links[idx], r=a.getBoundingClientRect(), rw=w.getBoundingClientRect();
+      if(r.left<rw.left+20 || r.right>rw.right-20)
+        w.scrollTo({left:a.offsetLeft-w.clientWidth/2+a.offsetWidth/2,behavior:'smooth'});
+    }
+    addEventListener('scroll',spy,{passive:true});
+    addEventListener('resize',function(){ place(); spy(); });
+    place(); spy();
+  })();
+
+  /* stacked-card scrolling */
+  (function(){
+    if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var stack=[].slice.call(document.querySelectorAll('.hero, .sec, .dual'));
+    if(stack.length<2) return;
+    stack.forEach(function(s,i){ s.classList.add('stk'); s.style.zIndex=i+1; });
+    var ticking=false;
+    function frame(){
+      ticking=false;
+      var vh=innerHeight;
+      for(var i=0;i<stack.length-1;i++){
+        var nextTop=stack[i+1].getBoundingClientRect().top;
+        var k=Math.min(1,Math.max(0,(vh-nextTop)/vh));   /* 0 = not covered, 1 = fully covered */
+        if(k<=0){ stack[i].style.transform=''; stack[i].style.filter=''; continue; }
+        stack[i].style.transform='scale('+(1-0.045*k).toFixed(4)+')';
+        stack[i].style.filter='brightness('+(1-0.16*k).toFixed(3)+')';
+      }
+    }
+    function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(frame); } }
+    addEventListener('scroll',onScroll,{passive:true});
+    addEventListener('resize',onScroll);
+    frame();
+  })();
+
   /* photo gallery */
   var gal=$('#galTrack');
   if(gal){
@@ -186,9 +289,28 @@
     }
     sprev.addEventListener('click',function(){ if(!sprev.disabled) move(-1); });
     snext.addEventListener('click',function(){ move(1); });
+    var count=document.createElement('p');
+    count.className='fcount';
+    var fbar=document.querySelector('.filters');
+    if(fbar) fbar.parentNode.insertBefore(count,fbar.nextSibling);
+    function tell(b){
+      var n=visible().length, label=b?b.textContent.trim():'All services';
+      count.textContent = (b && b.dataset.f!=='all')
+        ? 'Showing '+n+' '+label.toLowerCase()+' service'+(n===1?'':'s')
+        : 'Showing all '+n+' service lines';
+    }
     $$('.fbtn').forEach(function(b){
-      b.addEventListener('click',function(){ setTimeout(function(){ dots(); rest(); },30); });
+      b.addEventListener('click',function(){
+        setTimeout(function(){
+          dots();
+          var vs=visible();
+          if(vs.length) centre(b.dataset.f==='all' && vs.length>2 ? vs[1] : vs[0]);
+          setTimeout(mark,220);
+          tell(b);
+        },30);
+      });
     });
+    tell(null);
     window.addEventListener('resize',function(){ mark(); });
     dots();
     /* open on a centred, enlarged card rather than a flat row */
