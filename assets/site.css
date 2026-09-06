@@ -1389,3 +1389,15 @@
 @media (min-width:1181px){
   body{zoom:0.9}
 }
+
+
+/* ============ landscape touch tablets (iPad landscape is wider than 1180pt,
+   so the width breakpoints alone send it to the desktop rules) ============ */
+@media (min-width:901px) and (orientation:landscape) and (pointer:coarse){
+  .intro .gallery{align-self:start !important;display:block !important}
+  .intro .gallery .gtrack{flex:none}
+  .intro .gallery .gtrack figure{height:auto}
+  .intro .gallery .gtrack img{height:auto !important;width:100%;aspect-ratio:3/2;object-fit:cover}
+  /* bullets fill the column under the photos instead of a full-width row */
+  .intro .checks{grid-column:2 !important;columns:2;column-gap:30px;margin-top:26px;align-self:start}
+}
