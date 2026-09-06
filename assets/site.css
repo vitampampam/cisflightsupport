@@ -752,19 +752,19 @@
   }
 
 
-  /* ---------- stacked cards: each section pins, the next slides over it ---------- */
-  .stk{position:sticky;bottom:0;border-radius:26px 26px 0 0;
-    box-shadow:0 -24px 46px -20px rgba(4,26,36,.45);
-    transform-origin:center top;will-change:transform;
-    transition:transform .15s linear,filter .15s linear}
+  /* ---------- card stack ---------- */
+  .stk{position:sticky;bottom:0;border-radius:28px 28px 0 0;
+    box-shadow:0 -26px 50px -18px rgba(4,26,36,.5);
+    transform-origin:center top;will-change:transform,filter;backface-visibility:hidden}
   .hero.stk{border-radius:0;box-shadow:none}
-  .stk + .stk{margin-top:-26px}
+  .stk + .stk{margin-top:-28px}
   @media (prefers-reduced-motion:reduce){
-    .stk{position:relative;transform:none!important;filter:none!important}
+    .stk{position:relative;transform:none!important;filter:none!important;box-shadow:none}
   }
-  @media(max-width:640px){
-    .stk{border-radius:20px 20px 0 0;box-shadow:0 -16px 30px -14px rgba(4,26,36,.4)}
-    .stk + .stk{margin-top:-20px}
+  @media(max-width:1180px){
+    /* the overlap has to read on a small screen, so deepen it */
+    .stk{border-radius:30px 30px 0 0;box-shadow:0 -22px 44px -14px rgba(4,26,36,.55)}
+    .stk + .stk{margin-top:-30px}
   }
 
   /* ---------- the hero's grid, carried across the whole site ---------- */
@@ -781,10 +781,7 @@
   .sec.academy::before{background-image:linear-gradient(rgba(74,80,200,.045) 1px,transparent 1px),
                      linear-gradient(90deg,rgba(74,80,200,.045) 1px,transparent 1px)}
   .sec > *,.dual > *,.helpbar > *,footer > *,.stats > *{position:relative;z-index:1}
-
-  /* the stats strip had its own column rules — they fight the grid, so drop them */
   .stats div{border-right:0;border-bottom:0}
-  .stats .wrap{border-left:0}
 
   /* ---------- and over photography ---------- */
   .gtrack figure::after,.listing .ph::after{
@@ -1102,8 +1099,7 @@
   /* services: two cards visible, centre one enlarged */
   .cards{padding:30px calc(50% - 230px) 36px;gap:20px}
   .card{flex:0 0 min(360px,52vw)}
-  .card.is-active{transform:scale(1.06)}
-  .card.is-active:hover{transform:scale(1.06)}
+  .card.is-active:hover{transform:scale(1.1)}
   .svccar .cnav{width:46px;height:46px}
   .cnav.prev{left:-4px}.cnav.next{right:-4px}
 
@@ -1150,7 +1146,7 @@
   .netmap .code{font-size:12px}
   @media (hover:none){
     .tile:hover,.benefits li:hover,.ctrack>article:hover,.card:hover{transform:none}
-    .card.is-active:hover{transform:scale(1.06)}
+    .card.is-active:hover{transform:scale(1.1)}
     .tile:before,.card:before{display:none}
   }
 
