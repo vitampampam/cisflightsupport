@@ -165,7 +165,10 @@
   /* dual CTA */
   .dual{display:grid;grid-template-columns:1fr 1fr}
   @media(max-width:760px){.dual{grid-template-columns:1fr}}
-  .dual > div{padding:64px 40px 70px;text-align:center;color:#fff}
+  .dual > div{padding:64px 40px 70px;text-align:center;color:#fff;
+    display:flex;flex-direction:column;align-items:center}
+  .dual p{max-width:38ch}
+  .dual .btn{margin-top:auto}   /* headings wrap unevenly — pin the buttons to one line */
   .dual .a{background:var(--navy)}
   .dual .b{background:var(--navy-d)}
   .dual h3{color:#fff;font-size:30px;text-transform:uppercase;letter-spacing:.05em}
