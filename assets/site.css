@@ -622,7 +622,7 @@
   .mapwrap{display:grid;grid-template-columns:1.35fr .65fr;gap:44px;align-items:center;margin-top:40px}
   @media(max-width:900px){.mapwrap{grid-template-columns:1fr;gap:26px}}
   .netmap{width:100%;height:auto;overflow:visible}
-  .netmap .land{fill:none;stroke:rgba(255,255,255,.22);stroke-width:.7}
+  .netmap .land path{paint-order:stroke fill}
   .netmap .ring{fill:none;stroke:rgba(255,255,255,.16);stroke-width:1}
   .netmap .spoke{stroke:rgba(255,255,255,.07);stroke-width:1}
   .netmap .rlab{fill:rgba(255,255,255,.34);font:400 11px "Source Sans 3";letter-spacing:.06em}
@@ -724,7 +724,7 @@
   }
 
   /* keep horizontal movement locked to the carousels themselves */
-  html,body{overflow-x:clip}
+  /* no overflow clip on html/body: it would disable position:sticky */
   .ctrack,.cards{overscroll-behavior-x:contain;scroll-snap-stop:always;
     -webkit-overflow-scrolling:touch;touch-action:pan-x pan-y}
   .ctrack>article,.card{scroll-snap-stop:always}
@@ -751,77 +751,20 @@
     .gallery .cdots{bottom:50px}
   }
 
-  /* ---------- the hero's grid, carried across the whole site ---------- */
-  :root{--net:78px}
-  .sec,.dual,.helpbar,footer,.stats{position:relative}
-  .sec::before,.dual::before,.helpbar::before,footer::before,.stats::before{
-    content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
-    background-image:linear-gradient(rgba(6,42,56,.055) 1px,transparent 1px),
-                     linear-gradient(90deg,rgba(6,42,56,.055) 1px,transparent 1px);
-    background-size:var(--net) var(--net)}
-  /* dark bands need light lines instead */
-  .sec.coverage::before,.sec.contact::before,.dual::before,.helpbar::before,footer::before{
-    background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),
-                     linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px)}
-  /* the Academy band keeps its own lavender wash — grid stays very faint there */
-  .sec.academy::before{background-image:linear-gradient(rgba(74,80,200,.045) 1px,transparent 1px),
-                     linear-gradient(90deg,rgba(74,80,200,.045) 1px,transparent 1px)}
-  .sec > *,.dual > *,.helpbar > *,footer > *,.stats > *{position:relative;z-index:1}
 
-  /* ---------- and over photography ---------- */
-  .gtrack figure::after,.listing .ph::after{
-    content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
-    background-image:linear-gradient(rgba(255,255,255,.13) 1px,transparent 1px),
-                     linear-gradient(90deg,rgba(255,255,255,.13) 1px,transparent 1px);
-    background-size:var(--net) var(--net);mix-blend-mode:overlay}
-  .listing .ph{position:relative}
-  .gtrack figcaption{z-index:2}
-
-  /* ---------- stacked-card scrolling: each section slides over the last ---------- */
-  .stk{position:relative;border-radius:26px 26px 0 0;
-    box-shadow:0 -22px 50px -18px rgba(4,26,36,.35);
+  /* ---------- stacked cards: each section pins, the next slides over it ---------- */
+  .stk{position:sticky;bottom:0;border-radius:26px 26px 0 0;
+    box-shadow:0 -24px 46px -20px rgba(4,26,36,.45);
     transform-origin:center top;will-change:transform;
-    transition:transform .12s linear,filter .12s linear}
-  .stk + .stk{margin-top:-26px}
+    transition:transform .15s linear,filter .15s linear}
   .hero.stk{border-radius:0;box-shadow:none}
+  .stk + .stk{margin-top:-26px}
   @media (prefers-reduced-motion:reduce){
-    .stk{transform:none!important;filter:none!important;transition:none}
+    .stk{position:relative;transform:none!important;filter:none!important}
   }
   @media(max-width:640px){
-    .stk{border-radius:20px 20px 0 0;box-shadow:0 -16px 34px -14px rgba(4,26,36,.32)}
+    .stk{border-radius:20px 20px 0 0;box-shadow:0 -16px 30px -14px rgba(4,26,36,.4)}
     .stk + .stk{margin-top:-20px}
-  }
-
-  /* ---------- section rail: the stacked cards' titles, always reachable ---------- */
-  .rail{position:sticky;top:var(--hdr,66px);z-index:35;
-    background:rgba(255,255,255,.82);backdrop-filter:blur(16px) saturate(180%);
-    -webkit-backdrop-filter:blur(16px) saturate(180%);
-    border-bottom:1px solid rgba(6,42,56,.10)}
-  .rail .wrap{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;
-    padding-top:10px;padding-bottom:10px;scroll-behavior:smooth}
-  .rail .wrap::-webkit-scrollbar{display:none}
-  .rail a{flex:none;text-decoration:none;white-space:nowrap;border-radius:999px;
-    padding:8px 16px;font-family:"Barlow Semi Condensed";font-weight:600;font-size:14px;
-    letter-spacing:.09em;text-transform:uppercase;color:var(--navy-d);
-    border:1px solid rgba(6,42,56,.14);background:rgba(255,255,255,.7);transition:.22s}
-  .rail a:hover{border-color:var(--gold);color:var(--navy)}
-  .rail a.on{background:var(--navy);border-color:var(--navy);color:#fff}
-  @media(max-width:640px){
-    .rail a{font-size:13px;padding:7px 13px;letter-spacing:.07em}
-    .rail .wrap{gap:6px;padding-top:8px;padding-bottom:8px}
-  }
-
-  /* ---------- per-section request buttons ---------- */
-  .seccta{display:flex;justify-content:center;margin-top:44px;position:relative;z-index:2}
-  .seccta .ctabtn{border-radius:999px;padding:15px 34px;font-size:15px;min-height:52px;
-    display:inline-flex;align-items:center;justify-content:center}
-  .seccta.dark .ctabtn{background:transparent;border-color:rgba(255,255,255,.55);color:#fff}
-  @media (hover:hover){
-    .seccta.dark .ctabtn:hover{background:#fff;color:var(--navy-d);border-color:#fff}
-  }
-  @media(max-width:640px){
-    .seccta{margin-top:32px}
-    .seccta .ctabtn{width:100%;padding:14px 20px}
   }
 
   footer{background:var(--navy-x);color:#9FB4C6;font-size:15.5px}
@@ -991,7 +934,7 @@
 
 /* ---- measured corrections for a 390px-wide viewport ---- */
   html{-webkit-text-size-adjust:100%}
-  body{overflow-x:hidden}
+  /* overflow-x on body would cancel sticky sections */
 
   /* util bar had only a stray left-aligned number once the tagline was hidden */
   .util .wrap{justify-content:center;gap:8px;font-size:12.5px}
@@ -1186,7 +1129,7 @@
 
 /* ---- measured corrections: 820 / 1024 / 1180pt viewports ---- */
   html{-webkit-text-size-adjust:100%}
-  body{overflow-x:hidden}
+  /* overflow-x on body would cancel sticky sections */
 
   /* carousel padding was a fixed 230px against a 360px card, leaving every
      card 50px off centre and the last one unable to reach the middle */

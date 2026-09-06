@@ -116,10 +116,6 @@
         if(n && fill(n)) e.preventDefault();   /* same page: fill in place */
       });
     });
-    $$('.ctabtn').forEach(function(a){
-      a.addEventListener('click',function(e){
-        if(seed(a.dataset.msg,a.dataset.service)) e.preventDefault();
-      });
     });
     var p=new URLSearchParams(location.search);
     var q=p.get('aircraft');
@@ -163,7 +159,7 @@
     place(); spy();
   })();
 
-  /* stacked-card scrolling */
+  /* stacked cards — the covered section recedes as the next slides over it */
   (function(){
     if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var stack=[].slice.call(document.querySelectorAll('.hero, .sec, .dual'));
@@ -175,10 +171,11 @@
       var vh=innerHeight;
       for(var i=0;i<stack.length-1;i++){
         var nextTop=stack[i+1].getBoundingClientRect().top;
-        var k=Math.min(1,Math.max(0,(vh-nextTop)/vh));   /* 0 = not covered, 1 = fully covered */
-        if(k<=0){ stack[i].style.transform=''; stack[i].style.filter=''; continue; }
-        stack[i].style.transform='scale('+(1-0.045*k).toFixed(4)+')';
-        stack[i].style.filter='brightness('+(1-0.16*k).toFixed(3)+')';
+        var k=Math.min(1,Math.max(0,(vh-nextTop)/vh));
+        var el=stack[i];
+        if(k<=0){ el.style.transform=''; el.style.filter=''; continue; }
+        el.style.transform='scale('+(1-0.03*k).toFixed(4)+')';
+        el.style.filter='brightness('+(1-0.12*k).toFixed(3)+')';
       }
     }
     function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(frame); } }
