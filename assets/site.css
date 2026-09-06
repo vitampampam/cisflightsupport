@@ -168,7 +168,18 @@
   .dual > div{padding:64px 40px 70px;text-align:center;color:#fff;
     display:flex;flex-direction:column;align-items:center}
   .dual p{max-width:38ch}
-  .dual .btn{margin-top:auto}   /* headings wrap unevenly — pin the buttons to one line */
+  .dual .btn{margin-top:auto}   /* fallback: pin the buttons to the panel floor */
+  /* the two headings wrap to different line counts, so align the rows themselves:
+     subgrid puts heading / paragraph / button on shared tracks across both panels */
+  @supports (grid-template-rows: subgrid){
+    .dual{grid-template-rows:auto auto auto}
+    .dual > div{display:grid;grid-template-rows:subgrid;grid-row:span 3;
+      align-content:start;justify-items:center;row-gap:0}
+    .dual h3{align-self:start}
+    .dual p{align-self:start;margin:10px 0 24px}
+    .dual .btn{align-self:end;margin-top:0}
+  }
+
   .dual .a{background:var(--navy)}
   .dual .b{background:var(--navy-d)}
   .dual h3{color:#fff;font-size:30px;text-transform:uppercase;letter-spacing:.05em}
@@ -994,7 +1005,7 @@
   .hero .wrap{padding-top:80px;padding-bottom:88px}
   .hero h1{font-size:clamp(40px,6.4vw,58px)}
   .hero .col{max-width:min(660px,80%)}
-  .hero .plane{width:min(560px,52vw);opacity:.13;bottom:2%}
+
   .hero .acts .btn{min-height:54px}
 
   .stats .wrap{grid-template-columns:repeat(4,1fr)}
@@ -1080,11 +1091,7 @@
   /* hero: in portrait the text column reached 688px and the aircraft began
      at 424px — a 264px overlap. Hidden in portrait, trimmed in landscape */
   @media (orientation:portrait){
-    .hero .plane{display:block;position:absolute;left:auto;right:-6%;top:auto;bottom:18px;
-      width:76%;max-width:none;opacity:.17;transform:none;
-      -webkit-mask-image:linear-gradient(90deg,#000 0,#000 58%,transparent 100%);
-      mask-image:linear-gradient(90deg,#000 0,#000 58%,transparent 100%)}
-    .hero .wrap{padding-bottom:255px}
+
     .hero .col{max-width:none}
     .hero h1{font-size:clamp(42px,7vw,58px)}
   }
@@ -1244,8 +1251,14 @@
 
 /* ---- hero aircraft: clear of the buttons, tail off the right edge ---- */
   @media (orientation:portrait){
-    .hero .plane{width:72%;right:-10%;bottom:16px}
-    .hero .wrap{padding-bottom:265px}
+    /* height-based so the aircraft can never grow into the buttons */
+    .hero .plane{display:block;position:absolute;left:auto;right:-5%;top:auto;bottom:14px;
+      width:auto;height:190px;max-width:none;opacity:.17;transform:none;
+      -webkit-mask-image:linear-gradient(90deg,#000 0,#000 58%,transparent 100%);
+      mask-image:linear-gradient(90deg,#000 0,#000 58%,transparent 100%)}
+    .hero .wrap{padding-bottom:238px;padding-top:64px}
+    .hero.pagehead .plane{height:150px;width:auto;bottom:-10px;right:-5%}
+    .hero.pagehead .wrap{padding-bottom:150px}
   }
 }
 
