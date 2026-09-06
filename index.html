@@ -9,7 +9,29 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Source+Sans+3:wght@300;400;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/site.css?v=10">
+<style>
+/* critical: gallery works even with a stale external stylesheet */
+.intro{align-items:start}
+.intro .gallery{margin-top:4px}
+.gallery{position:relative;border-radius:18px;overflow:hidden}
+.gtrack{display:flex!important;flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x mandatory;
+  scroll-behavior:smooth;scrollbar-width:none}
+.gtrack::-webkit-scrollbar{display:none}
+.gtrack figure{flex:0 0 100%!important;width:100%;margin:0;scroll-snap-align:center;position:relative}
+.gtrack img{width:100%;aspect-ratio:3/2;object-fit:cover;display:block}
+.gtrack figcaption{position:absolute;left:0;right:0;bottom:0;padding:34px 20px 16px;font-size:14.5px;
+  color:#fff;background:linear-gradient(180deg,rgba(4,26,36,0),rgba(4,26,36,.82))}
+.gallery .cnav{position:absolute;top:calc(50% - 25px);z-index:3}
+.gallery .cnav.prev{left:12px}.gallery .cnav.next{right:12px}
+.gallery .cdots{position:absolute;left:0;right:0;bottom:56px;margin:0;display:flex;gap:8px;justify-content:center}
+.gallery .cdots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.45);cursor:pointer}
+.gallery .cdots i.on{background:#fff;width:26px;border-radius:99px}
+.gallery .cnav{background:rgba(255,255,255,.72);border:1px solid rgba(6,42,56,.14);
+  width:50px;height:50px;border-radius:50%;font-size:26px;color:#062A38;cursor:pointer}
+.gallery .cnav[disabled]{opacity:.3;pointer-events:none}
+.gallery .cnav.wrap{border-color:#12A69B;color:#12A69B}
+</style>
 </head>
 <body>
 <div class="progress" id="progress" aria-hidden="true"></div>
@@ -590,6 +612,31 @@
   <a class="s" href="contact.html">Send enquiry</a>
 </nav>
 <a class="fab" href="#top" id="fab" aria-label="Back to top">&#8593;</a>
-<script src="assets/site.js"></script>
+<script src="assets/site.js?v=10"></script>
+<script>
+/* critical: gallery controls, independent of the external bundle */
+(function(){
+  var t=document.getElementById('galTrack'); if(!t) return;
+  var d=document.getElementById('galDots'), p=document.getElementById('galPrev'), n=document.getElementById('galNext');
+  if(d && !d.children.length){
+    [].forEach.call(t.querySelectorAll('figure'),function(f,i){
+      var b=document.createElement('i');
+      b.addEventListener('click',function(){ t.scrollTo({left:i*t.clientWidth,behavior:'smooth'}); });
+      d.appendChild(b);
+    });
+  }
+  function i(){ return Math.round(t.scrollLeft/t.clientWidth); }
+  function last(){ return t.querySelectorAll('figure').length-1; }
+  function sync(){
+    [].forEach.call(d.children,function(x,k){ x.classList.toggle('on',k===i()); });
+    p.disabled = i()<=0;
+    n.classList.toggle('wrap', i()>=last());
+  }
+  p.onclick=function(){ if(!p.disabled) t.scrollTo({left:(i()-1)*t.clientWidth,behavior:'smooth'}); };
+  n.onclick=function(){ t.scrollTo({left:(i()>=last()?0:i()+1)*t.clientWidth,behavior:'smooth'}); };
+  t.addEventListener('scroll',function(){ clearTimeout(t._g); t._g=setTimeout(sync,80); },{passive:true});
+  addEventListener('resize',sync); sync();
+})();
+</script>
 </body>
 </html>
