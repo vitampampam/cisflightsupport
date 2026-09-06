@@ -2,14 +2,13 @@
   var $=function(s,c){return (c||document).querySelector(s)},
       $$=function(s,c){return [].slice.call((c||document).querySelectorAll(s))};
 
-  /* sticky header state + scrollspy + fab */
-  var hdr=$('header'), fab=$('#fab'),
+  /* sticky header state + scrollspy */
+  var hdr=$('header'),
       secs=$$('section[id], div[id="top"]'),
       navlinks=$$('.nav a[href^="#"]');
   function onScroll(){
     var y=window.scrollY;
     hdr.classList.toggle('stuck', y>20);
-    fab.classList.toggle('on', y>700);
     var cur='';
     secs.forEach(function(s){ if(s.getBoundingClientRect().top<=140) cur=s.id; });
     navlinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href')==='#'+cur); });
@@ -123,49 +122,13 @@
     if(p.get('service')||p.get('msg')) seed(p.get('msg'),p.get('service'));
   })();
 
-  /* section rail — titles of the stacked cards, for jumping straight to one */
-  (function(){
-    var secs=[].slice.call(document.querySelectorAll('section[id]'))
-                .filter(function(s){ return s.id!=='contact'; });   /* the header CTA covers contact */
-    if(secs.length<4) return;
-    var hdr=document.querySelector('header');
-    var rail=document.createElement('nav');
-    rail.className='rail'; rail.setAttribute('aria-label','Sections');
-    var w=document.createElement('div'); w.className='wrap'; rail.appendChild(w);
-    var SHORT={services:'Services',turnaround:'Turnaround',coverage:'Coverage',fleet:'Fleet',
-               prebuy:'Pre-buy',academy:'CAW Academy',team:'Team',contact:'Contact'};
-    var links=secs.map(function(s){
-      var t=s.querySelector('h2');
-      var label=SHORT[s.id] || (t?t.textContent.trim():s.id);
-      if(label.length>26) label=label.slice(0,24).trim()+'…';
-      var a=document.createElement('a');
-      a.href='#'+s.id; a.textContent=label;
-      w.appendChild(a); return a;
-    });
-    hdr.parentNode.insertBefore(rail, hdr.nextSibling);
-    function place(){ document.documentElement.style.setProperty('--hdr', hdr.offsetHeight+'px'); }
-    var cur=-1;
-    function spy(){
-      var line=(hdr.offsetHeight+rail.offsetHeight)+8, idx=0;
-      secs.forEach(function(s,i){ if(s.getBoundingClientRect().top<=line) idx=i; });
-      if(idx===cur) return;
-      cur=idx;
-      links.forEach(function(a,i){ a.classList.toggle('on',i===idx); });
-      var a=links[idx], r=a.getBoundingClientRect(), rw=w.getBoundingClientRect();
-      if(r.left<rw.left+20 || r.right>rw.right-20)
-        w.scrollTo({left:a.offsetLeft-w.clientWidth/2+a.offsetWidth/2,behavior:'smooth'});
-    }
-    addEventListener('scroll',spy,{passive:true});
-    addEventListener('resize',function(){ place(); spy(); });
-    place(); spy();
-  })();
 
   /* card stack: each section rises from below, then pins while the next covers it */
   (function(){
     if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var stack=[].slice.call(document.querySelectorAll('.hero, .sec, .dual'));
     if(stack.length<2) return;
-    stack.forEach(function(s,i){ s.classList.add('stk'); s.style.zIndex=i+1; });
+    stack.forEach(function(s){ s.classList.add('stk'); });   /* CSS already pins them */
     function clamp(v){ return v<0?0:v>1?1:v; }
     var ticking=false;
     function frame(){

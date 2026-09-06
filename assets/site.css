@@ -510,14 +510,6 @@
   .rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.25,1)}
   .rv.in{opacity:1;transform:none}
 
-  /* floating action button */
-  .fab{position:fixed;right:22px;bottom:22px;z-index:45;width:52px;height:52px;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:20px;
-    color:var(--navy-d);background:rgba(255,255,255,.7);border:1px solid rgba(6,42,56,.14);
-    backdrop-filter:blur(16px) saturate(180%);-webkit-backdrop-filter:blur(16px) saturate(180%);
-    box-shadow:var(--shadow);opacity:0;pointer-events:none;transform:translateY(14px);transition:.3s}
-  .fab.on{opacity:1;pointer-events:auto;transform:none}
-  .fab:hover{background:var(--navy);color:#fff}
 
   @media(prefers-reduced-motion:reduce){
     .rv{opacity:1;transform:none;transition:none}
@@ -752,19 +744,23 @@
   }
 
 
-  /* ---------- card stack ---------- */
-  .stk{position:sticky;bottom:0;border-radius:28px 28px 0 0;
+  /* ---------- card stack: pure CSS, so it works without scripts ----------
+     later siblings paint over earlier ones, so no z-index bookkeeping is needed */
+  .hero,.sec,.dual{position:sticky;bottom:0;
+    border-radius:28px 28px 0 0;
     box-shadow:0 -26px 50px -18px rgba(4,26,36,.5);
-    transform-origin:center top;will-change:transform,filter;backface-visibility:hidden}
-  .hero.stk{border-radius:0;box-shadow:none}
-  .stk + .stk{margin-top:-28px}
+    transform-origin:center top}
+  .hero{border-radius:0;box-shadow:none}
+  .sec,.dual{margin-top:-28px}
+  .stats{position:relative;z-index:1}          /* thin strip stays in flow */
+  .stk{will-change:transform,filter;backface-visibility:hidden}
   @media (prefers-reduced-motion:reduce){
-    .stk{position:relative;transform:none!important;filter:none!important;box-shadow:none}
+    .hero,.sec,.dual{position:relative;box-shadow:none;margin-top:0}
+    .stk{transform:none!important;filter:none!important}
   }
   @media(max-width:1180px){
-    /* the overlap has to read on a small screen, so deepen it */
-    .stk{border-radius:30px 30px 0 0;box-shadow:0 -22px 44px -14px rgba(4,26,36,.55)}
-    .stk + .stk{margin-top:-30px}
+    .sec,.dual{border-radius:30px 30px 0 0;box-shadow:0 -22px 44px -14px rgba(4,26,36,.55);
+      margin-top:-30px}
   }
 
   /* ---------- the hero's grid, carried across the whole site ---------- */
@@ -802,7 +798,6 @@
   footer li{padding:5px 0}
   .copy{border-top:1px solid rgba(255,255,255,.12);padding-block:20px;display:flex;flex-wrap:wrap;gap:12px;
     font-size:14px}
-  .copy .sp{margin-left:auto}
   :focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 
 /* ================== responsive builds ==================
@@ -948,7 +943,6 @@
     text-transform:uppercase;min-height:48px;display:flex;align-items:center;justify-content:center}
   .callbar .p{background:var(--gold);color:#04161E}
   .callbar .s{border:1px solid rgba(255,255,255,.4);color:#fff}
-  .fab{bottom:calc(84px + env(safe-area-inset-bottom));right:16px;width:46px;height:46px}
 
   /* touch: no hover states, lighter compositing */
   @media (hover:none){
@@ -1018,7 +1012,6 @@
   footer li{padding:3px 0}
   footer li a{font-size:14.5px}
   .copy{padding-block:14px calc(84px + env(safe-area-inset-bottom));font-size:12.5px;gap:6px;line-height:1.5}
-  .copy .sp{margin-left:0}
   .helpbar .wrap{padding-block:18px;gap:6px}
   .helpbar .hl{font-size:17px;margin-bottom:2px}
   .helpbar a{font-size:15.5px}
