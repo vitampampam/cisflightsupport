@@ -733,7 +733,12 @@
   .hero .lede{font-size:17px;margin-top:20px}
   .hero .acts{gap:10px;margin-top:28px}
   .hero .acts .btn{width:100%;min-height:52px;font-size:14px}
-  .hero .plane{display:none}
+  .hero .plane{display:block;position:absolute;left:auto;right:-14%;top:auto;bottom:26px;
+    width:124%;max-width:none;opacity:.26;transform:none;
+    -webkit-mask-image:linear-gradient(90deg,#000 0,#000 62%,transparent 100%);
+    mask-image:linear-gradient(90deg,#000 0,#000 62%,transparent 100%)}
+  .hero .wrap{padding-bottom:132px}
+  .pagehead .plane{bottom:8px}
   .blob{filter:blur(60px);opacity:.28}
   .blob.b1{width:300px;height:300px}
   .blob.b2{width:260px;height:260px}
@@ -1024,7 +1029,11 @@
   /* hero: in portrait the text column reached 688px and the aircraft began
      at 424px — a 264px overlap. Hidden in portrait, trimmed in landscape */
   @media (orientation:portrait){
-    .hero .plane{display:none}
+    .hero .plane{display:block;position:absolute;left:auto;right:-8%;top:auto;bottom:34px;
+      width:92%;max-width:none;opacity:.18;transform:none;
+      -webkit-mask-image:linear-gradient(90deg,#000 0,#000 60%,transparent 100%);
+      mask-image:linear-gradient(90deg,#000 0,#000 60%,transparent 100%)}
+    .hero .wrap{padding-bottom:180px}
     .hero .col{max-width:none}
     .hero h1{font-size:clamp(42px,7vw,58px)}
   }
@@ -1148,7 +1157,12 @@
 }
 
 /* ---------- multi-page additions ---------- */
-  .pagehead{min-height:0;padding:0}
+  .pagehead{min-height:0;padding:0;position:relative;overflow:hidden}
+  .pagehead .plane{display:block;position:absolute;right:-4%;bottom:-6%;width:min(560px,52%);
+    opacity:.12;filter:brightness(0) invert(1);pointer-events:none}
+  @media(max-width:1180px){.pagehead .plane{width:70%;opacity:.16;bottom:-10%;right:-8%}}
+  @media(max-width:640px){.pagehead .plane{width:120%;right:-10%;bottom:-4%;opacity:.22}
+    .pagehead .wrap{padding-bottom:96px}}
   .pagehead .wrap{padding-top:74px;padding-bottom:74px}
   .pagehead h1{font-size:clamp(32px,4.8vw,58px);max-width:18ch;margin-left:-.03em}
   .pagehead .lede{margin-top:18px}

@@ -206,11 +206,12 @@
       var el=e.target, txt=el.textContent, m=txt.match(/[\d,]+/);
       if(!m) return;
       var end=parseInt(m[0].replace(/,/g,''),10), pre=txt.slice(0,m.index), post=txt.slice(m.index+m[0].length);
+      var grouped=m[0].indexOf(',')>-1;   /* 2004 is a year, not a quantity — never group it */
       var t0=null, dur=1100;
       function tick(ts){
         if(!t0) t0=ts;
         var k=Math.min(1,(ts-t0)/dur), v=Math.round(end*(1-Math.pow(1-k,3)));
-        el.textContent=pre+v.toLocaleString('en-US')+post;
+        el.textContent=pre+(grouped?v.toLocaleString('en-US'):String(v))+post;
         if(k<1) requestAnimationFrame(tick);
       }
       if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(tick);
