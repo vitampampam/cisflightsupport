@@ -115,7 +115,11 @@
 
   /* intro */
   .intro{display:grid;grid-template-columns:1.25fr .95fr;gap:64px;align-items:start}
-  .intro .gallery{margin-top:4px}   /* line the frame up with the eyebrow */
+  .intro .gallery{margin-top:4px}
+  @media(min-width:1181px){
+    /* drop the frame past the eyebrow so its top edge meets the heading */
+    .intro .gallery{margin-top:40px}
+  }
   @media(max-width:900px){.intro{grid-template-columns:1fr;gap:40px}}
   .checks{list-style:none;margin:26px 0 0;padding:0;columns:2;column-gap:38px}
   @media(max-width:640px){.checks{columns:1}}
