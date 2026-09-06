@@ -1343,10 +1343,12 @@
   @media (orientation:landscape){
     /* landscape tablets have the width for the desktop treatment */
     .intro{grid-template-columns:0.95fr 1.25fr;gap:36px 44px;align-items:start}
-    .intro .gallery{align-self:start;display:block}
-    .intro .gallery .gtrack img{height:auto;width:100%;aspect-ratio:3/2;object-fit:cover}
-    /* bullets sit under the photos so the column is not left empty */
-    .intro .checks{grid-column:2;columns:2;column-gap:30px;margin-top:26px;align-self:start}
+    /* same as desktop: carousel fills its column, bullets span the full width */
+    .intro .gallery{align-self:stretch;display:flex;flex-direction:column}
+    .intro .gallery .gtrack{flex:1;min-height:0}
+    .intro .gallery .gtrack figure{height:100%}
+    .intro .gallery .gtrack img{height:100%;width:100%;aspect-ratio:auto;object-fit:cover}
+    .intro .checks{grid-column:1 / -1;columns:3;column-gap:34px;margin-top:8px}
     .intro .gallery{margin-top:0}
     .gtrack img{aspect-ratio:3/2;height:auto}
     .gtrack figcaption{font-size:14px;padding:30px 18px 14px}
@@ -1391,13 +1393,13 @@
 }
 
 
-/* ============ landscape touch tablets (iPad landscape is wider than 1180pt,
-   so the width breakpoints alone send it to the desktop rules) ============ */
-@media (min-width:901px) and (orientation:landscape) and (pointer:coarse){
-  .intro .gallery{align-self:start !important;display:block !important}
-  .intro .gallery .gtrack{flex:none}
-  .intro .gallery .gtrack figure{height:auto}
-  .intro .gallery .gtrack img{height:auto !important;width:100%;aspect-ratio:3/2;object-fit:cover}
-  /* bullets fill the column under the photos instead of a full-width row */
-  .intro .checks{grid-column:2 !important;columns:2;column-gap:30px;margin-top:26px;align-self:start}
+
+
+/* ============ tighten the pre-buy -> Academy seam on touch devices ============
+   the 96px blend strip plus the section paddings read as a hole on a tablet */
+@media (pointer:coarse){
+  #prebuy{padding-bottom:34px}
+  .seam-caw{height:52px}
+  .spanels{min-height:0}
+  .academy{padding-top:10px}
 }

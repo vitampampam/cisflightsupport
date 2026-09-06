@@ -336,12 +336,30 @@
 
   /* parallax on hero artwork + blobs */
   var plane=$('.hero .plane'), blobs=$$('.blob');
+  /* parallax writes an inline transform; on a tablet the CSS positions the aircraft
+     itself, so the leftover inline value survived rotation until a refresh */
+  function parallaxOn(){
+    return innerWidth>=900 && matchMedia('(pointer:fine)').matches;
+  }
+  function clearParallax(){
+    if(plane) plane.style.transform='';
+    blobs.forEach(function(b){ b.style.translate=''; });
+  }
   addEventListener('scroll',function(){
-    if(innerWidth<900) return;
+    if(!parallaxOn()) return;
     var y=scrollY;
     if(plane) plane.style.transform='translateY('+(y*0.09)+'px)';
     blobs.forEach(function(b,i){ b.style.translate='0 '+(y*(i?0.05:-0.04))+'px'; });
   },{passive:true});
+  function onOrient(){
+    clearParallax();                        /* drop stale values first */
+    setTimeout(function(){                  /* let the new viewport settle */
+      if(!parallaxOn()) clearParallax();
+    },120);
+  }
+  addEventListener('resize',onOrient);
+  addEventListener('orientationchange',onOrient);
+  if(!parallaxOn()) clearParallax();
 
   var nums=$$('.stats b, .anums b, .tbig');
   var io2=new IntersectionObserver(function(es){
