@@ -734,10 +734,10 @@
   .hero .lede{font-size:17px;margin-top:20px}
   .hero .acts{gap:10px;margin-top:28px}
   .hero .acts .btn{width:100%;min-height:52px;font-size:14px}
-  .hero .plane{display:block;position:absolute;left:auto;right:-14%;top:auto;bottom:26px;
-    width:124%;max-width:none;opacity:.26;transform:none;
-    -webkit-mask-image:linear-gradient(90deg,#000 0,#000 62%,transparent 100%);
-    mask-image:linear-gradient(90deg,#000 0,#000 62%,transparent 100%)}
+  .hero .plane{display:block;position:absolute;left:16px;right:auto;top:auto;bottom:26px;
+    width:118%;max-width:none;opacity:.26;transform:none;
+    -webkit-mask-image:linear-gradient(90deg,#000 0,#000 44%,transparent 94%);
+    mask-image:linear-gradient(90deg,#000 0,#000 44%,transparent 94%)}
   .hero .wrap{padding-bottom:132px}
   .pagehead .plane{bottom:8px}
   .blob{filter:blur(60px);opacity:.28}
@@ -1179,7 +1179,9 @@
   .pagehead .plane{display:block;position:absolute;right:-4%;bottom:-6%;width:min(560px,52%);
     opacity:.12;filter:brightness(0) invert(1);pointer-events:none}
   @media(max-width:1180px){.pagehead .plane{width:70%;opacity:.16;bottom:-10%;right:-8%}}
-  @media(max-width:640px){.pagehead .plane{width:120%;right:-10%;bottom:-4%;opacity:.22}
+  @media(max-width:640px){.pagehead .plane{width:114%;left:16px;right:auto;bottom:-4%;opacity:.22;
+    -webkit-mask-image:linear-gradient(90deg,#000 0,#000 44%,transparent 94%);
+    mask-image:linear-gradient(90deg,#000 0,#000 44%,transparent 94%)}
     .pagehead .wrap{padding-bottom:96px}}
   .pagehead .wrap{padding-top:74px;padding-bottom:74px}
   .pagehead h1{font-size:clamp(32px,4.8vw,58px);max-width:18ch;margin-left:-.03em}
