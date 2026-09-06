@@ -112,7 +112,12 @@
 
   /* intro */
   .intro{display:grid;grid-template-columns:0.95fr 1.25fr;gap:48px 56px;align-items:start}
-  .intro .checks{grid-column:2;columns:2;column-gap:34px;margin-top:30px;align-self:start}
+  .intro .checks{grid-column:1 / -1;columns:3;column-gap:44px;margin-top:8px}
+  /* the carousel fills its column instead of leaving a gap under it */
+  .intro .gallery{align-self:stretch;display:flex;flex-direction:column}
+  .intro .gallery .gtrack{flex:1;min-height:0}
+  .intro .gallery .gtrack figure{height:100%}
+  .intro .gallery .gtrack img{height:100%;width:100%;aspect-ratio:auto;object-fit:cover}
   .intro .gallery{margin-top:4px}
   @media(min-width:1181px){
     .intro .gallery{margin-top:0}
@@ -1333,7 +1338,11 @@
   @media (orientation:landscape){
     /* landscape tablets have the width for the desktop treatment */
     .intro{grid-template-columns:0.95fr 1.25fr;gap:36px 44px;align-items:start}
-    .intro .checks{grid-column:2;columns:2;column-gap:28px;margin-top:24px}
+    .intro .checks{grid-column:1 / -1;columns:3;column-gap:34px;margin-top:6px}
+    .intro .gallery{align-self:stretch;display:flex;flex-direction:column}
+    .intro .gallery .gtrack{flex:1;min-height:0}
+    .intro .gallery .gtrack figure{height:100%}
+    .intro .gallery .gtrack img{height:100%;width:100%;aspect-ratio:auto;object-fit:cover}
     .intro .gallery{margin-top:0}
     .gtrack img{aspect-ratio:3/2;height:auto}
     .gtrack figcaption{font-size:14px;padding:30px 18px 14px}
