@@ -33,7 +33,7 @@
   .btn.gold:hover{background:#0B756E;border-color:#0B756E}
   .eyebrow{font-family:"Barlow Semi Condensed";font-weight:600;font-size:15px;letter-spacing:.18em;
     text-transform:uppercase;color:var(--gold);margin-bottom:14px}
-  .sec{padding:82px 0}
+  .sec{padding:82px 0;background:var(--white)}
   .sec h2{font-size:clamp(30px,3.8vw,42px);text-transform:uppercase;letter-spacing:.02em}
   .sec .sub{margin-top:16px;max-width:70ch}
   .center{text-align:center}
@@ -426,8 +426,6 @@
   .hero .acts .btn.ghost{background:rgba(255,255,255,.12);
     backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-color:rgba(255,255,255,.55)}
   .stats .wrap{position:relative}
-  .stats div{transition:background .3s}
-  .stats div:hover{background:rgba(255,255,255,.7)}
 
   /* glass service cards + filter menu */
   .svc{background:linear-gradient(180deg,#EEF4F4 0%,#E2EDED 100%)}
@@ -746,16 +744,15 @@
 
   /* ---------- card stack: pure CSS, so it works without scripts ----------
      later siblings paint over earlier ones, so no z-index bookkeeping is needed */
-  .sec{background:var(--white)}          /* every card must be opaque to cover the one below */
   .hero,.sec,.dual{position:sticky;bottom:0;
-    border-radius:28px;
+    border-radius:28px 28px 0 0;
     box-shadow:0 -26px 50px -18px rgba(4,26,36,.5);
     overflow:hidden;
     transform-origin:center top;
     /* each card is its own stacking context, otherwise the z-index:1 on section
        children escapes to the root layer and earlier cards paint over later ones */
     isolation:isolate}
-  .hero{border-radius:0 0 28px 28px;box-shadow:none}
+  .hero{border-radius:0;box-shadow:none}
   .sec,.dual{margin-top:-28px}
   .stats{position:relative;z-index:1}          /* thin strip stays in flow */
   .stk{will-change:transform,filter;backface-visibility:hidden}
@@ -764,14 +761,14 @@
     .stk{transform:none!important;filter:none!important}
   }
   @media(max-width:1180px){
-    .sec,.dual{border-radius:30px;box-shadow:0 -22px 44px -14px rgba(4,26,36,.55);
+    .sec,.dual{border-radius:30px 30px 0 0;box-shadow:0 -22px 44px -14px rgba(4,26,36,.55);
       margin-top:-30px}
-    .hero{border-radius:0 0 30px 30px}
+    .hero{border-radius:0}
   }
 
   /* ---------- the hero's grid, carried across the whole site ---------- */
   :root{--net:78px}
-  .sec,.dual,.helpbar,footer,.stats{position:relative}
+  .helpbar,footer,.stats{position:relative}   /* .sec and .dual are already sticky */
   .sec::before,.dual::before,.helpbar::before,footer::before,.stats::before{
     content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
     background-image:linear-gradient(rgba(6,42,56,.055) 1px,transparent 1px),
