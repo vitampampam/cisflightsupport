@@ -106,12 +106,12 @@
   /* stats bar */
   .stats{background:var(--ice);border-bottom:1px solid var(--line)}
   .stats .wrap{display:grid;grid-template-columns:repeat(4,1fr);text-align:center}
-  .stats div{padding:30px 12px;border-right:1px solid var(--line)}
+  .stats div{padding:30px 12px}
   .stats div:last-child{border-right:0}
   .stats b{display:block;font-family:"Barlow Semi Condensed";font-size:44px;font-weight:700;color:var(--navy);line-height:1}
   .stats span{display:block;font-size:14.5px;letter-spacing:.1em;text-transform:uppercase;color:#61797F;margin-top:8px}
   @media(max-width:760px){.stats .wrap{grid-template-columns:1fr 1fr}
-    .stats div:nth-child(2){border-right:0}.stats div:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+    .stats div:nth-child(2){border-right:0}}
 
   /* intro */
   .intro{display:grid;grid-template-columns:1.25fr .95fr;gap:64px;align-items:start}
@@ -766,6 +766,34 @@
     .stk{border-radius:20px 20px 0 0;box-shadow:0 -16px 30px -14px rgba(4,26,36,.4)}
     .stk + .stk{margin-top:-20px}
   }
+
+  /* ---------- the hero's grid, carried across the whole site ---------- */
+  :root{--net:78px}
+  .sec,.dual,.helpbar,footer,.stats{position:relative}
+  .sec::before,.dual::before,.helpbar::before,footer::before,.stats::before{
+    content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+    background-image:linear-gradient(rgba(6,42,56,.055) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(6,42,56,.055) 1px,transparent 1px);
+    background-size:var(--net) var(--net)}
+  .sec.coverage::before,.sec.contact::before,.dual::before,.helpbar::before,footer::before{
+    background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px)}
+  .sec.academy::before{background-image:linear-gradient(rgba(74,80,200,.045) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(74,80,200,.045) 1px,transparent 1px)}
+  .sec > *,.dual > *,.helpbar > *,footer > *,.stats > *{position:relative;z-index:1}
+
+  /* the stats strip had its own column rules — they fight the grid, so drop them */
+  .stats div{border-right:0;border-bottom:0}
+  .stats .wrap{border-left:0}
+
+  /* ---------- and over photography ---------- */
+  .gtrack figure::after,.listing .ph::after{
+    content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
+    background-image:linear-gradient(rgba(255,255,255,.13) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(255,255,255,.13) 1px,transparent 1px);
+    background-size:var(--net) var(--net);mix-blend-mode:overlay}
+  .listing .ph{position:relative}
+  .gtrack figcaption{z-index:2}
 
   footer{background:var(--navy-x);color:#9FB4C6;font-size:15.5px}
   .fgrid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:44px;padding-block:56px 40px}

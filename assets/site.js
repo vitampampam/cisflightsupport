@@ -125,7 +125,8 @@
 
   /* section rail — titles of the stacked cards, for jumping straight to one */
   (function(){
-    var secs=[].slice.call(document.querySelectorAll('section[id]'));
+    var secs=[].slice.call(document.querySelectorAll('section[id]'))
+                .filter(function(s){ return s.id!=='contact'; });   /* the header CTA covers contact */
     if(secs.length<4) return;
     var hdr=document.querySelector('header');
     var rail=document.createElement('nav');
