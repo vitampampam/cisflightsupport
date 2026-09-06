@@ -338,7 +338,8 @@
   .helpbar .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:14px 36px;padding:30px 26px}
   .helpbar .hl{font-family:"Barlow Semi Condensed";font-size:22px;font-weight:600;color:#fff;
     text-transform:uppercase;letter-spacing:.06em;margin-right:auto}
-  .helpbar a{color:#fff;font-size:17px;text-decoration:none;border-bottom:2px solid var(--gold);padding-bottom:2px}
+  .helpbar a{color:#fff;font-size:17px;text-decoration:none;border-bottom:2px solid var(--gold);
+    padding-bottom:2px;max-width:100%;overflow-wrap:anywhere}
   .helpbar a:hover{color:var(--gold)}
 
   /* ================= modern layer: glass, motion, controls ================= */
@@ -687,14 +688,14 @@
   .maplegend .k.me{background:var(--sand)}
 
   footer{background:var(--navy-x);color:#9FB4C6;font-size:15.5px}
-  .fgrid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:44px;padding:56px 0 40px}
+  .fgrid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:44px;padding-block:56px 40px}
   @media(max-width:860px){.fgrid{grid-template-columns:1fr;gap:30px}}
   footer h4{color:#fff;font-size:19px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
   footer a{color:#CBDBE8;text-decoration:none}
   footer a:hover{color:#fff;text-decoration:underline}
   footer ul{list-style:none;margin:0;padding:0}
   footer li{padding:5px 0}
-  .copy{border-top:1px solid rgba(255,255,255,.12);padding:20px 0;display:flex;flex-wrap:wrap;gap:12px;
+  .copy{border-top:1px solid rgba(255,255,255,.12);padding-block:20px;display:flex;flex-wrap:wrap;gap:12px;
     font-size:14px}
   .copy .sp{margin-left:auto}
   :focus-visible{outline:3px solid var(--gold);outline-offset:2px}
@@ -827,7 +828,7 @@
   .fr{grid-template-columns:1fr;gap:0}
   .cinfo div{gap:10px}
   .cinfo strong{min-width:92px;font-size:12.5px}
-  .helpbar .wrap{padding:22px 18px;gap:10px}
+  .helpbar .wrap{padding-block:22px;gap:10px}
   .helpbar .hl{font-size:19px;margin-right:0;width:100%}
   .helpbar a{font-size:16px}
   .foot{padding:22px 0 calc(88px + env(safe-area-inset-bottom))}
@@ -896,7 +897,7 @@
   .ctrack>article{flex:0 0 78vw}
 
   /* misc spacing the measurement turned up */
-  .helpbar .wrap{padding:22px 0}
+  .helpbar .wrap{padding-block:22px}
   .hero h1{margin-left:-.025em}
   .spanels{padding:22px 18px}
   .anums div{padding:6px 6px}
@@ -905,24 +906,24 @@
 
 /* ---- footer: compact on phones ---- */
   footer{font-size:14.5px}
-  .fgrid{grid-template-columns:1fr 1fr;gap:8px 20px;padding:34px 0 22px}
+  .fgrid{grid-template-columns:1fr 1fr;gap:8px 20px;padding-block:34px 22px}
   .fgrid > div:first-child{grid-column:span 2;margin-bottom:6px}
   .fgrid > div:first-child p{font-size:14.5px;line-height:1.55;margin-bottom:10px}
   footer h4{font-size:16px;letter-spacing:.08em;margin-bottom:9px}
   footer li{padding:3px 0}
   footer li a{font-size:14.5px}
-  .copy{padding:14px 0 calc(84px + env(safe-area-inset-bottom));font-size:12.5px;gap:6px;line-height:1.5}
+  .copy{padding-block:14px calc(84px + env(safe-area-inset-bottom));font-size:12.5px;gap:6px;line-height:1.5}
   .copy .sp{margin-left:0}
-  .helpbar .wrap{padding:18px 0;gap:6px}
+  .helpbar .wrap{padding-block:18px;gap:6px}
   .helpbar .hl{font-size:17px;margin-bottom:2px}
   .helpbar a{font-size:15.5px}
 
 /* ---- footer: less to read, clear separation from the bar above ---- */
   .dual > div{padding:44px 24px 48px}
-  .helpbar .wrap{padding:24px 0 26px;gap:8px}
+  .helpbar .wrap{padding-block:24px 26px;gap:8px}
   .helpbar .hl{font-size:16px;letter-spacing:.14em;color:var(--gold);margin-bottom:4px}
-  .helpbar a{font-size:16.5px;display:block}
-  .fgrid{padding:30px 0 18px}
+  .helpbar a{font-size:16px;display:block;max-width:100%;overflow-wrap:anywhere}
+  .fgrid{padding-block:30px 18px}
   .fgrid > div:first-child p:first-of-type{display:none}
   .fgrid > div:first-child{margin-bottom:2px}
   footer h4{font-size:15px}
@@ -1138,22 +1139,39 @@
 
 
 /* ---- footer: tighter on tablets ---- */
-  .fgrid{grid-template-columns:1.5fr 1fr 1fr;gap:26px;padding:44px 0 30px}
+  .fgrid{grid-template-columns:1.5fr 1fr 1fr;gap:26px;padding-block:44px 30px}
   .fgrid > div:first-child p{font-size:15px;line-height:1.6}
   footer h4{font-size:17px;margin-bottom:12px}
   footer li{padding:4px 0}
   footer li a,footer p,footer{font-size:15px}
-  .copy{padding:16px 0;font-size:13px}
-  .helpbar .wrap{padding:20px 0}
+  .copy{padding-block:16px;font-size:13px}
+  .helpbar .wrap{padding-block:20px;gap:10px 30px}
+  .helpbar .hl{width:100%;margin-right:0}
   .helpbar .hl{font-size:18px}
   .helpbar a{font-size:16px}
 
 /* ---- footer: same, with the three columns kept ---- */
   .dual > div{padding:52px 30px 56px}
-  .helpbar .wrap{padding:26px 0}
+  .helpbar .wrap{padding-block:26px;gap:10px 34px}
+  .helpbar .hl{width:100%;margin-right:0;margin-bottom:2px}
+  .helpbar a{white-space:nowrap;max-width:100%;overflow-wrap:anywhere}
   .helpbar .hl{font-size:17px;color:var(--gold)}
-  .fgrid{padding:40px 0 26px;gap:22px 30px}
+  .fgrid{padding-block:40px 26px;gap:22px 30px}
   .fgrid > div:first-child p:first-of-type{font-size:14.5px;max-width:34ch}
+
+/* ---- Academy section: centred stack, as on caw-academy.com ---- */
+  .academy .agrid{display:flex;flex-direction:column;align-items:center;text-align:center;gap:0}
+  .academy .agrid > div:first-child{display:contents}
+  .academy h2.caw-h{order:1;max-width:16ch;margin:0 auto}
+  .academy .agrid .sub{order:2;max-width:62ch;margin:20px auto 0;text-align:center}
+  .academy .agrid > div:last-child{order:3;width:100%;margin-top:34px}
+  .academy .stores{order:4;justify-content:center;margin-top:26px}
+  .devices{max-width:680px;margin:0 auto}
+  .cawtop{justify-content:center;margin:44px 0 30px}
+  .ticks{display:grid;grid-template-columns:1fr 1fr;justify-content:center;gap:16px 32px;
+    max-width:760px;margin:0 auto 28px;padding:0}
+  .ticks li{font-size:15.5px}
+  .trialbar{margin:34px 0 26px}
 }
 
 /* ---------- multi-page additions ---------- */
