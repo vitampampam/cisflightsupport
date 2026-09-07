@@ -894,8 +894,13 @@
      by width and anchoring bottom-right keeps it small and out of the map. */
   .sec.coverage .covbg img{position:absolute;right:-5%;bottom:-7%;left:auto;top:auto;
     width:min(70%,1150px);height:auto;display:block;opacity:.34;
-    -webkit-mask-image:radial-gradient(72% 72% at 52% 46%,#000 40%,rgba(0,0,0,.5) 70%,transparent 90%);
-    mask-image:radial-gradient(72% 72% at 52% 46%,#000 40%,rgba(0,0,0,.5) 70%,transparent 90%)}
+    /* the gradient must hit full transparency INSIDE the box, or the image's
+       own rectangle shows as a hard edge. 60% radius reaching transparent at
+       72% means every edge and corner is already at zero alpha. */
+    -webkit-mask-image:radial-gradient(60% 60% at 52% 52%,#000 0%,rgba(0,0,0,.55) 38%,transparent 72%);
+    mask-image:radial-gradient(60% 60% at 52% 52%,#000 0%,rgba(0,0,0,.55) 38%,transparent 72%);
+    -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+    -webkit-mask-size:100% 100%;mask-size:100% 100%}
   .sec.coverage .covbg:after{content:"";position:absolute;inset:0;
     background:linear-gradient(180deg,rgba(11,65,82,.38) 0%,rgba(11,65,82,.30) 45%,rgba(11,65,82,.42) 100%)}
 
