@@ -122,8 +122,9 @@
     .intro .gallery .gtrack{flex:1;min-height:0}
     .intro .gallery .gtrack figure{height:100%}
     .intro .gallery .gtrack img{height:100%;width:100%;aspect-ratio:auto;object-fit:cover}
-    /* native 3:2 — a forced height would crop the nose off */
-    .gtrack img{aspect-ratio:3/2;height:auto}
+    /* was reset to aspect-ratio:3/2 here, which cancelled the stretch above and
+       left a large gap under the photo. The carousel now fills the column. */
+    .intro .gallery{min-height:460px}
   }
   @media(max-width:900px){.intro{grid-template-columns:1fr;gap:40px}}
   .checks{list-style:none;margin:26px 0 0;padding:0;columns:2;column-gap:38px}
@@ -887,13 +888,20 @@
   /* no overflow:hidden here — .netmap is overflow:visible and the section is a
      plain full-width rectangle, so clipping would only risk cutting the map */
   .sec.coverage{position:relative}
+  /* the grid texture is a square inset:0 layer too — round it for the same reason */
+  .sec.coverage::before{border-radius:inherit}
   .sec.coverage .covbg{position:absolute;inset:0;z-index:0;pointer-events:none}
-  .sec.coverage .covbg{overflow:hidden}
+  /* under 1180px .sec gets border-radius:30px 30px 0 0 — without inheriting it
+     this square layer's corners poke out past the section's rounded top edge */
+  .sec.coverage .covbg{overflow:hidden;border-radius:inherit}
   /* Placed rather than object-fit:cover — cover scales the image up to fill a
      tall viewport, which made the aircraft enormous on iPad portrait. Sizing it
      by width and anchoring bottom-right keeps it small and out of the map. */
-  .sec.coverage .covbg img{position:absolute;right:-2%;bottom:1%;left:auto;top:auto;
-    width:min(62%,900px);height:auto;display:block;opacity:.55;
+  /* small and low: the legend and 'Hover a station' card occupy the right
+     column down to roughly 75% of the section, so anything taller than this
+     ends up behind the card and invisible */
+  .sec.coverage .covbg img{position:absolute;right:3%;bottom:2%;left:auto;top:auto;
+    width:min(40%,540px);height:auto;display:block;opacity:.6;
     /* the gradient must hit full transparency INSIDE the box, or the image's
        own rectangle shows as a hard edge. 60% radius reaching transparent at
        72% means every edge and corner is already at zero alpha. */
@@ -1642,6 +1650,8 @@
   .intro .gallery{align-self:start !important;display:block !important}
   .intro .gallery .gtrack{flex:none}
   .intro .gallery .gtrack figure{height:auto}
-  .intro .gallery .gtrack img{height:auto !important;width:100%;aspect-ratio:3/2;object-fit:cover}
+  /* 4:3 rather than 3:2 — a third taller, which closes the gap under the photo
+     on iPad landscape without letting a full stretch turn the frame vertical */
+  .intro .gallery .gtrack img{height:auto !important;width:100%;aspect-ratio:4/3;object-fit:cover}
   .intro .checks{grid-column:1 / -1 !important;columns:3;column-gap:34px;margin-top:14px}
 }

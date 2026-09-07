@@ -283,9 +283,40 @@
     tell(null);
     window.addEventListener('resize',function(){ mark(); arrows(); });
     buildDots();
+    /* A #hash must win over the default centring, otherwise arriving from the
+       menu at services.html#catering lands on whatever card rest() picks. */
+    function svcHashCard(){
+      var id=(location.hash||'').slice(1);
+      if(!id) return null;
+      var c=document.getElementById(id);
+      return (c && c.classList.contains('card') && st.contains(c)) ? c : null;
+    }
+    /* land at the top of the Services section, clear of the sticky header,
+       rather than part-way down at the card itself */
+    function svcTop(instant){
+      var sec=st.closest('section'); if(!sec) return;
+      var hdr=document.querySelector('header');
+      var off=(hdr?hdr.getBoundingClientRect().height:0)+14;
+      var y=sec.getBoundingClientRect().top+(window.pageYOffset||0)-off;
+      window.scrollTo({top:y<0?0:y,behavior:instant?'auto':'smooth'});
+    }
+    function svcOpen(instant){
+      var c=svcHashCard();
+      if(!c){ rest(instant); setTimeout(mark,60); return; }
+      if(c.classList.contains('hide')){          /* target filtered out — show all */
+        var allBtn=document.querySelector('.fbtn[data-f="all"]');
+        if(allBtn) allBtn.click();
+      }
+      setTimeout(function(){
+        centre(c,instant);
+        svcTop(instant);
+        setTimeout(mark,instant?0:240);
+      },40);
+    }
     /* open on a centred, enlarged card rather than a flat row */
-    requestAnimationFrame(function(){ rest(true); setTimeout(mark,60); });
-    window.addEventListener('load',function(){ rest(true); setTimeout(mark,60); });
+    requestAnimationFrame(function(){ svcOpen(true); });
+    window.addEventListener('load',function(){ svcOpen(true); });
+    window.addEventListener('hashchange',function(){ svcOpen(false); });
   }
 
   /* station map interaction */
@@ -399,7 +430,11 @@
       document.querySelectorAll('.rv').forEach(function(el){el.classList.add('in')});
     var t=document.getElementById('svcTrack');
     if(t && !t.querySelector('.card.is-active')){
-      var vs=[].slice.call(t.querySelectorAll('.card:not(.hide)')), c=vs[1]||vs[0];
+      var vs=[].slice.call(t.querySelectorAll('.card:not(.hide)'));
+      /* honour a #hash here too, so the fallback cannot land on the wrong card */
+      var hid=(location.hash||'').slice(1);
+      var hc=hid?document.getElementById(hid):null;
+      var c=(hc && vs.indexOf(hc)>-1) ? hc : (vs[1]||vs[0]);
       if(c){ c.classList.add('is-active'); t.scrollLeft=c.offsetLeft-(t.clientWidth-c.offsetWidth)/2; }
     }
   },1500);
