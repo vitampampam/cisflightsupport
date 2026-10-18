@@ -19,10 +19,12 @@
 
   Promise.all([
     load('assets/data/airports.json'),
-    load('assets/data/aircraft.json')
+    load('assets/data/aircraft.json'),
+    load('assets/data/routing.json')
   ]).then(function (d) {
     airports = d[0];
     cats = d[1];
+    routing = d[2];
     wire();
   }).catch(function (e) {
     $('teHint').textContent = 'The airport list could not be loaded. Please send us the route instead and we will work it out.';
@@ -73,29 +75,95 @@
     return 2 * R_NM * Math.asin(Math.min(1, Math.sqrt(h)));
   }
 
-  function bearing(a, b) {
-    var la1 = rad(a.y), la2 = rad(b.y), dlo = rad(b.x - a.x);
-    var y = Math.sin(dlo) * Math.cos(la2);
-    var x = Math.cos(la1) * Math.sin(la2) - Math.sin(la1) * Math.cos(la2) * Math.cos(dlo);
-    return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+
+  /* ---------- routing model ----------
+     Track miles are not great-circle miles. Extension is largest on short sectors,
+     where SIDs, STARs and radar vectors dominate, and converges towards 2-3% on
+     long ones. Closed airspace is a separate, much larger penalty: an EU, UK or
+     US registered aircraft cannot overfly Russia or Belarus, which reshapes
+     anything routing towards Central Asia. Values live in routing.json. */
+  var routing = null;
+
+  function bandFactor(nm) {
+    if (!routing) return 1.04;
+    for (var i = 0; i < routing.bands.length; i++) {
+      if (nm <= routing.bands[i].upto) return routing.bands[i].factor;
+    }
+    return 1.03;
   }
 
-  /* ---------- performance model ----------
-     Airways add distance over the great circle; reserves, winds and payload
-     mean no one plans to the book range. Both are deliberately conservative. */
-  var AIRWAY = 1.04;      // track miles vs great circle
-  var USABLE = 0.85;      // of book range, planned
+  /* point in polygon, ray casting on [lat,lon] rings */
+  function inRings(rings, la, lo) {
+    for (var r = 0; r < rings.length; r++) {
+      var ring = rings[r], inside = false;
+      for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+        var yi = ring[i][0], xi = ring[i][1], yj = ring[j][0], xj = ring[j][1];
+        if ((yi > la) !== (yj > la) && lo < (xj - xi) * (la - yi) / (yj - yi) + xi) inside = !inside;
+      }
+      if (inside) return true;
+    }
+    return false;
+  }
+
+  /* which restricted countries does the direct track pass through?
+     Departing from or arriving in one is not a crossing — you are going there. */
+  function endpointBlocks(a, b) {
+    if (!routing || !$('teAvoid').checked) return [];
+    return routing.restricted.filter(function (r) {
+      return inRings(r.rings, a.y, a.x) || inRings(r.rings, b.y, b.x);
+    });
+  }
+
+  function crossings(a, b) {
+    if (!routing || !$('teAvoid').checked) return [];
+    var ends = {};
+    routing.restricted.forEach(function (r) {
+      if (inRings(r.rings, a.y, a.x) || inRings(r.rings, b.y, b.x)) ends[r.id] = true;
+    });
+
+    var hit = {}, steps = Math.max(16, Math.round(distanceNm(a, b) / 20));
+    var la1 = rad(a.y), lo1 = rad(a.x), la2 = rad(b.y), lo2 = rad(b.x);
+    var d = 2 * Math.asin(Math.sqrt(
+      Math.pow(Math.sin((la2 - la1) / 2), 2) +
+      Math.cos(la1) * Math.cos(la2) * Math.pow(Math.sin((lo2 - lo1) / 2), 2)));
+    if (!d) return [];
+    for (var s = 0; s <= steps; s++) {
+      var f = s / steps;
+      var A = Math.sin((1 - f) * d) / Math.sin(d), B = Math.sin(f * d) / Math.sin(d);
+      var x = A * Math.cos(la1) * Math.cos(lo1) + B * Math.cos(la2) * Math.cos(lo2);
+      var y = A * Math.cos(la1) * Math.sin(lo1) + B * Math.cos(la2) * Math.sin(lo2);
+      var z = A * Math.sin(la1) + B * Math.sin(la2);
+      var plat = Math.atan2(z, Math.sqrt(x * x + y * y)) * 180 / Math.PI;
+      var plon = Math.atan2(y, x) * 180 / Math.PI;
+      routing.restricted.forEach(function (r) {
+        if (!ends[r.id] && inRings(r.rings, plat, plon)) hit[r.id] = r;
+      });
+    }
+    return Object.keys(hit).map(function (k) { return hit[k]; });
+  }
+
+  /* great circle -> planned track miles */
+  function trackMiles(nm, blocks) {
+    var f = bandFactor(nm);
+    blocks.forEach(function (r) { f = Math.max(f, r.factor); });
+    var term = routing ? routing.terminal_nm : 25;
+    var cap = routing && routing.terminal_cap ? routing.terminal_cap : 0.18;
+    return nm * f + Math.min(term, nm * cap);
+  }
+
+  var USABLE = 0.88;      // of normal range, planned (reserves, winds, payload)
   var TAXI_H = 0.25;      // taxi out + in
   var TERMINAL_H = 0.15;  // climb and descent inefficiency vs cruise TAS
   var STOP_H = 1.0;       // descent, turn, climb for a tech stop
   var STOP_FEE = 2500;    // landing, handling and fuel uplift at a tech stop
 
-  function estimate(cat, nm) {
-    var track = nm * AIRWAY;
+  function estimate(cat, track, oneWay) {
     var usable = cat.range * USABLE;
     var stops = Math.max(0, Math.ceil(track / usable) - 1);
     var hours = track / cat.tas + TERMINAL_H + TAXI_H + stops * STOP_H;
-    var cost = hours * cat.rate + stops * STOP_FEE;
+    /* one-way work still pays for the aircraft to reach you and go home again */
+    var ferry = oneWay && routing && routing.positioning_h ? routing.positioning_h : 0;
+    var cost = (hours + ferry) * cat.rate + stops * STOP_FEE;
     return { stops: stops, hours: hours, cost: cost, viable: stops <= 2 };
   }
 
@@ -122,17 +190,34 @@
     }
     hint.hidden = true; out.hidden = false;
 
-    var nm = distanceNm(from, to);
+    var nm = distanceNm(from, to);                 // great circle
+    var blocks = crossings(from, to);              // closed airspace on the direct path
+    var track = trackMiles(nm, blocks);            // planned track miles
     var ret = $('teReturn').checked;
-    var shown = ret ? nm * 2 : nm;
+    var shown = ret ? track * 2 : track;
 
-    $('teNm').textContent = Math.round(nm).toLocaleString('en-GB');
-    $('teKm').textContent = Math.round(nm * 1.852).toLocaleString('en-GB');
-    $('teBear').textContent = Math.round(bearing(from, to)) + '°';
+    $('teNm').textContent = Math.round(track).toLocaleString('en-GB');
+    $('teKm').textContent = Math.round(track * 1.852).toLocaleString('en-GB');
+
+    var pct = Math.round((track / nm - 1) * 100);
+    var ext = 'Great circle ' + Math.round(nm).toLocaleString('en-GB') +
+              ' nm — about ' + pct + '% is added for airways, SIDs and STARs';
+    if (blocks.length) {
+      ext += ', and for routing around ' +
+             blocks.map(function (r) { return r.name; }).join(' and ');
+    }
+    ext += '.';
+    var ep = endpointBlocks(from, to);
+    if (ep.length) {
+      ext += ' Note: an EU, UK or US registered aircraft cannot operate to or from ' +
+             ep.map(function (r) { return r.name; }).join(' or ') +
+             ' — this sector would need an operator from another registry.';
+    }
+    $('teExt').textContent = ext;
 
     var pax = parseInt($('tePax').value, 10) || 1;
     var rows = cats.map(function (c) {
-      var e = estimate(c, nm);
+      var e = estimate(c, track, !ret);
       var hrs = ret ? e.hours * 2 : e.hours;
       var cost = ret ? e.cost * 2 : e.cost;
       var seats = parseInt(String(c.pax).split('–').pop(), 10);
@@ -150,11 +235,28 @@
     }).join('');
     $('teRows').innerHTML = rows;
 
+    /* duration shown as a range across the categories that can do the sector */
+    var hrsList = cats.map(function (c) {
+      var e = estimate(c, track, !ret);
+      var seats = parseInt(String(c.pax).split('\u2013').pop(), 10);
+      if (!e.viable || pax > seats) return null;
+      return ret ? e.hours * 2 : e.hours;
+    }).filter(function (v) { return v !== null; });
+
+    if (!hrsList.length) {
+      $('teDur').textContent = '—';
+    } else {
+      var lo = Math.min.apply(null, hrsList), hi = Math.max.apply(null, hrsList);
+      $('teDur').textContent = (Math.abs(hi - lo) < 0.1)
+        ? hhmm(lo)
+        : hhmm(lo) + ' – ' + hhmm(hi);
+    }
+
     var q = 'service=Charter organisation&msg=' + encodeURIComponent(
-      'Charter enquiry: ' + from.i + ' (' + (from.c || from.n) + ') to ' + to.i +
+      'Quote request: ' + from.i + ' (' + (from.c || from.n) + ') to ' + to.i +
       ' (' + (to.c || to.n) + ')' + (ret ? ', return' : ', one way') +
       ', ' + pax + ' passengers. Approximately ' + Math.round(shown) +
-      ' nm. Dates: ');
+      ' nm track miles. Dates and times: ');
     $('teSend').href = 'contact.html?' + q;
 
     showLegs();
@@ -239,6 +341,7 @@
     attach('teFrom', 'teFromPick', 'teFromName', function (a) { from = a; });
     attach('teTo', 'teToPick', 'teToName', function (a) { to = a; });
     $('teReturn').addEventListener('change', render);
+    $('teAvoid').addEventListener('change', render);
     $('tePax').addEventListener('input', render);
     $('teSwap').addEventListener('click', function () {
       var a = from, b = to;

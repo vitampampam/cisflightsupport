@@ -1,0 +1,753 @@
+{
+ "ground-handling": {
+  "title": "Ground handling request",
+  "service": "Ground handling",
+  "intro": "Tell us the station and the movement. We appoint and supervise the agent.",
+  "fields": [
+   {
+    "k": "airport",
+    "label": "Airport (ICAO or name)",
+    "t": "text",
+    "req": true,
+    "ph": "EDMA"
+   },
+   {
+    "k": "date",
+    "label": "Date of movement",
+    "t": "date",
+    "req": true
+   },
+   {
+    "k": "times",
+    "label": "ETA / ETD (local)",
+    "t": "text",
+    "ph": "ETA 14:30, ETD next day 09:00"
+   },
+   {
+    "k": "type",
+    "label": "Aircraft type and registration",
+    "t": "text",
+    "ph": "Falcon 7X, D-ABCD"
+   },
+   {
+    "k": "pax",
+    "label": "Passengers on board",
+    "t": "number",
+    "ph": "6"
+   },
+   {
+    "k": "needs",
+    "label": "Services needed",
+    "t": "checks",
+    "opts": [
+     "Marshalling and ramp supervision",
+     "Fuel arrangement",
+     "GPU / ASU",
+     "Lavatory and water",
+     "De-icing",
+     "Crew and passenger transport",
+     "Slots and PPR",
+     "Customs and immigration"
+    ]
+   },
+   {
+    "k": "notes",
+    "label": "Anything else",
+    "t": "textarea",
+    "ph": "Stand preference, security requirements, late changes"
+   }
+  ]
+ },
+ "charters": {
+  "title": "Charter request",
+  "service": "Charter organisation",
+  "intro": "Give us the routing and the party. We source the aircraft and vet the operator.",
+  "fields": [
+   {
+    "k": "from",
+    "label": "From (airport or city)",
+    "t": "text",
+    "req": true,
+    "ph": "Munich"
+   },
+   {
+    "k": "to",
+    "label": "To (airport or city)",
+    "t": "text",
+    "req": true,
+    "ph": "Dubai"
+   },
+   {
+    "k": "date",
+    "label": "Outbound date",
+    "t": "date",
+    "req": true
+   },
+   {
+    "k": "time",
+    "label": "Preferred departure time",
+    "t": "text",
+    "ph": "Morning, or 09:00"
+   },
+   {
+    "k": "ret",
+    "label": "Return date (leave blank for one way)",
+    "t": "date"
+   },
+   {
+    "k": "pax",
+    "label": "Passengers",
+    "t": "number",
+    "req": true,
+    "ph": "6"
+   },
+   {
+    "k": "bags",
+    "label": "Baggage",
+    "t": "text",
+    "ph": "6 cases, 2 sets of golf clubs"
+   },
+   {
+    "k": "cabin",
+    "label": "Cabin preference",
+    "t": "select",
+    "opts": [
+     "No preference",
+     "Turboprop",
+     "Light jet",
+     "Midsize",
+     "Super-midsize",
+     "Heavy / large cabin",
+     "Ultra-long-range"
+    ]
+   },
+   {
+    "k": "special",
+    "label": "Special requirements",
+    "t": "textarea",
+    "ph": "Pets, medical equipment, accessibility, catering, press sensitivity"
+   }
+  ]
+ },
+ "maintenance": {
+  "title": "Maintenance consultancy request",
+  "service": "Maintenance consultancy",
+  "intro": "What is the aircraft and what is the work? We scope it and oversee the shop.",
+  "fields": [
+   {
+    "k": "type",
+    "label": "Aircraft type and registration",
+    "t": "text",
+    "req": true,
+    "ph": "Legacy 650, OE-XXX"
+   },
+   {
+    "k": "location",
+    "label": "Current location",
+    "t": "text",
+    "ph": "EDDM"
+   },
+   {
+    "k": "scope",
+    "label": "What is needed",
+    "t": "select",
+    "req": true,
+    "opts": [
+     "Scheduled check",
+     "Defect rectification",
+     "Engine or APU shop visit",
+     "AD / SB assessment",
+     "Work-package scope and quotes",
+     "CAMO liaison",
+     "Second opinion on a quote"
+    ]
+   },
+   {
+    "k": "window",
+    "label": "Target window",
+    "t": "text",
+    "ph": "Mid-November, aircraft free for 10 days"
+   },
+   {
+    "k": "camo",
+    "label": "Current CAMO / operator",
+    "t": "text",
+    "ph": "In-house, or name"
+   },
+   {
+    "k": "notes",
+    "label": "Details",
+    "t": "textarea",
+    "ph": "Findings so far, quotes received, cost concerns"
+   }
+  ]
+ },
+ "passenger-services": {
+  "title": "Passenger services request",
+  "service": "Passenger services",
+  "intro": "Who is travelling and what should be arranged on the ground.",
+  "fields": [
+   {
+    "k": "airport",
+    "label": "Airport",
+    "t": "text",
+    "req": true,
+    "ph": "EDDF"
+   },
+   {
+    "k": "date",
+    "label": "Date",
+    "t": "date",
+    "req": true
+   },
+   {
+    "k": "flight",
+    "label": "Flight details",
+    "t": "text",
+    "ph": "Arrival 14:30 from LOWW, or tail number"
+   },
+   {
+    "k": "pax",
+    "label": "Passengers",
+    "t": "number",
+    "req": true,
+    "ph": "4"
+   },
+   {
+    "k": "needs",
+    "label": "What is needed",
+    "t": "checks",
+    "opts": [
+     "Meet and assist",
+     "Fast-track security",
+     "Lounge access",
+     "Wheelchair or reduced mobility",
+     "Unaccompanied minor",
+     "Customs and immigration support",
+     "Baggage handling",
+     "Onward transport"
+    ]
+   },
+   {
+    "k": "notes",
+    "label": "Anything else",
+    "t": "textarea",
+    "ph": "Languages, discretion, VIP status"
+   }
+  ]
+ },
+ "crew": {
+  "title": "Crew support request",
+  "service": "Crew support",
+  "intro": "Where the crew are and what they need around the schedule.",
+  "fields": [
+   {
+    "k": "airport",
+    "label": "Airport",
+    "t": "text",
+    "req": true,
+    "ph": "LTBA"
+   },
+   {
+    "k": "dates",
+    "label": "Dates",
+    "t": "text",
+    "req": true,
+    "ph": "12–14 November"
+   },
+   {
+    "k": "crew",
+    "label": "Crew",
+    "t": "text",
+    "ph": "2 pilots, 1 cabin attendant"
+   },
+   {
+    "k": "needs",
+    "label": "What is needed",
+    "t": "checks",
+    "opts": [
+     "Hotel",
+     "Airport transport",
+     "Crew meals",
+     "Briefing pack",
+     "Visa and crew documentation",
+     "Rest facilities between sectors",
+     "Standby accommodation"
+    ]
+   },
+   {
+    "k": "standard",
+    "label": "Hotel standard",
+    "t": "select",
+    "opts": [
+     "No preference",
+     "4 star",
+     "5 star",
+     "Airport hotel",
+     "Close to city centre"
+    ]
+   },
+   {
+    "k": "notes",
+    "label": "Details",
+    "t": "textarea",
+    "ph": "Duty limits, early show, late arrival, dietary needs"
+   }
+  ]
+ },
+ "vip": {
+  "title": "VIP handling request",
+  "service": "VIP lounge and meet-and-greet",
+  "intro": "Discretion, timing and vehicles — tell us what the arrival should look like.",
+  "fields": [
+   {
+    "k": "airport",
+    "label": "Airport",
+    "t": "text",
+    "req": true,
+    "ph": "LFPB"
+   },
+   {
+    "k": "date",
+    "label": "Date",
+    "t": "date",
+    "req": true
+   },
+   {
+    "k": "time",
+    "label": "Time (local)",
+    "t": "text",
+    "ph": "Arrival 16:40"
+   },
+   {
+    "k": "pax",
+    "label": "Guests",
+    "t": "number",
+    "req": true,
+    "ph": "3"
+   },
+   {
+    "k": "where",
+    "label": "Where should the meet happen",
+    "t": "select",
+    "opts": [
+     "At the aircraft steps",
+     "In the terminal",
+     "Private terminal / FBO lounge",
+     "Both arrival and departure"
+    ]
+   },
+   {
+    "k": "needs",
+    "label": "What is needed",
+    "t": "checks",
+    "opts": [
+     "Private lounge",
+     "Fast-track and dedicated security",
+     "Customs and immigration at the aircraft",
+     "Vehicles airside to the steps",
+     "Porter and baggage handling",
+     "Press or privacy screening",
+     "Security detail coordination"
+    ]
+   },
+   {
+    "k": "vehicles",
+    "label": "Vehicles",
+    "t": "text",
+    "ph": "1 S-Class and 1 Vito, or number of seats needed"
+   },
+   {
+    "k": "notes",
+    "label": "Anything else",
+    "t": "textarea",
+    "ph": "Names not to be announced, timing sensitivity, onward connections"
+   }
+  ]
+ },
+ "catering": {
+  "title": "Catering request",
+  "service": "Catering",
+  "intro": "Menus ordered, checked and loaded. Dietary and cultural requirements handled.",
+  "fields": [
+   {
+    "k": "airport",
+    "label": "Airport",
+    "t": "text",
+    "req": true,
+    "ph": "EDMA"
+   },
+   {
+    "k": "date",
+    "label": "Date",
+    "t": "date",
+    "req": true
+   },
+   {
+    "k": "time",
+    "label": "Delivery time to the aircraft",
+    "t": "text",
+    "req": true,
+    "ph": "13:30 for a 14:30 departure"
+   },
+   {
+    "k": "type",
+    "label": "Aircraft type",
+    "t": "text",
+    "ph": "Global 7500"
+   },
+   {
+    "k": "pax",
+    "label": "Passengers and crew",
+    "t": "number",
+    "req": true,
+    "ph": "6 passengers, 3 crew"
+   },
+   {
+    "k": "meal",
+    "label": "Meal",
+    "t": "checks",
+    "opts": [
+     "Breakfast",
+     "Lunch",
+     "Dinner",
+     "Canapés and snacks",
+     "Cold platters",
+     "Crew meals",
+     "Fruit and pastries"
+    ]
+   },
+   {
+    "k": "diet",
+    "label": "Dietary and cultural requirements",
+    "t": "checks",
+    "opts": [
+     "Halal",
+     "Kosher",
+     "Vegetarian",
+     "Vegan",
+     "Gluten free",
+     "Nut allergy",
+     "No pork",
+     "No alcohol"
+    ]
+   },
+   {
+    "k": "drinks",
+    "label": "Beverages",
+    "t": "text",
+    "ph": "Champagne, still and sparkling water, specific labels"
+   },
+   {
+    "k": "notes",
+    "label": "Specific requests",
+    "t": "textarea",
+    "ph": "Restaurant to order from, china and linen, special occasion"
+   }
+  ]
+ },
+ "dispatch": {
+  "title": "Flight dispatch request",
+  "service": "Flight dispatch, slots and permits",
+  "intro": "Route, dates and aircraft — we plan it and watch it.",
+  "fields": [
+   {
+    "k": "from",
+    "label": "From",
+    "t": "text",
+    "req": true,
+    "ph": "EDMA"
+   },
+   {
+    "k": "to",
+    "label": "To",
+    "t": "text",
+    "req": true,
+    "ph": "UAAA"
+   },
+   {
+    "k": "date",
+    "label": "Date of flight",
+    "t": "date",
+    "req": true
+   },
+   {
+    "k": "type",
+    "label": "Aircraft type and registration",
+    "t": "text",
+    "req": true,
+    "ph": "Praetor 600, D-ABCD"
+   },
+   {
+    "k": "needs",
+    "label": "What is needed",
+    "t": "checks",
+    "opts": [
+     "Flight plan filing",
+     "Slots",
+     "Overflight and landing permits",
+     "Fuel arrangement and release",
+     "Weather and NOTAM briefing",
+     "Operational watch during the flight",
+     "Handling coordination at both ends"
+    ]
+   },
+   {
+    "k": "countries",
+    "label": "Countries overflown, if known",
+    "t": "text",
+    "ph": "Leave blank and we will work it out"
+   },
+   {
+    "k": "notes",
+    "label": "Details",
+    "t": "textarea",
+    "ph": "Short notice, unusual destination, registry restrictions"
+   }
+  ]
+ },
+ "transactions": {
+  "title": "Aircraft transaction enquiry",
+  "service": "Buying or selling an aircraft",
+  "intro": "Buying, selling or searching — tell us where you are in the process.",
+  "fields": [
+   {
+    "k": "side",
+    "label": "What are you doing",
+    "t": "select",
+    "req": true,
+    "opts": [
+     "Selling an aircraft",
+     "Buying an aircraft",
+     "Looking for a search mandate",
+     "Valuation only"
+    ]
+   },
+   {
+    "k": "type",
+    "label": "Aircraft type or target",
+    "t": "text",
+    "req": true,
+    "ph": "Falcon 7X, or \"super-midsize, 2015 or newer\""
+   },
+   {
+    "k": "reg",
+    "label": "Registration and serial, if selling",
+    "t": "text",
+    "ph": "D-ABCD, s/n 123"
+   },
+   {
+    "k": "hours",
+    "label": "Hours and cycles, if selling",
+    "t": "text",
+    "ph": "2,180 h / 980 c"
+   },
+   {
+    "k": "budget",
+    "label": "Budget or asking price",
+    "t": "text",
+    "ph": "Indicative is fine"
+   },
+   {
+    "k": "timeline",
+    "label": "Timeline",
+    "t": "text",
+    "ph": "Closing before year end"
+   },
+   {
+    "k": "registry",
+    "label": "Registry and jurisdiction",
+    "t": "text",
+    "ph": "Current and intended"
+   },
+   {
+    "k": "notes",
+    "label": "Details",
+    "t": "textarea",
+    "ph": "Programmes, damage history, trade-in, financing"
+   }
+  ]
+ },
+ "pre-buy": {
+  "title": "Pre-buy inspection request",
+  "service": "Pre-buy inspection",
+  "intro": "Independent inspection before you commit — including on aircraft we are not brokering.",
+  "fields": [
+   {
+    "k": "type",
+    "label": "Aircraft type, registration and serial",
+    "t": "text",
+    "req": true,
+    "ph": "Challenger 650, OE-XXX, s/n 123"
+   },
+   {
+    "k": "location",
+    "label": "Where is the aircraft",
+    "t": "text",
+    "req": true,
+    "ph": "LSZG, or \"to be ferried to a facility\""
+   },
+   {
+    "k": "date",
+    "label": "Estimated inspection date",
+    "t": "date",
+    "req": true
+   },
+   {
+    "k": "side",
+    "label": "You are the",
+    "t": "select",
+    "req": true,
+    "opts": [
+     "Buyer",
+     "Seller",
+     "Adviser or financier"
+    ]
+   },
+   {
+    "k": "scope",
+    "label": "Scope",
+    "t": "checks",
+    "opts": [
+     "Records and logbook review",
+     "Physical survey",
+     "Engine and APU borescope",
+     "Corrosion and damage history",
+     "Functional and systems checks",
+     "Acceptance flight with our engineer",
+     "Costed two-year forecast"
+    ]
+   },
+   {
+    "k": "facility",
+    "label": "Maintenance facility",
+    "t": "text",
+    "ph": "Already chosen, or ask us to propose one"
+   },
+   {
+    "k": "programmes",
+    "label": "Engine and airframe programmes",
+    "t": "text",
+    "ph": "ESP Gold, Smart Parts, none"
+   },
+   {
+    "k": "notes",
+    "label": "Details",
+    "t": "textarea",
+    "ph": "LOI deadline, escrow, known findings, deal structure"
+   }
+  ]
+ },
+ "advisory": {
+  "title": "Aviation advisory enquiry",
+  "service": "Aviation advisory",
+  "intro": "Regulatory and technical advice — tell us the authority and the problem.",
+  "fields": [
+   {
+    "k": "topic",
+    "label": "Topic",
+    "t": "select",
+    "req": true,
+    "opts": [
+     "Continuing airworthiness set-up",
+     "Entry into service",
+     "Post-holder support",
+     "Audit preparation",
+     "AOC or Part-NCC compliance",
+     "Findings and corrective actions",
+     "Other"
+    ]
+   },
+   {
+    "k": "authority",
+    "label": "Authority",
+    "t": "select",
+    "opts": [
+     "EASA",
+     "UK CAA",
+     "UAE GCAA",
+     "FAA",
+     "Other / not sure"
+    ]
+   },
+   {
+    "k": "org",
+    "label": "Organisation type",
+    "t": "text",
+    "ph": "Private owner, corporate flight department, operator, CAMO"
+   },
+   {
+    "k": "fleet",
+    "label": "Fleet",
+    "t": "text",
+    "ph": "2 x Praetor 600"
+   },
+   {
+    "k": "timeline",
+    "label": "Timeline",
+    "t": "text",
+    "ph": "Audit in February"
+   },
+   {
+    "k": "notes",
+    "label": "What is the situation",
+    "t": "textarea",
+    "req": true,
+    "ph": "Describe it in your own words"
+   }
+  ]
+ },
+ "academy-card": {
+  "title": "CAW Academy enquiry",
+  "service": "CAW Academy training",
+  "intro": "Licences for a team, or a question about the platform.",
+  "fields": [
+   {
+    "k": "org",
+    "label": "Organisation",
+    "t": "text",
+    "req": true,
+    "ph": "Company name"
+   },
+   {
+    "k": "users",
+    "label": "Number of users",
+    "t": "number",
+    "ph": "12"
+   },
+   {
+    "k": "frameworks",
+    "label": "Frameworks needed",
+    "t": "checks",
+    "opts": [
+     "EASA",
+     "UK CAA",
+     "UAE GCAA",
+     "FAA 14 CFR"
+    ]
+   },
+   {
+    "k": "purpose",
+    "label": "Purpose",
+    "t": "select",
+    "opts": [
+     "Team training",
+     "Individual study",
+     "Audit or compliance evidence",
+     "Evaluating the platform"
+    ]
+   },
+   {
+    "k": "timeline",
+    "label": "When do you need it",
+    "t": "text",
+    "ph": "Start of next quarter"
+   },
+   {
+    "k": "notes",
+    "label": "Anything else",
+    "t": "textarea"
+   }
+  ]
+ }
+}

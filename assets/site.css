@@ -1878,3 +1878,76 @@
   /* the active card is not scaled at this width, so it needs no headroom */
   .cards{padding-top:24px;margin-top:0}
 }
+
+
+/* routing explanation under the distance tiles */
+.te-ext{font-size:14.5px;line-height:1.6;color:var(--body);margin:-6px 2px 18px;
+  padding:12px 16px;background:rgba(255,255,255,.75);border-left:3px solid var(--gold);
+  border-radius:0 10px 10px 0}
+
+
+/* estimator disclaimer — read before the numbers are believed */
+.te-disc{font-size:14.5px;line-height:1.65;color:#6B4A18;background:#FFF6E8;
+  border:1px solid #E8C999;border-radius:12px;padding:14px 18px;margin:18px 0 0}
+.te-disc b{display:block;color:#5A3A0C;margin-bottom:3px}
+.te-cta .btn{font-size:16px;padding:15px 30px}
+
+
+/* the Services dropdown carries the active mark on services.html, now that the
+   duplicate standalone link beside it is gone */
+.nav .dtop.active{color:var(--navy-d)}
+.nav .dtop.active::after{content:"";display:block;height:2px;border-radius:2px;
+  background:var(--gold);margin-top:4px}
+
+
+/* ===================== per-service request dialog ===================== */
+.rq{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;
+  padding:24px}
+.rq[hidden]{display:none}
+.rq-back{position:absolute;inset:0;background:rgba(4,26,36,.62);backdrop-filter:blur(3px)}
+.rq-box{position:relative;background:#fff;border-radius:22px;border-top:5px solid var(--gold);
+  box-shadow:0 40px 90px -30px rgba(4,26,36,.7);width:min(780px,100%);
+  max-height:min(86vh,900px);overflow:auto;padding:34px 36px 0}
+.rq-box h2{font-family:"Barlow Semi Condensed";font-size:27px;letter-spacing:.02em;
+  text-transform:uppercase;color:var(--navy-d);margin:0 0 6px;padding-right:40px}
+.rq-intro{font-size:15px;line-height:1.6;color:var(--body);margin:0 0 22px;max-width:62ch}
+.rq-x{position:absolute;top:18px;right:18px;width:38px;height:38px;border-radius:50%;
+  border:1px solid var(--line);background:#fff;color:var(--navy);font-size:22px;line-height:1;
+  cursor:pointer}
+@media (hover:hover){.rq-x:hover{border-color:var(--gold);color:var(--gold)}}
+
+.rq-form{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px}
+.rq-field{display:flex;flex-direction:column;min-width:0}
+.rq-wide{grid-column:1 / -1}
+.rq-field label,.rq-lab{font-family:"Barlow Semi Condensed";font-weight:600;font-size:13.5px;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--navy);margin-bottom:7px}
+.rq-req{color:var(--gold);letter-spacing:.06em;font-size:11.5px}
+.rq-field input,.rq-field select,.rq-field textarea{font:inherit;font-size:16px;padding:13px 15px;
+  border:1.5px solid rgba(6,42,56,.22);border-radius:12px;background:#FCFDFD;color:var(--navy-d);
+  width:100%;box-sizing:border-box}
+.rq-field textarea{resize:vertical;min-height:84px}
+.rq-field input:focus,.rq-field select:focus,.rq-field textarea:focus{outline:none;
+  border-color:var(--gold);background:#fff;box-shadow:0 0 0 4px rgba(18,166,155,.16)}
+.rq-bad input,.rq-bad select,.rq-bad textarea,.rq-bad .rq-checks{border-color:#C0463A;
+  background:#FFF5F3}
+
+.rq-checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px 16px;
+  border:1.5px solid rgba(6,42,56,.14);border-radius:12px;padding:14px 16px;background:#FCFDFD}
+.rq-check{display:flex;align-items:flex-start;gap:9px;font-size:15px;color:var(--body);
+  text-transform:none;letter-spacing:0;font-family:inherit;font-weight:400;margin:0;cursor:pointer}
+.rq-check input{width:18px;height:18px;flex:none;margin-top:1px;accent-color:var(--gold)}
+
+.rq-foot{position:sticky;bottom:0;background:linear-gradient(180deg,rgba(255,255,255,0),#fff 22%);
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:12px;
+  padding:22px 0 26px;margin-top:8px}
+.rq-foot .btn.ghost{background:transparent;color:var(--navy);border:1px solid var(--line)}
+@media (hover:hover){.rq-foot .btn.ghost:hover{border-color:var(--gold);color:var(--gold)}}
+.rq-err{flex:1 1 100%;margin:0 0 4px;font-size:14px;color:#C0463A}
+
+@media (max-width:720px){
+  .rq{padding:0}
+  .rq-box{width:100%;max-height:100vh;border-radius:0;border-top-width:4px;padding:26px 20px 0}
+  .rq-form{grid-template-columns:1fr}
+  .rq-checks{grid-template-columns:1fr}
+  .rq-foot .btn{flex:1 1 auto;text-align:center}
+}

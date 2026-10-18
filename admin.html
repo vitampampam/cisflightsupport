@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Source+Sans+3:wght@300;400;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=102">
+<link rel="stylesheet" href="assets/site.css?v=108">
 </head>
 <body>
 <div class="progress" id="progress" aria-hidden="true"></div>
@@ -111,6 +111,19 @@
         </div>
         <pre class="adm-json" id="admJson" hidden></pre>
 
+        <h2>Aircraft for sale</h2>
+        <p class="adm-hint">Publishing at least one listing brings the Fleet page and its links back
+          onto the site automatically. An empty list keeps them hidden and the page explains that
+          nothing is listed. Status drives the badge and the button wording.</p>
+        <table class="adm-table">
+          <thead><tr><th>Status</th><th>Title</th><th>Reg</th><th>Hours</th><th>Location</th><th>€ asking</th><th>Silhouette</th><th></th></tr></thead>
+          <tbody id="admFleet"></tbody>
+        </table>
+        <div class="adm-row">
+          <button type="button" class="btn ghost" id="admAddAc">Add an aircraft</button>
+          <button type="button" class="btn" id="admDlFleet">Download fleet.json</button>
+        </div>
+
         <div class="adm-steps">
           <h3>Publishing a change</h3>
           <ol>
@@ -168,7 +181,9 @@
   <a class="p" href="tel:+491622684626">Call ops</a>
   <a class="s" href="contact.html">Send enquiry</a>
 </nav>
-<script src="assets/site.js?v=102"></script>
-<script src="assets/admin.js?v=102"></script>
+<script src="assets/site.js?v=108"></script>
+<script src="assets/request.js?v=108"></script>
+<script src="assets/fleet.js?v=108"></script>
+<script src="assets/admin.js?v=108"></script>
 </body>
 </html>

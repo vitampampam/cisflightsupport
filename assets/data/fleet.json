@@ -1,0 +1,11 @@
+{
+ "updated": "",
+ "note": "Listings added here appear on fleet.html and re-enable the Fleet links across the site. Each entry: status (for-sale|under-offer|sold|wanted), title, reg, hours, location, silhouette, and optionally price_eur and summary.",
+ "silhouettes": [
+  "falcon-7x.png",
+  "global-7500.png",
+  "praetor-600.png",
+  "learjet-60.png"
+ ],
+ "listings": []
+}

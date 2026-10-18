@@ -7,6 +7,7 @@
 
   var $ = function (id) { return document.getElementById(id); };
   var cats = [], legs = [], meta = {}, airports = null;
+  var fleet = [], fleetMeta = {}, shapes = [];
 
   function load(url) {
     return fetch(url + '?t=' + Date.now()).then(function (r) {
@@ -15,13 +16,18 @@
     });
   }
 
-  Promise.all([load('assets/data/aircraft.json'), load('assets/data/empty-legs.json')])
+  Promise.all([load('assets/data/aircraft.json'), load('assets/data/empty-legs.json'),
+               load('assets/data/fleet.json')])
     .then(function (d) {
       cats = d[0];
       meta = d[1] || {};
       legs = (meta.legs || []).slice();
+      fleetMeta = d[2] || {};
+      fleet = (fleetMeta.listings || []).slice();
+      shapes = fleetMeta.silhouettes || ['falcon-7x.png'];
       drawRates();
       drawLegs();
+      drawFleet();
       $('admLoading').hidden = true;
       $('admBody').hidden = false;
     })
@@ -122,6 +128,90 @@
     });
   }
 
+
+  /* ---------- aircraft for sale ---------- */
+  var STATUS = [['for-sale','For sale'],['under-offer','Under offer'],
+                ['sold','Sold'],['wanted','Acquisition mandate']];
+
+  function fleetRow(l, i) {
+    var st = STATUS.map(function (s) {
+      return '<option value="' + s[0] + '"' + (s[0] === l.status ? ' selected' : '') + '>' + s[1] + '</option>';
+    }).join('');
+    var sil = shapes.map(function (s) {
+      return '<option value="' + s + '"' + (s === l.silhouette ? ' selected' : '') + '>' + s.replace('.png','') + '</option>';
+    }).join('');
+    return '<tr>' +
+      '<td><select data-f="' + i + '" data-k="status">' + st + '</select></td>' +
+      '<td><input type="text" data-f="' + i + '" data-k="title" value="' + (l.title || '').replace(/"/g,'&quot;') + '" placeholder="2016 Dassault Falcon 7X" size="24"></td>' +
+      '<td><input type="text" data-f="' + i + '" data-k="reg" value="' + (l.reg || '') + '" size="8" placeholder="D-ABCD"></td>' +
+      '<td><input type="text" data-f="' + i + '" data-k="hours" value="' + (l.hours || '') + '" size="8" placeholder="2,180 h"></td>' +
+      '<td><input type="text" data-f="' + i + '" data-k="location" value="' + (l.location || '') + '" size="6" maxlength="4" placeholder="EDMA"></td>' +
+      '<td><input type="number" data-f="' + i + '" data-k="price_eur" value="' + (l.price_eur || '') + '" step="100000" placeholder="optional"></td>' +
+      '<td><select data-f="' + i + '" data-k="silhouette">' + sil + '</select></td>' +
+      '<td><button type="button" class="adm-del" data-delf="' + i + '" aria-label="Remove">&times;</button></td>' +
+      '</tr>';
+  }
+
+  function drawFleet() {
+    $('admFleet').innerHTML = fleet.length
+      ? fleet.map(fleetRow).join('')
+      : '<tr><td colspan="8" class="adm-none">Nothing listed — the Fleet page and its links stay hidden.</td></tr>';
+  }
+
+  $('admFleet').addEventListener('input', function (e) {
+    var el = e.target;
+    if (!el.dataset.f) return;
+    var l = fleet[+el.dataset.f], k = el.dataset.k, v = el.value;
+    if (k === 'reg' || k === 'location') { v = v.toUpperCase(); el.value = v; }
+    if (k === 'price_eur') v = v === '' ? '' : (parseInt(v, 10) || 0);
+    l[k] = v;
+    dirty();
+  });
+
+  $('admFleet').addEventListener('change', function (e) {
+    var el = e.target;
+    if (el.dataset.f && (el.dataset.k === 'status' || el.dataset.k === 'silhouette')) {
+      fleet[+el.dataset.f][el.dataset.k] = el.value;
+      dirty();
+    }
+  });
+
+  $('admFleet').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-delf]');
+    if (!b) return;
+    fleet.splice(+b.dataset.delf, 1);
+    drawFleet();
+    dirty();
+  });
+
+  $('admAddAc').addEventListener('click', function () {
+    fleet.push({ status: 'for-sale', title: '', reg: '', hours: '', location: '',
+                 price_eur: '', silhouette: shapes[0] });
+    drawFleet();
+    dirty();
+  });
+
+  function fleetJson() {
+    var clean = fleet.filter(function (l) { return l.title; }).map(function (l) {
+      var o = { status: l.status || 'for-sale', title: l.title, silhouette: l.silhouette || shapes[0] };
+      ['reg','hours','location','summary'].forEach(function (k) { if (l[k]) o[k] = l[k]; });
+      if (l.price_eur) o.price_eur = +l.price_eur;
+      return o;
+    });
+    return JSON.stringify({
+      updated: new Date().toISOString().slice(0, 10),
+      silhouettes: shapes,
+      listings: clean
+    }, null, 1);
+  }
+
+  $('admDlFleet').addEventListener('click', function () {
+    download('fleet.json', fleetJson());
+    if (!fleet.filter(function (l) { return l.title; }).length) {
+      $('admState').textContent = 'Downloaded — empty, so the Fleet page stays hidden';
+    }
+  });
+
   /* ---------- output ---------- */
   function dirty() {
     $('admState').textContent = 'Edited — not saved yet';
@@ -163,7 +253,8 @@
 
   $('admCopy').addEventListener('click', function () {
     var text = '--- assets/data/aircraft.json ---\n' + aircraftJson() +
-               '\n\n--- assets/data/empty-legs.json ---\n' + legsJson();
+               '\n\n--- assets/data/empty-legs.json ---\n' + legsJson() +
+               '\n\n--- assets/data/fleet.json ---\n' + fleetJson();
     navigator.clipboard.writeText(text).then(function () {
       $('admState').textContent = 'Both files copied to the clipboard';
       $('admState').className = 'adm-state ok';
@@ -173,6 +264,7 @@
   $('admPreview').addEventListener('click', function () {
     $('admJson').hidden = !$('admJson').hidden;
     $('admJson').textContent = '// assets/data/aircraft.json\n' + aircraftJson() +
-      '\n\n// assets/data/empty-legs.json\n' + legsJson();
+      '\n\n// assets/data/empty-legs.json\n' + legsJson() +
+      '\n\n// assets/data/fleet.json\n' + fleetJson();
   });
 })();

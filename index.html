@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Source+Sans+3:wght@300;400;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=102">
+<link rel="stylesheet" href="assets/site.css?v=108">
 <style>
 /* critical: gallery works even with a stale external stylesheet */
 .intro{align-items:start}
@@ -331,6 +331,9 @@
         </div>
         <div class="te-opts">
           <label class="te-inline"><input type="checkbox" id="teReturn"> Return trip</label>
+          <label class="te-inline" title="EU, UK and US registered aircraft cannot overfly Russia or Belarus">
+            <input type="checkbox" id="teAvoid" checked> EU/UK/US registered
+          </label>
           <label class="te-inline">Passengers
             <input type="number" id="tePax" min="1" max="16" value="4" inputmode="numeric">
           </label>
@@ -341,10 +344,12 @@
 
       <div class="te-out" id="teOut" hidden>
         <div class="te-dist">
-          <div><b id="teNm">—</b><span>nautical miles</span></div>
+          <div><b id="teNm">—</b><span>track miles (nm)</span></div>
           <div><b id="teKm">—</b><span>kilometres</span></div>
-          <div><b id="teBear">—</b><span>initial track</span></div>
+          <div><b id="teDur">—</b><span>trip duration</span></div>
         </div>
+
+        <p class="te-ext" id="teExt"></p>
 
         <table class="te-table">
           <thead>
@@ -353,15 +358,22 @@
           <tbody id="teRows"></tbody>
         </table>
 
+        <p class="te-disc">
+          <b>This is an estimate, not a commercial offer.</b>
+          Nothing shown here is a quotation, a price promise or a booking. Real prices come from the
+          operator holding the aircraft on the day and depend on the tail, its base, the dates, slots,
+          airport and handling fees, crew duty limits and the ferry legs to and from you.
+        </p>
         <p class="te-note">
-          Block time includes taxi, climb and descent, flown on a great-circle track with no wind.
-          Costs are a rough band for planning only — a real quote depends on the tail, the operator, the dates,
-          airport slots, handling, crew duty and whether the aircraft has to position to you first.
-          Categories shown in grey cannot make the sector without more stops than are sensible.
+          Distances are estimated track miles, not a filed flight plan: great circle plus a routing
+          allowance that is largest on short sectors, plus departure and arrival track miles. Block time
+          assumes no wind. Hourly rates are category averages for the European ad-hoc charter market;
+          one-way trips include an allowance for positioning. Categories in grey cannot make the sector
+          without more stops than are sensible, or cannot seat the party.
         </p>
 
         <div class="te-cta">
-          <a class="btn" id="teSend" href="contact.html">Send this trip to us</a>
+          <a class="btn" id="teSend" href="contact.html">Contact us about this trip</a>
         </div>
       </div>
 
@@ -585,8 +597,10 @@
   <a class="p" href="tel:+491622684626">Call ops</a>
   <a class="s" href="contact.html">Send enquiry</a>
 </nav>
-<script src="assets/site.js?v=102"></script>
-<script src="assets/trip.js?v=102"></script>
+<script src="assets/site.js?v=108"></script>
+<script src="assets/request.js?v=108"></script>
+<script src="assets/fleet.js?v=108"></script>
+<script src="assets/trip.js?v=108"></script>
 <script>
 /* critical: gallery controls, independent of the external bundle */
 (function(){
