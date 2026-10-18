@@ -1655,3 +1655,95 @@
   .intro .gallery .gtrack img{height:auto !important;width:100%;aspect-ratio:4/3;object-fit:cover}
   .intro .checks{grid-column:1 / -1 !important;columns:3;column-gap:34px;margin-top:14px}
 }
+
+
+/* ===== temporarily withdrawn: aircraft for sale / fleet =====
+   Markup and pages are intact. Delete this block (and the noindex meta in
+   fleet.html) to put the fleet back on the site. */
+.temp-off{display:none !important}
+
+
+/* ===================== trip estimator ===================== */
+.te{max-width:980px;margin:0 auto}
+.te-form{background:var(--surface);border:1px solid var(--line);border-radius:var(--r,20px);
+  box-shadow:var(--shadow);padding:28px}
+.te-route{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:end}
+.te-field{position:relative;min-width:0}
+.te-field label{display:block;font-family:"Barlow Semi Condensed";font-weight:600;font-size:13.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.te-field input{width:100%;box-sizing:border-box;padding:14px 16px;font:inherit;font-size:16px;
+  color:var(--navy-d);background:#fff;border:1px solid var(--line);border-radius:12px}
+.te-field input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(18,166,155,.14)}
+.te-chosen{margin:8px 2px 0;font-size:14px;color:var(--body);min-height:1.2em}
+.te-swap{align-self:center;margin-bottom:6px;width:46px;height:46px;flex:none;border-radius:50%;
+  border:1px solid var(--line);background:#fff;color:var(--navy);font-size:20px;cursor:pointer;
+  transition:.2s}
+@media (hover:hover){.te-swap:hover{border-color:var(--gold);color:var(--gold)}}
+
+.te-pick{position:absolute;z-index:20;top:100%;left:0;right:0;margin-top:6px;background:#fff;
+  border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.te-pick button{display:block;width:100%;text-align:left;padding:11px 14px;border:0;background:none;
+  font:inherit;font-size:15px;color:var(--body);cursor:pointer;position:relative}
+.te-pick button b{color:var(--navy-d);font-family:"Barlow Semi Condensed";letter-spacing:.04em;
+  margin-right:8px}
+.te-pick button i{position:absolute;right:14px;color:var(--gold);font-style:normal;font-size:13px}
+.te-pick button.on,.te-pick button:hover{background:var(--ice)}
+
+.te-opts{display:flex;flex-wrap:wrap;gap:22px;align-items:center;margin-top:20px;
+  padding-top:18px;border-top:1px solid var(--line)}
+.te-inline{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--body)}
+.te-inline input[type=number]{width:74px;padding:8px 10px;font:inherit;border:1px solid var(--line);
+  border-radius:9px}
+.te-inline input[type=checkbox]{width:18px;height:18px;accent-color:var(--gold)}
+
+.te-empty{text-align:center;color:var(--body);margin:26px 0 0}
+
+.te-out{margin-top:26px}
+.te-dist{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.te-dist div{background:var(--ice);border-radius:14px;padding:18px;text-align:center}
+.te-dist b{display:block;font-family:"Barlow Semi Condensed";font-weight:700;font-size:30px;
+  color:var(--navy-d);line-height:1.1}
+.te-dist span{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--body)}
+
+.te-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r,20px);overflow:hidden}
+.te-table th{text-align:left;padding:13px 16px;background:var(--navy-d);color:#fff;
+  font-family:"Barlow Semi Condensed";font-weight:600;font-size:13.5px;letter-spacing:.12em;
+  text-transform:uppercase}
+.te-table td{padding:14px 16px;border-top:1px solid var(--line);font-size:15px;color:var(--navy-d);
+  vertical-align:top}
+.te-table td b{display:block;font-weight:600}
+.te-table td span{display:block;font-size:13px;color:var(--body);margin-top:3px}
+.te-table tr.te-no td{color:#9BA9AE;background:rgba(237,243,243,.5)}
+.te-table tr.te-no td b{color:#9BA9AE}
+
+.te-note{font-size:13.5px;line-height:1.65;color:var(--body);margin:16px 2px 0}
+.te-cta{margin-top:22px;text-align:center}
+
+.te-legs{margin-top:34px;padding-top:26px;border-top:1px solid var(--line)}
+.te-legs h3{font-family:"Barlow Semi Condensed";font-size:20px;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--navy-d);margin:0 0 12px}
+.te-leglist{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.te-leglist li{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px;background:var(--ice);
+  border-radius:12px;padding:14px 16px}
+.te-leglist b{font-family:"Barlow Semi Condensed";letter-spacing:.05em;color:var(--navy-d)}
+.te-leglist span{font-size:14px;color:var(--body)}
+.te-leglist em{margin-left:auto;font-style:normal;font-weight:600;color:var(--gold)}
+
+@media (max-width:760px){
+  .te-form{padding:20px}
+  .te-route{grid-template-columns:1fr;gap:14px}
+  .te-swap{justify-self:center;margin:0;transform:rotate(90deg)}
+  .te-dist{grid-template-columns:1fr;gap:10px}
+  .te-dist div{display:flex;align-items:baseline;justify-content:space-between;text-align:left;
+    padding:14px 16px}
+  .te-dist b{font-size:24px}
+  /* a four-column table does not fit a phone: stack each row as a block */
+  .te-table,.te-table tbody,.te-table tr,.te-table td{display:block;width:100%;box-sizing:border-box}
+  .te-table thead{display:none}
+  .te-table tr{border-top:1px solid var(--line);padding:6px 0}
+  .te-table td{border:0;padding:4px 16px}
+  .te-table td:nth-child(2):before{content:"Block time: ";color:var(--body)}
+  .te-table td:nth-child(3):before{content:"Routing: ";color:var(--body)}
+  .te-table td:nth-child(4):before{content:"Indicative: ";color:var(--body)}
+}

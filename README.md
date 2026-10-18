@@ -43,3 +43,27 @@ The site appears at `https://vitampampam.github.io/cisflightsupport/`.
 - Turnaround timeline is an illustrative sequence, not measured data
 - App Store / Google Play badges are approximations; replace with official artwork
 - No logo — the header is typographic
+
+
+## Trip estimator
+
+`trip-estimator.html` + `assets/trip.js` + `assets/data/`.
+
+- `airports.json` — 5,448 airports (ICAO, IATA, city, coordinates) built from the
+  OurAirports dataset: large and medium fields worldwide, plus smaller fields across
+  Europe, the CIS and the Middle East. Loaded only on the estimator page.
+- `aircraft.json` — six categories with cruise TAS, book range, seats and an indicative
+  hourly rate. Edit the rates here; nothing else needs changing.
+- `empty-legs.json` — **ships empty on purpose.** Add real listings only:
+  `{"from":"EDMA","to":"OMDB","date":"2026-11-04","category":"supermid","seats":8,"price_eur":19500}`
+  With an empty list the panel tells the visitor nothing is listed and invites their dates.
+
+Model: track miles = great circle x 1.04; planned range = 85% of book range; block time adds
+15 min for climb/descent and 15 min taxi, plus 1 h per fuel stop. Cost = hours x rate +
+EUR 2,500 per tech stop, shown as a band of +/-15%.
+
+## Temporarily withdrawn
+
+The fleet / aircraft-for-sale pages are hidden, not deleted: links carry `class="temp-off"`,
+`fleet.html` has a `noindex` meta. To restore, delete the `.temp-off` rule at the end of
+`assets/site.css` and that meta tag.
