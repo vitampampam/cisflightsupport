@@ -62,8 +62,19 @@ Model: track miles = great circle x 1.04; planned range = 85% of book range; blo
 15 min for climb/descent and 15 min taxi, plus 1 h per fuel stop. Cost = hours x rate +
 EUR 2,500 per tech stop, shown as a band of +/-15%.
 
+## Admin editor
+
+`admin.html` + `assets/admin.js` — edits hourly rates, cruise TAS, range and seats per
+category, and the empty-leg list. It writes nothing to the server (there is none):
+you edit, download `aircraft.json` / `empty-legs.json`, commit them to `assets/data/`
+and push. ICAO codes are validated against the airport list as you type.
+
+The page carries `noindex` and is not linked from anywhere, but it is **not protected** —
+static hosting cannot authenticate. For real access control the site needs Cloudflare
+Pages / Netlify access rules, or a small CMS with a GitHub login.
+
 ## Temporarily withdrawn
 
-The fleet / aircraft-for-sale pages are hidden, not deleted: links carry `class="temp-off"`,
-`fleet.html` has a `noindex` meta. To restore, delete the `.temp-off` rule at the end of
+The fleet / aircraft-for-sale pages and the coverage page are hidden, not deleted: links carry `class="temp-off"`,
+`fleet.html` and `coverage.html` carry a `noindex` meta. To restore, delete the `.temp-off` rule at the end of
 `assets/site.css` and that meta tag.
