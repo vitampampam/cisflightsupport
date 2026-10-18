@@ -21,10 +21,14 @@
   wrap.innerHTML =
     '<div class="rq-back" data-close></div>' +
     '<div class="rq-box" role="dialog" aria-modal="true" aria-labelledby="rqTitle">' +
-      '<button class="rq-x" type="button" data-close aria-label="Close">&times;</button>' +
-      '<h2 id="rqTitle"></h2>' +
-      '<p class="rq-intro"></p>' +
-      '<form class="rq-form" novalidate></form>' +
+      '<div class="rq-head">' +
+        '<button class="rq-x" type="button" data-close aria-label="Close">&times;</button>' +
+        '<h2 id="rqTitle"></h2>' +
+        '<p class="rq-intro"></p>' +
+      '</div>' +
+      '<div class="rq-body">' +
+        '<form class="rq-form" novalidate></form>' +
+      '</div>' +
       '<div class="rq-foot">' +
         '<p class="rq-err" role="alert" hidden></p>' +
         '<button type="button" class="btn ghost" data-close>Cancel</button>' +
@@ -54,6 +58,7 @@
     lastFocus = document.activeElement;
     wrap.hidden = false;
     document.body.style.overflow = 'hidden';
+    wrap.querySelector('.rq-body').scrollTop = 0;
     var first = formEl.querySelector('input,select,textarea');
     if (first) setTimeout(function () { first.focus(); }, 40);
     return true;

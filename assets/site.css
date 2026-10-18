@@ -1951,3 +1951,23 @@
   .rq-checks{grid-template-columns:1fr}
   .rq-foot .btn{flex:1 1 auto;text-align:center}
 }
+
+
+/* ===== dialog: fixed header and footer, only the middle scrolls =====
+   Scrolling the whole box ran the scrollbar over the rounded corners. */
+.rq-box{display:flex;flex-direction:column;overflow:hidden;padding:0}
+.rq-head{flex:none;padding:30px 36px 18px;border-bottom:1px solid var(--line);
+  background:#fff;border-radius:17px 17px 0 0}
+.rq-head h2{margin:0 0 6px}
+.rq-head .rq-intro{margin:0}
+.rq-body{flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;
+  padding:24px 36px 26px;scrollbar-gutter:stable}
+.rq-foot{position:static;flex:none;background:#fff;border-top:1px solid var(--line);
+  padding:18px 36px;margin:0;border-radius:0 0 21px 21px}
+.rq-x{top:22px;right:24px}
+
+@media (max-width:720px){
+  .rq-head{padding:22px 20px 14px;border-radius:0}
+  .rq-body{padding:18px 20px 20px}
+  .rq-foot{padding:14px 20px calc(14px + env(safe-area-inset-bottom));border-radius:0}
+}
