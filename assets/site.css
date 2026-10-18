@@ -1971,3 +1971,15 @@
   .rq-body{padding:18px 20px 20px}
   .rq-foot{padding:14px 20px calc(14px + env(safe-area-inset-bottom));border-radius:0}
 }
+
+
+/* ===== dialog fields: controls line up even when labels wrap =====
+   A two-line label next to a one-line label pushed its input lower. Grid items
+   stretch to the row height, so sending the control to the bottom aligns them. */
+.rq-form{align-items:stretch}
+.rq-field{justify-content:flex-start}
+.rq-field > input,.rq-field > select,.rq-field > textarea,.rq-field > .rq-checks{
+  margin-top:auto}
+.rq-field > label,.rq-field > .rq-lab{margin-bottom:7px}
+/* keep the required tag on the label's last line rather than orphaning it */
+.rq-req{white-space:nowrap}
