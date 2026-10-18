@@ -61,7 +61,7 @@
         <a href="services.html" class="dtop">Services<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg></a>
         <div class="menu"><a href="services.html#ground-handling">Ground handling</a><a href="services.html#charters">Charter organisation</a><a href="trip-estimator.html">Trip estimator</a><a href="services.html#maintenance">Maintenance consultancy</a><a href="services.html#passenger-services">Passenger services</a><a href="services.html#crew">Crew support</a><a href="services.html#vip">VIP lounge &amp; meet-and-greet</a><a href="services.html#catering">Catering</a><a href="services.html#dispatch">Flight dispatch</a><a href="services.html#transactions">Aircraft transactions</a><a href="prebuy.html">Pre-buy inspections</a><a href="services.html#advisory">Aviation advisory</a><a href="services.html#academy-card">CAW Academy management</a><a href="services.html#turnaround">How a turnaround runs</a><a href="prebuy.html">How a pre-buy runs</a></div>
       </div>
-      <a href="coverage.html">Coverage</a>
+      <a class="temp-off" href="coverage.html">Coverage</a>
       <a class="temp-off" href="fleet.html">Fleet</a>
       <a href="training.html">Training</a>
       <a href="team.html">Team</a>
@@ -75,7 +75,7 @@
     <a href="index.html">Home</a>
     <a href="services.html">Services</a>
     <div class="sub"><a href="services.html#ground-handling">Ground handling</a><a href="services.html#charters">Charter organisation</a><a href="services.html#maintenance">Maintenance consultancy</a><a href="services.html#passenger-services">Passenger services</a><a href="services.html#crew">Crew support</a><a href="services.html#vip">VIP lounge &amp; meet-and-greet</a><a href="services.html#catering">Catering</a><a href="services.html#dispatch">Flight dispatch</a><a href="services.html#transactions">Aircraft transactions</a><a href="prebuy.html">Pre-buy inspections</a><a href="services.html#advisory">Aviation advisory</a><a href="services.html#academy-card">CAW Academy management</a><a href="services.html#turnaround">How a turnaround runs</a><a href="prebuy.html">How a pre-buy runs</a></div>
-    <a href="coverage.html">Coverage</a>
+    <a class="temp-off" href="coverage.html">Coverage</a>
     <a class="temp-off" href="fleet.html">Fleet</a>
     <a href="prebuy.html">Pre-buy process</a>
     <a href="training.html">CAW Academy</a>
@@ -302,6 +302,77 @@
 
 </section>
 
+<section class="sec" id="estimator">
+  <div class="wrap center">
+    <div class="eyebrow">Charter planning</div>
+    <h2>What would the trip look like?</h2>
+    <hr class="rule">
+    <p class="sub">Two airports, and you get the distance, the block time, whether it needs a fuel stop and roughly what it costs by aircraft category. Send it over and we will price it properly.</p>
+  </div>
+  <div class="wrap">
+    <div class="te" id="te">
+      <div class="te-form">
+        <div class="te-route">
+          <div class="te-field">
+            <label for="teFrom">From</label>
+            <input id="teFrom" type="text" autocomplete="off" spellcheck="false"
+                   placeholder="Airport, city or ICAO" aria-describedby="teFromPick">
+            <div class="te-pick" id="teFromPick" role="listbox" hidden></div>
+            <p class="te-chosen" id="teFromName"></p>
+          </div>
+          <button class="te-swap" id="teSwap" type="button" aria-label="Swap airports">&#8646;</button>
+          <div class="te-field">
+            <label for="teTo">To</label>
+            <input id="teTo" type="text" autocomplete="off" spellcheck="false"
+                   placeholder="Airport, city or ICAO" aria-describedby="teToPick">
+            <div class="te-pick" id="teToPick" role="listbox" hidden></div>
+            <p class="te-chosen" id="teToName"></p>
+          </div>
+        </div>
+        <div class="te-opts">
+          <label class="te-inline"><input type="checkbox" id="teReturn"> Return trip</label>
+          <label class="te-inline">Passengers
+            <input type="number" id="tePax" min="1" max="16" value="4" inputmode="numeric">
+          </label>
+        </div>
+      </div>
+
+      <p class="te-empty" id="teHint">Pick a departure and a destination to see the estimate.</p>
+
+      <div class="te-out" id="teOut" hidden>
+        <div class="te-dist">
+          <div><b id="teNm">—</b><span>nautical miles</span></div>
+          <div><b id="teKm">—</b><span>kilometres</span></div>
+          <div><b id="teBear">—</b><span>initial track</span></div>
+        </div>
+
+        <table class="te-table">
+          <thead>
+            <tr><th>Aircraft category</th><th>Block time</th><th>Stops</th><th>Indicative cost</th></tr>
+          </thead>
+          <tbody id="teRows"></tbody>
+        </table>
+
+        <p class="te-note">
+          Block time includes taxi, climb and descent, flown on a great-circle track with no wind.
+          Costs are a rough band for planning only — a real quote depends on the tail, the operator, the dates,
+          airport slots, handling, crew duty and whether the aircraft has to position to you first.
+          Categories shown in grey cannot make the sector without more stops than are sensible.
+        </p>
+
+        <div class="te-cta">
+          <a class="btn" id="teSend" href="contact.html">Send this trip to us</a>
+        </div>
+      </div>
+
+      <div class="te-legs" id="teLegs" hidden>
+        <h3>Empty legs on this route</h3>
+        <div id="teLegsBody"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="sec turn" id="turnaround">
   <div class="wrap center">
     <div class="eyebrow">Ground operations</div>
@@ -498,7 +569,7 @@
       <ul>
         <li><a href="index.html">Home</a></li>
         <li><a href="trip-estimator.html">Trip estimator</a></li>
-        <li><a href="coverage.html">Coverage</a></li>
+        <li class="temp-off"><a class="temp-off" href="coverage.html">Coverage</a></li>
         <li><a href="team.html">Our team</a></li>
         <li><a href="contact.html">Contact</a></li>
         <li><a href="impressum.html">Impressum</a></li>
@@ -515,6 +586,7 @@
   <a class="s" href="contact.html">Send enquiry</a>
 </nav>
 <script src="assets/site.js?v=99"></script>
+<script src="assets/trip.js?v=99"></script>
 <script>
 /* critical: gallery controls, independent of the external bundle */
 (function(){
