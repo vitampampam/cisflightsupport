@@ -863,5 +863,54 @@
     "ph": "Recent upgrades, known defects, comparable offers you have seen"
    }
   ]
+ },
+ "academy-trial": {
+  "title": "Request a free trial",
+  "service": "CAW Academy training",
+  "intro": "Tell us which framework you work to and we will set up a trial of CAW Academy.",
+  "fields": [
+   {
+    "k": "frameworks",
+    "label": "Which frameworks",
+    "t": "checks",
+    "req": true,
+    "opts": [
+     "EASA",
+     "UK CAA",
+     "UAE GCAA",
+     "FAA 14 CFR"
+    ]
+   },
+   {
+    "k": "name",
+    "label": "Your name",
+    "t": "text",
+    "req": true
+   },
+   {
+    "k": "org",
+    "label": "Organisation",
+    "t": "text",
+    "ph": "Company name, if this is for a team"
+   },
+   {
+    "k": "role",
+    "label": "Your role",
+    "t": "text",
+    "ph": "CAMO manager, Part-145 engineer, student"
+   },
+   {
+    "k": "users",
+    "label": "How many people would use it",
+    "t": "number",
+    "ph": "1"
+   },
+   {
+    "k": "notes",
+    "label": "Anything else",
+    "t": "textarea",
+    "ph": "Subjects you are most interested in, or a deadline you are working to"
+   }
+  ]
  }
 }
