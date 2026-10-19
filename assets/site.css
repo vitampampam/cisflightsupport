@@ -2064,7 +2064,7 @@
    when something changes, rather than silently rewriting themselves. */
 .te-go{margin-left:auto;display:flex;align-items:center;gap:14px}
 .te-go .btn{font-size:16px;padding:13px 30px}
-.te-note{font-size:14.5px;font-weight:600;color:var(--gold);
+.te-flag{font-size:14.5px;font-weight:600;color:var(--gold);
   font-family:"Barlow Semi Condensed";letter-spacing:.06em;text-transform:uppercase}
 .te-stale{opacity:.42;transition:opacity .2s}
 @media(max-width:620px){
