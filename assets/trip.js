@@ -180,6 +180,22 @@
   }
 
   /* ---------- render ---------- */
+  /* The estimate runs when Calculate is pressed, never as the form is
+     edited. Anything the visitor changes afterwards marks the figures on
+     screen as out of date rather than quietly rewriting them. */
+  function markStale() {
+    var out = $('teOut'), note = $('teNote');
+    if (out && !out.hidden) out.classList.add('te-stale');
+    if (note) note.hidden = !(out && !out.hidden);
+  }
+
+  function calculate() {
+    var out = $('teOut'), note = $('teNote');
+    if (out) out.classList.remove('te-stale');
+    if (note) note.hidden = true;
+    render();
+  }
+
   function render() {
     var out = $('teOut'), hint = $('teHint');
     if (!from || !to) { out.hidden = true; hint.hidden = false; return; }
@@ -196,12 +212,16 @@
     var ret = $('teReturn').checked;
     var shown = ret ? track * 2 : track;
 
-    $('teNm').textContent = Math.round(track).toLocaleString('en-GB');
-    $('teKm').textContent = Math.round(track * 1.852).toLocaleString('en-GB');
+    /* On a return trip the block time and the cost below already count both
+       sectors, so the distance has to as well - showing a one-way figure
+       beside a return time read as a contradiction. */
+    $('teNm').textContent = Math.round(shown).toLocaleString('en-GB');
+    $('teKm').textContent = Math.round(shown * 1.852).toLocaleString('en-GB');
 
     var pct = Math.round((track / nm - 1) * 100);
     var ext = 'Great circle ' + Math.round(nm).toLocaleString('en-GB') +
-              ' nm — about ' + pct + '% is added for airways, SIDs and STARs';
+              ' nm' + (ret ? ' each way' : '') +
+              ' — about ' + pct + '% is added for airways, SIDs and STARs';
     if (blocks.length) {
       ext += ', and for routing around ' +
              blocks.map(function (r) { return r.name; }).join(' and ');
@@ -306,13 +326,13 @@
       input.value = a.i;
       name.textContent = (a.c ? a.c + ', ' : '') + a.n;
       close();
-      render();
+      markStale();
     }
 
     input.addEventListener('input', function () {
       set(null); name.textContent = '';
       open(search(input.value));
-      render();
+      markStale();
     });
     input.addEventListener('keydown', function (e) {
       if (pick.hidden) return;
@@ -340,9 +360,20 @@
   function wire() {
     attach('teFrom', 'teFromPick', 'teFromName', function (a) { from = a; });
     attach('teTo', 'teToPick', 'teToName', function (a) { to = a; });
-    $('teReturn').addEventListener('change', render);
-    $('teAvoid').addEventListener('change', render);
-    $('tePax').addEventListener('input', render);
+    $('teGo').addEventListener('click', calculate);
+    $('teReturn').addEventListener('change', markStale);
+    $('teAvoid').addEventListener('change', markStale);
+    $('tePax').addEventListener('input', markStale);
+    /* Enter anywhere in the form runs it, as long as a suggestion list
+       is not open - there Enter still picks the highlighted airport. */
+    var formEl = document.querySelector('.te-form');
+    formEl && formEl.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter') return;
+      var open = document.querySelector('.te-pick:not([hidden])');
+      if (open) return;
+      e.preventDefault();
+      calculate();
+    });
     $('teSwap').addEventListener('click', function () {
       var a = from, b = to;
       from = b; to = a;
@@ -350,7 +381,7 @@
       $('teTo').value = to ? to.i : '';
       $('teFromName').textContent = from ? (from.c ? from.c + ', ' : '') + from.n : '';
       $('teToName').textContent = to ? (to.c ? to.c + ', ' : '') + to.n : '';
-      render();
+      markStale();
     });
 
     /* deep link: trip-estimator.html?from=EDMA&to=OMDB */
@@ -363,6 +394,7 @@
       if (k === 'from') { from = hit; $('teFrom').value = hit.i; $('teFromName').textContent = (hit.c ? hit.c + ', ' : '') + hit.n; }
       else { to = hit; $('teTo').value = hit.i; $('teToName').textContent = (hit.c ? hit.c + ', ' : '') + hit.n; }
     });
-    render();
+    /* arriving with ?from=&to= is a request for the answer, so run it */
+    if (from && to) calculate();
   }
 })();

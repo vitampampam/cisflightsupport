@@ -154,8 +154,9 @@
   .card a{margin-top:auto;font-family:"Barlow Semi Condensed";font-weight:600;font-size:15px;
     letter-spacing:.12em;text-transform:uppercase;text-decoration:none;color:var(--gold)}
   .card a:hover{text-decoration:underline}
-  .card.acad{border-top-color:var(--caw)}
-  .card.acad:hover{border-top-color:var(--caw)}
+  /* the Academy card keeps its indigo icon and link, but takes the same
+     top edge as every other card - an accent line only it had read as a
+     mistake in the carousel */
   .card.acad svg{stroke:var(--caw)}
   .card.acad a{color:var(--caw)}
 
@@ -2058,3 +2059,23 @@
   .cawcta{width:100%}
   .cawcta .btn{width:100%;text-align:center}
 }
+
+/* Calculate sits at the end of the options row; the figures above dim
+   when something changes, rather than silently rewriting themselves. */
+.te-go{margin-left:auto;display:flex;align-items:center;gap:14px}
+.te-go .btn{font-size:16px;padding:13px 30px}
+.te-note{font-size:14.5px;font-weight:600;color:var(--gold);
+  font-family:"Barlow Semi Condensed";letter-spacing:.06em;text-transform:uppercase}
+.te-stale{opacity:.42;transition:opacity .2s}
+@media(max-width:620px){
+  .te-go{margin-left:0;width:100%;justify-content:space-between}
+  .te-go .btn{flex:1 1 auto;text-align:center}
+}
+
+/* A section that explains a service ends with the way to ask for it. The
+   button spans the whole block - the step pills and the photo beside them -
+   so it reads as the section's conclusion rather than a stray link. */
+.secreq{margin:26px 0 0}
+.secreq .btn{display:block;width:100%;box-sizing:border-box;text-align:center;
+  padding:19px 24px;font-size:17px;letter-spacing:.06em}
+@media(max-width:620px){.secreq{margin-top:20px}.secreq .btn{padding:16px 18px;font-size:16px}}
