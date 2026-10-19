@@ -209,7 +209,44 @@
   var st=$('#svcTrack');
   if(st){
     var sdots=$('#svcDots');
+    /* The track is a closed loop: a copy of the set sits on each side of the
+       real cards, so the first card always has a neighbour on its left and the
+       last one on its right. When a scroll settles we shift by exactly one set
+       width — invisible, because the three sets are identical. */
+    var setW=0, loop=false;
+    function reals(){ return $$('.card',st).filter(function(c){
+      return !c.classList.contains('clone') && !c.classList.contains('hide'); }); }
     function visible(){ return $$('.card',st).filter(function(c){return !c.classList.contains('hide')}); }
+    function buildLoop(){
+      $$('.card.clone',st).forEach(function(c){ c.parentNode.removeChild(c); });
+      var rs=reals();
+      loop = rs.length>2;
+      setW = 0;
+      if(!loop) return;
+      var head=document.createDocumentFragment(), tail=document.createDocumentFragment();
+      rs.forEach(function(c){
+        [head,tail].forEach(function(frag){
+          var n=c.cloneNode(true);
+          n.classList.add('clone'); n.classList.remove('is-active');
+          n.removeAttribute('id'); n.setAttribute('aria-hidden','true');
+          $$('[id]',n).forEach(function(x){ x.removeAttribute('id'); });
+          $$('a',n).forEach(function(a){ a.tabIndex=-1; });
+          frag.appendChild(n);
+        });
+      });
+      st.insertBefore(head, st.firstChild);
+      st.appendChild(tail);
+      var firstClone=$$('.card.clone',st)[0];
+      setW = rs[0].offsetLeft - firstClone.offsetLeft;
+      if(setW<=0) loop=false;
+    }
+    /* keep the scroll inside the middle set, so there is always a set either side */
+    function normalise(){
+      if(!loop || !setW) return;
+      var x=st.scrollLeft;
+      if(x < setW*0.5) st.scrollLeft = x + setW;
+      else if(x >= setW*1.5) st.scrollLeft = x - setW;
+    }
     function mark(){
       var mid=st.getBoundingClientRect().left+st.clientWidth/2, best=null, bd=1e9;
       visible().forEach(function(c){
@@ -217,7 +254,8 @@
         if(d<bd){bd=d;best=c;}
       });
       $$('.card',st).forEach(function(c){ c.classList.toggle('is-active',c===best); });
-      var vs=visible(), i=vs.indexOf(best);
+      var vs=visible(), i=vs.indexOf(best), rn=reals().length;
+      if(loop && rn) i=((i%rn)+rn)%rn;       /* a clone lights its real card's dot */
       $$('i',sdots).forEach(function(d,n){ d.classList.toggle('on',n===i); });
       arrows();
     }
@@ -226,26 +264,36 @@
                    behavior:instant?'auto':'smooth'});
     }
     function rest(instant){
-      var vs=visible(); if(!vs.length) return;
-      centre(vs.length>2?vs[1]:vs[0],instant);
+      var rs=reals(); if(!rs.length) return;
+      centre(rs[0],instant);
       setTimeout(mark,instant?0:220);
     }
     function buildDots(){
       sdots.innerHTML='';
-      visible().forEach(function(c){
+      reals().forEach(function(c){
         var d=document.createElement('i');
         d.addEventListener('click',function(){ centre(c); });
         sdots.appendChild(d);
       });
       mark();
     }
-    st.addEventListener('scroll',function(){ clearTimeout(st._t); st._t=setTimeout(mark,60); },{passive:true});
-    $$('.card',st).forEach(function(c){
-      c.addEventListener('click',function(e){ if(e.target.closest('a')) return; centre(c); });
+    st.addEventListener('scroll',function(){ clearTimeout(st._t);
+      st._t=setTimeout(function(){ normalise(); mark(); },60); },{passive:true});
+    st.addEventListener('click',function(e){
+      if(e.target.closest('a')) return;
+      var c=e.target.closest('.card');
+      if(c && st.contains(c)) centre(c);
     });
     var sprev=$('#svcPrev'), snext=$('#svcNext');
     function arrows(){
       var vs=visible(), cur=vs.findIndex(function(c){return c.classList.contains('is-active')});
+      if(loop){
+        sprev.disabled=false;
+        snext.classList.remove('wrap');
+        sprev.setAttribute('aria-label','Previous service');
+        snext.setAttribute('aria-label','Next service');
+        return;
+      }
       sprev.disabled = cur<=0;
       var last = cur>=vs.length-1;
       snext.classList.toggle('wrap', last);
@@ -253,6 +301,8 @@
     }
     function move(dir){
       var vs=visible(), cur=vs.findIndex(function(c){return c.classList.contains('is-active')});
+      if(cur<0) return;
+      if(loop){ var nl=vs[cur+dir]; if(nl) centre(nl); return; }
       if(dir>0 && cur>=vs.length-1){ centre(vs[0]); return; }   /* last -> first */
       var nx=vs[Math.min(vs.length-1,Math.max(0,cur+dir))];
       if(nx) centre(nx);
@@ -272,16 +322,25 @@
     $$('.fbtn').forEach(function(b){
       b.addEventListener('click',function(){
         setTimeout(function(){
+          buildLoop();
           buildDots();
-          var vs=visible();
-          if(vs.length) centre(b.dataset.f==='all' && vs.length>2 ? vs[1] : vs[0]);
-          setTimeout(mark,220);
+          var rs=reals();
+          if(rs.length) centre(rs[0],true);
+          setTimeout(function(){ normalise(); mark(); },220);
           tell(b);
         },30);
       });
     });
     tell(null);
-    window.addEventListener('resize',function(){ mark(); arrows(); });
+    window.addEventListener('resize',function(){
+      clearTimeout(st._r);
+      st._r=setTimeout(function(){
+        buildLoop(); buildDots();
+        var rs=reals(); if(rs.length) centre(rs[0],true);
+        mark(); arrows();
+      },180);
+    });
+    buildLoop();
     buildDots();
     /* A #hash must win over the default centring, otherwise arriving from the
        menu at services.html#catering lands on whatever card rest() picks. */

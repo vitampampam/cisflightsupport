@@ -57,10 +57,13 @@
   .logo b{font-family:"Barlow Semi Condensed";font-size:25px;font-weight:700;color:var(--navy-d);
     letter-spacing:.02em;line-height:1.05;display:block;white-space:nowrap}
   .logo small{display:block;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
-  .nav{margin-left:auto;display:flex;align-items:center;gap:22px;flex-wrap:nowrap;white-space:nowrap}
+  /* the links carry their hover padding at rest, so hovering one cannot
+     widen it and shunt the rest of the bar sideways; gap:0 because the
+     padding itself now provides the spacing */
+  .nav{margin-left:auto;display:flex;align-items:center;gap:0;flex-wrap:nowrap;white-space:nowrap}
   .nav a{font-family:"Barlow Semi Condensed";font-weight:600;font-size:16px;letter-spacing:.07em;
-    text-transform:uppercase;text-decoration:none;color:var(--navy-d);padding:6px 0;
-    border-bottom:3px solid transparent;white-space:nowrap;flex:none}
+    text-transform:uppercase;text-decoration:none;color:var(--navy-d);padding:6px 12px;
+    border-bottom:3px solid transparent;white-space:nowrap;flex:none;-webkit-user-drag:none}
   .nav a:hover{border-bottom-color:var(--gold)}
   .nav .btn{border-bottom:2px solid var(--navy);color:#fff;padding:11px 22px;font-size:15px}
   .nav .btn:hover{border-bottom-color:var(--navy-d)}
@@ -70,7 +73,7 @@
   .drop .dtop svg{width:11px;height:8px;fill:none;stroke:currentColor;stroke-width:1.8;
     transition:transform .2s ease}
   .drop:hover .dtop svg,.drop:focus-within .dtop svg{transform:rotate(180deg)}
-  .menu{position:absolute;top:100%;left:-20px;background:#fff;border:1px solid var(--line);
+  .menu{position:absolute;top:100%;left:-8px;background:#fff;border:1px solid var(--line);
     border-top:3px solid var(--gold);box-shadow:0 18px 40px rgba(6,42,56,.16);
     display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;padding:16px;min-width:540px;
     opacity:0;visibility:hidden;transform:translateY(8px);transition:.18s ease}
@@ -388,9 +391,10 @@
   .bar{transition:height .3s ease}
   header.stuck .bar{height:66px}
   .nav a{border-radius:999px;transition:background .25s,color .25s,border-color .25s}
-  .nav a:not(.btn):hover{background:rgba(11,65,82,.07);border-bottom-color:transparent;padding-left:12px;padding-right:12px}
+  .nav a:not(.btn):hover{background:rgba(11,65,82,.07);border-bottom-color:transparent}
   .nav a.active{color:var(--navy);border-bottom-color:var(--gold)}
-  .nav .btn{border-radius:999px;white-space:nowrap;flex:none;padding:12px 24px;font-size:15px;line-height:1}
+  .nav .btn{border-radius:999px;white-space:nowrap;flex:none;padding:12px 24px;font-size:15px;line-height:1;
+    margin-left:10px}
   .menu{border-radius:16px;border-top-width:1px;background:rgba(255,255,255,.86);
     backdrop-filter:blur(18px) saturate(180%);-webkit-backdrop-filter:blur(18px) saturate(180%);
     box-shadow:var(--shadow-lg)}

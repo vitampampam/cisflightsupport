@@ -749,5 +749,119 @@
     "t": "textarea"
    }
   ]
+ },
+ "valuation": {
+  "title": "Aircraft valuation request",
+  "service": "Buying or selling an aircraft",
+  "intro": "A desktop valuation stands on the aircraft's record, so the more of this you can fill in, the tighter the range we can give you.",
+  "fields": [
+   {
+    "k": "type",
+    "label": "Aircraft type and year",
+    "t": "text",
+    "req": true,
+    "ph": "2016 Dassault Falcon 7X"
+   },
+   {
+    "k": "serial",
+    "label": "Registration and serial number",
+    "t": "text",
+    "req": true,
+    "ph": "D-ABCD, s/n 123"
+   },
+   {
+    "k": "hours",
+    "label": "Total time and cycles",
+    "t": "text",
+    "req": true,
+    "ph": "2,180 h / 980 c"
+   },
+   {
+    "k": "engines",
+    "label": "Engine and APU programmes",
+    "t": "checks",
+    "opts": [
+     "Engines on programme",
+     "APU on programme",
+     "Airframe on programme",
+     "None",
+     "Not sure"
+    ]
+   },
+   {
+    "k": "programme",
+    "label": "Which programmes",
+    "t": "text",
+    "ph": "JSSI, MSP Gold, ESP, Smart Parts"
+   },
+   {
+    "k": "inspection",
+    "label": "Next major inspection due",
+    "t": "text",
+    "ph": "C-check Mar 2027, or hours remaining"
+   },
+   {
+    "k": "avionics",
+    "label": "Avionics and mandates",
+    "t": "text",
+    "ph": "EASy III, ADS-B Out, FANS 1/A+, CPDLC"
+   },
+   {
+    "k": "interior",
+    "label": "Interior and paint last done",
+    "t": "text",
+    "ph": "Interior 2021, paint 2019"
+   },
+   {
+    "k": "damage",
+    "label": "Damage history",
+    "t": "select",
+    "opts": [
+     "None",
+     "Repaired and documented",
+     "Open or unresolved",
+     "Not sure"
+    ]
+   },
+   {
+    "k": "location",
+    "label": "Where the aircraft is based",
+    "t": "text",
+    "req": true,
+    "ph": "EDMA"
+   },
+   {
+    "k": "registry",
+    "label": "Registry",
+    "t": "text",
+    "ph": "Current, and any planned change"
+   },
+   {
+    "k": "purpose",
+    "label": "What the valuation is for",
+    "t": "select",
+    "req": true,
+    "opts": [
+     "Deciding whether to sell",
+     "Setting an asking price",
+     "Insurance",
+     "Financing or leasing",
+     "Accounting or audit",
+     "Estate or shareholder matter",
+     "Something else"
+    ]
+   },
+   {
+    "k": "when",
+    "label": "When you need it",
+    "t": "date"
+   },
+   {
+    "k": "notes",
+    "label": "Anything else",
+    "t": "textarea",
+    "ph": "Recent upgrades, known defects, comparable offers you have seen"
+   }
+  ]
  }
 }

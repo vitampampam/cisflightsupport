@@ -152,13 +152,10 @@
     .then(function (d) {
       forms = d;
       if (!forms) return;
-      /* a service card's call to action opens that service's form */
-      [].forEach.call(document.querySelectorAll('.card[id]'), function (card) {
-        if (!forms[card.id]) return;
-        var a = card.querySelector('a[href^="#"]');
-        if (!a) return;
-        a.setAttribute('data-request', card.id);
-      });
+      /* Which links open a form is declared in the markup with data-request,
+         not guessed from the href. Guessing caught the navigational calls to
+         action too — "See the process" and "See the platform" are meant to
+         take you to the page that explains them, not to open an enquiry. */
       document.addEventListener('click', function (e) {
         var t = e.target.closest('[data-request]');
         if (!t) return;
