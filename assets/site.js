@@ -145,8 +145,12 @@
       stack.forEach(function(el){
         var top=el.getBoundingClientRect().top;
         var enter=clamp((vh-top)/(vh*0.4));
+        /* Rise only. A scale here was quietly resizing the panels: at 0.975
+           it takes ~24px off a 950px panel, which is far more than the 9px
+           the fan steps by, so panels looked randomly wide depending on how
+           far they had scrolled in. Width is the fan's to decide. */
         el.style.transform = enter<1
-          ? 'translate3d(0,'+((1-enter)*46).toFixed(1)+'px,0) scale('+(0.975+0.025*enter).toFixed(4)+')'
+          ? 'translate3d(0,'+((1-enter)*46).toFixed(1)+'px,0)'
           : '';
       });
     }
@@ -512,4 +516,102 @@
       if(c){ c.classList.add('is-active'); t.scrollLeft=c.offsetLeft-(t.clientWidth-c.offsetWidth)/2; }
     }
   },1500);
+})();
+
+/* ---- the stack fans out: each panel a little wider than the one above ----
+   The panels are a mix of element types, so a CSS nth-child chain cannot
+   count them; the width is handed out here instead. Desktop only - on a
+   phone every panel already fills the screen. */
+(function () {
+  var SEL = 'body > .hero, body > .doorbar, body > section.sec, body > .dual, body > footer';
+  var STEP = 9;                       /* rendered px of extra width per panel */
+
+  /* The fan is set in RENDERED pixels, not declared ones. Two things get in
+     the way of declaring a width and having it appear: the page carries
+     zoom:.9 on :root, and a <section> resolves differently from a bare <div>
+     for the same declared width. Both used to be patched with constants that
+     made the steps uneven - "some cards the same width, some larger".
+
+     So: give every panel the same probe width, read back what each one
+     actually rendered, and from that derive its own declared-to-rendered
+     factor. Then the first panel can be pinned to the header's measured width
+     and each one after it stepped by exactly STEP on screen. */
+  function fan() {
+    /* Only on a true desktop. Below this the header follows its own tablet
+       rules and no longer shares the panels' measure, so pinning the first
+       panel to it would just make the panels disagree with each other -
+       uniform width is the better answer there. */
+    var wide = window.matchMedia('(min-width:1200px)').matches;
+    var panels = [].slice.call(document.querySelectorAll(SEL));
+    if (!panels.length) return;
+
+    if (!wide) {
+      panels.forEach(function (el) { el.style.removeProperty('--w'); });
+      return;
+    }
+
+    var bar = document.querySelector('.bar');
+    if (!bar) return;
+    var head = bar.getBoundingClientRect().width;      /* the header's measure */
+
+    /* Two probes, because the relation is affine and not merely scaled: a
+       panel's own padding and borders add a constant on top of the scaled
+       declared width. One probe assumes that constant is zero, which is what
+       left two panels off the step. rendered = m * declared + c, solved per
+       panel, then inverted. */
+    var P1 = 900, P2 = 1100;
+    panels.forEach(function (el) { el.style.setProperty('--w', P1 + 'px'); });
+    var r1 = panels.map(function (el) { return el.getBoundingClientRect().width; });
+    panels.forEach(function (el) { el.style.setProperty('--w', P2 + 'px'); });
+    var r2 = panels.map(function (el) { return el.getBoundingClientRect().width; });
+
+    var m = [], c = [];
+    panels.forEach(function (el, i) {
+      m[i] = (r2[i] - r1[i]) / (P2 - P1);
+      if (!(m[i] > 0.01)) { m[i] = 1; c[i] = 0; return; }   /* clamped: don't divide by ~0 */
+      c[i] = r1[i] - m[i] * P1;
+    });
+
+    /* How wide a panel may get before max-width clamps it. Read from the
+       resolved max-width rather than by probing a huge width, which would
+       throw a horizontal scrollbar and change the very viewport it depends
+       on. Without this the widest panels silently collapse onto one width on
+       a narrow desktop - the same "some are the same width" fault. */
+    var maxDecl = parseFloat(getComputedStyle(panels[0]).maxWidth);
+    var cap = isFinite(maxDecl) ? m[0] * maxDecl + c[0] : Infinity;
+    var n = panels.length - 1;
+
+    /* The first panel matching the header matters more than the size of the
+       step, so when there is not room for both, the step gives way - not the
+       starting width. */
+    var base = head, step = STEP;
+    if (head + STEP * n > cap) step = Math.max(0, (cap - head) / n);
+    if (head > cap) { base = cap; step = 0; }
+
+    panels.forEach(function (el, i) {
+      el.style.setProperty('--w', (((base + i * step) - c[i]) / m[i]).toFixed(2) + 'px');
+    });
+
+    /* Then correct against what actually came out. The probe is taken with
+       every panel at one width, and a panel's slope shifts a little once the
+       page is back in its real shape, which is enough to knock a step off by
+       a pixel or two. Measuring the error and feeding it back settles it. */
+    for (var pass = 0; pass < 4; pass++) {
+      var worst = 0;
+      var err = panels.map(function (el, i) {
+        var e = (base + i * step) - el.getBoundingClientRect().width;
+        if (Math.abs(e) > worst) worst = Math.abs(e);
+        return e;
+      });
+      if (worst < 0.25) break;
+      panels.forEach(function (el, i) {
+        var cur = parseFloat(el.style.getPropertyValue('--w'));
+        el.style.setProperty('--w', (cur + err[i] / m[i]).toFixed(2) + 'px');
+      });
+    }
+  }
+  fan();
+  window.addEventListener('resize', function () {
+    clearTimeout(window._fanT); window._fanT = setTimeout(fan, 150);
+  });
 })();

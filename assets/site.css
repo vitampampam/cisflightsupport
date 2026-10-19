@@ -1,13 +1,14 @@
 :root{
-    --navy:#0B4152;
-    --navy-d:#062A38;
-    --navy-x:#041A24;
+    --navy:#167E9E;      /* aviation blue - primary actions and mid panels */
+    --navy-d:#103B50;    /* deep navy - headings, hover, darkest text */
+    --navy-x:#0E3344;    /* top bar and the darkest surfaces */
     --gold:#12A69B;   /* aqua accent */
     --caw:#4A50C8;
     --caw-d:#383DA6;
     --caw-navy:#141B3D;
     --caw-orange:#F7941D;
-    --ice:#EDF3F3;
+    --ice:#F5F9F9;      /* warm white */
+    --mist:#E3F1F2;
     --line:#D2DFE0;
     --body:#3A4A50;
     --white:#fff;
@@ -85,7 +86,7 @@
   @media(max-width:520px){.nav .btn{display:none}.logo b{font-size:21px}}
 
   /* hero */
-  .hero{position:relative;background:linear-gradient(150deg,var(--navy-x) 0%,var(--navy) 62%,#12798F 100%);
+  .hero{position:relative;background:linear-gradient(150deg,var(--navy-x) 0%,#14506B 58%,#167E9E 100%);
     color:#fff;overflow:hidden}
   .hero .plane{position:absolute;right:-30px;bottom:4%;width:min(720px,48vw);opacity:.16;filter:brightness(0) invert(1);pointer-events:none;-webkit-mask-image:linear-gradient(90deg,#000 0,#000 58%,transparent 100%);mask-image:linear-gradient(90deg,#000 0,#000 58%,transparent 100%)}
   @media(max-width:1100px){.hero .plane{width:min(560px,58vw);bottom:0;opacity:.12}}
@@ -547,7 +548,7 @@
   :root{
     --glow:0 18px 50px -18px rgba(11,65,82,.45);
     --glow-gold:0 16px 40px -16px rgba(217,160,91,.55);
-    --sand:#D9A05B;--aqua:#12A69B;--aqua-lt:#4FE0D2;
+    --sand:#D9A05B;--aqua:#42C8C5;--aqua-lt:#7FE8E0;
     --surface:#fff;--surface-2:#F5F9F9;--text:#3A4A50;--head:#062A38;--hair:#D2DFE0;
   }
   html{scroll-padding-top:110px}
@@ -708,7 +709,9 @@
     transform:scale(.9);opacity:.62;transform-origin:center bottom;
     transition:transform .45s cubic-bezier(.2,.7,.25,1),opacity .45s,box-shadow .45s;cursor:pointer}
   .card.is-active{transform:scale(1.1);opacity:1;box-shadow:0 30px 70px -24px rgba(6,42,56,.55),var(--glow)}
-  .card.is-active h3{color:var(--aqua)}
+  /* the centred card is already marked by its scale and full opacity;
+     recolouring the heading as well just made one card look wrong */
+  .card.is-active h3{color:var(--navy-d)}
   .card:hover{transform:scale(.94)}
   .card.is-active:hover{transform:scale(1.11)}
   @media(max-width:900px){
@@ -1006,9 +1009,10 @@
   .cawhero .trialbar span{color:#fff;font-size:18px}
   .cawhero .trialbar:hover{transform:translateY(-2px);
     box-shadow:0 22px 44px -14px rgba(74,80,200,.85)}
+  /* no rules: a 1px hairline against a near-white panel is a clearly visible
+     seam, and the band is already set apart by its spacing */
   .cawband{display:flex;flex-direction:column;align-items:flex-start;gap:12px;
-    border-top:1px solid rgba(74,80,200,.2);border-bottom:1px solid rgba(74,80,200,.2);
-    padding:26px 0;margin:0 0 34px}
+    border:0;padding:26px 0;margin:0 0 34px}
   .cawband h2{font-family:"Source Serif 4",Georgia,serif;font-weight:700;text-transform:none;
     font-size:clamp(26px,3.2vw,38px);letter-spacing:-.01em;color:var(--caw-navy);margin:0;flex:0 0 auto}
   .cawband p{margin:0;font-size:17px;line-height:1.6;color:#4A5170;max-width:74ch}
@@ -1042,17 +1046,17 @@
     mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.4) 36%,rgba(0,0,0,.85) 66%,#000 88%)}
   .hero .heroshot img{width:100%;height:100%;object-fit:cover;object-position:64% 50%;display:block}
   .hero .heroshot:after{content:"";position:absolute;inset:0;
-    background:linear-gradient(90deg,var(--navy-x) 0%,rgba(6,42,56,.55) 40%,rgba(6,42,56,.18) 100%)}
+    background:linear-gradient(90deg,var(--navy-x) 0%,rgba(16,59,80,.58) 38%,rgba(16,59,80,.16) 78%,rgba(16,59,80,.04) 100%)}
   @media(max-width:1100px){
     .hero .heroshot{width:min(86%,900px)}
-    .hero .heroshot:after{background:linear-gradient(90deg,var(--navy-x) 0%,rgba(6,42,56,.62) 45%,rgba(6,42,56,.3) 100%)}
+    .hero .heroshot:after{background:linear-gradient(90deg,var(--navy-x) 0%,rgba(16,59,80,.5) 45%,rgba(16,59,80,.14) 100%)}
   }
   @media(max-width:820px){
     /* text runs full width on phones, so hold the photo well back */
     .hero .heroshot{width:100%;
       -webkit-mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.5) 55%,#000 100%);
       mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.5) 55%,#000 100%)}
-    .hero .heroshot:after{background:linear-gradient(180deg,var(--navy-x) 0%,rgba(6,42,56,.72) 60%,rgba(6,42,56,.5) 100%)}
+    .hero .heroshot:after{background:linear-gradient(180deg,rgba(14,51,68,.55) 0%,rgba(16,59,80,.35) 55%,rgba(16,59,80,.22) 100%)}
   }
   @media(max-width:900px){
     .cawhero{grid-template-columns:1fr;gap:26px;padding:28px 24px}
@@ -2101,14 +2105,14 @@
   .card{flex:none;transform:none;opacity:1;cursor:default;scroll-snap-align:none;
     display:grid;grid-template-rows:auto auto 1fr auto auto;height:100%;
     padding:26px 24px 22px}
-  .card:hover{transform:translateY(-5px);opacity:1;box-shadow:var(--shadow-lg)}
+  .card:hover{transform:none;opacity:1;box-shadow:var(--shadow-lg)}
   .card.is-active{transform:none;box-shadow:var(--shadow)}
-  .card.is-active h3{color:var(--navy)}
-  .card h3{min-height:2.3em;display:flex;align-items:flex-start;margin-bottom:10px}
-  .card p{margin:0 0 16px;align-self:start}
-  .card .cshot{align-self:end;margin:0 0 16px}
-  .card .cshot img{width:100%;height:132px;object-fit:cover;display:block}
-  .card > a{align-self:end;margin:0;min-height:3.1em;display:flex;align-items:flex-end}
+  /* same as any other card: --navy became the bright aviation blue in the
+     palette change while card headings moved to --navy-d, so the active
+     card's heading drifted off on its own colour */
+  .card.is-active h3{color:var(--navy-d)}
+  .card h3{min-height:auto;display:block;margin:0 0 8px}
+  .card p{margin:0 0 18px;align-self:start}
   .svccar .cnav,.sec.svc .cdots{display:none}
 }
 @media (min-width:1024px) and (max-width:1320px){
@@ -2149,25 +2153,600 @@
 .hero.pagehead h1{margin-bottom:0}
 .lede-in{margin:0 0 4px}
 
-/* The three doors sit in a band of their own under the banner, each taking
-   an equal third of the page the way the other full-width calls to action do. */
-.doorbar{background:linear-gradient(180deg,var(--ice) 0%,#E4EEEE 100%);
-  border-bottom:1px solid rgba(6,42,56,.08);padding:30px 0 34px}
-.doorlead{margin:0 0 16px;text-align:center;font-family:"Barlow Semi Condensed";
-  font-weight:600;font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--navy)}
-.doors{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.doors .btn{display:block;width:100%;box-sizing:border-box;text-align:center;
-  padding:19px 20px;font-size:16.5px;letter-spacing:.07em}
-.doors .btn:nth-child(2),.doors .btn:nth-child(3){background:#fff;color:var(--navy-d);
-  border:1.5px solid rgba(6,42,56,.16);box-shadow:0 10px 26px -16px rgba(6,42,56,.45)}
-.doors .btn:nth-child(2):hover,.doors .btn:nth-child(3):hover{background:var(--navy);color:#fff;
-  border-color:var(--navy)}
-.doorall{margin:16px 0 0;text-align:center;font-size:15.5px}
-.doorall a{color:var(--navy);text-decoration:none;border-bottom:1px solid rgba(11,65,82,.35);
-  padding-bottom:2px}
-.doorall a:hover{border-bottom-color:var(--gold)}
-@media(max-width:760px){
-  .doorbar{padding:24px 0 26px}
-  .doors{grid-template-columns:1fr;gap:10px}
-  .doors .btn{padding:16px 18px;font-size:16px}
+
+/* The counters sit along the bottom of the banner rather than in a strip of
+   their own: the banner had the room, and the strip was a screenful spent on
+   three numbers. */
+.hero .herostats{position:relative;z-index:2;background:none;border:0;
+  border-top:1px solid rgba(255,255,255,.16);margin-top:40px;padding:0}
+.hero .herostats .wrap{display:grid;grid-template-columns:repeat(3,1fr);
+  gap:18px;padding-top:26px;padding-bottom:0}
+.hero .herostats div{text-align:left;padding:0}
+.hero .herostats b{display:block;color:#fff;font-size:clamp(30px,3.4vw,44px);line-height:1}
+.hero .herostats span{display:block;margin-top:7px;color:#AFCDD2;font-size:13.5px;
+  font-family:"Barlow Semi Condensed";letter-spacing:.12em;text-transform:uppercase}
+@media(min-width:1024px){.hero .wrap{padding-bottom:70px}}
+@media(max-width:620px){
+  .hero .herostats .wrap{grid-template-columns:1fr 1fr;gap:16px 10px;padding-top:20px}
+  .hero .herostats div:last-child{grid-column:1 / -1}
+  .hero .herostats b{font-size:30px}
 }
+
+/* =========================================================
+   Tablet: grid, not carousel
+   ---------------------------------------------------------
+   A tablet is wide enough to read a catalogue, so the services run as a
+   grid from 700px up. That also settles two complaints at once: the cards
+   no longer take a whole screen each, and nothing slides on its own.
+   The carousel stays below 700px, where one card at a time is right.
+   ========================================================= */
+@media (min-width:700px){
+  .cards{display:grid;gap:20px;overflow:visible;scroll-snap-type:none;
+    padding:28px 0 0;margin-top:0;grid-template-columns:repeat(2,1fr)}
+  .card{flex:none;transform:none;opacity:1;cursor:default;scroll-snap-align:none;
+    display:grid;grid-template-rows:auto auto 1fr auto auto;height:100%;
+    padding:26px 24px 22px}
+  /* No lift on hover. A transform re-rasterises the card's text, and at the
+     card's own edge it moves the card out from under the pointer and straight
+     back in - which reads as the content shaking. Shadow carries the hover. */
+  .card:hover{transform:none;opacity:1;box-shadow:var(--shadow-lg)}
+  .card.is-active{transform:none;box-shadow:var(--shadow)}
+  /* same as any other card: --navy became the bright aviation blue in the
+     palette change while card headings moved to --navy-d, so the active
+     card's heading drifted off on its own colour */
+  .card.is-active h3{color:var(--navy-d)}
+  .card h3{min-height:auto;display:block;margin:0 0 8px}
+  .card p{margin:0 0 18px;align-self:start}
+  .svccar .cnav,.sec.svc .cdots{display:none}
+}
+@media (min-width:1000px){ .cards{grid-template-columns:repeat(3,1fr)} }
+@media (min-width:1320px){ .cards{grid-template-columns:repeat(4,1fr)} }
+
+/* The top bar wrapped to two lines on a tablet and read as a broken row.
+   The service list is the first thing to go; the number stays. */
+@media (min-width:641px) and (max-width:1180px){
+  .util .wrap{height:auto;min-height:40px;gap:14px;flex-wrap:nowrap;white-space:nowrap}
+  .util .tag{display:none}
+  .util .sp{margin-left:auto;font-size:13.5px}
+  .util .aog{font-size:14px}
+  .util .aog b{font-size:11px;letter-spacing:.1em}
+  .bar{height:68px}
+}
+
+/* Two controls side by side were colliding on a tablet: a date input and a
+   select both sit at their intrinsic width and overflowed the column. */
+@media (max-width:1180px){
+  .rq-form{gap:14px 16px}
+  .rq-field > input,.rq-field > select,.rq-field > textarea{
+    width:100%;max-width:100%;box-sizing:border-box;min-width:0}
+  .rq-field > input[type=date]{appearance:none;-webkit-appearance:none;min-height:46px}
+}
+@media (min-width:641px) and (max-width:900px){
+  .rq-form{grid-template-columns:1fr}
+}
+
+/* The counters sit in the foot of the banner rather than in a band of their
+   own: the credibility lands under the proposition and a whole light strip
+   comes off the page. */
+.hero .herostats{position:relative;z-index:2;margin-top:4px;
+  border-top:1px solid rgba(255,255,255,.14);background:none}
+.hero .herostats .wrap{display:grid;grid-template-columns:repeat(3,1fr);
+  gap:18px;padding-top:24px;padding-bottom:30px}
+.hero .herostats div{text-align:left}
+.hero .herostats b{display:block;font-family:"Barlow Semi Condensed";font-weight:600;
+  color:#fff;font-size:clamp(30px,3.2vw,40px);line-height:1;letter-spacing:.01em}
+.hero .herostats span{display:block;margin-top:7px;font-size:13.5px;
+  font-family:"Barlow Semi Condensed";font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--aqua)}
+@media(max-width:620px){
+  .hero .herostats .wrap{grid-template-columns:1fr 1fr;gap:16px 10px;padding-bottom:24px}
+  .hero .herostats div:last-child{grid-column:1 / -1}
+  .hero .herostats b{font-size:28px}
+  .hero .herostats span{font-size:12px;letter-spacing:.1em}
+}
+.hero .wrap{padding-bottom:40px}
+
+/* ---- the ask panel under the banner ---- */
+.doorbar{background:var(--white);padding:34px 0 38px}
+/* the panel spans the same width as the estimator below it, so the page
+   keeps one measure from top to bottom */
+.doorcard{background:var(--ice);border:1px solid rgba(16,59,80,.07);border-radius:22px;
+  padding:34px 40px 30px;text-align:center;width:100%;margin:0 auto}
+.doorlead{margin:0 0 12px;font-family:"Barlow Semi Condensed";font-weight:600;font-size:14px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--navy)}
+.doorhead{font-family:"Source Serif 4",Georgia,serif;font-weight:700;text-transform:none;
+  font-size:clamp(25px,3.1vw,34px);letter-spacing:-.01em;color:var(--navy-d);margin:0 0 10px}
+.doorsub{margin:0 0 22px;font-size:17.5px;color:#55707A}
+.doorprime{display:block;width:100%;box-sizing:border-box;text-align:center;
+  padding:19px 24px;font-size:17px;border-radius:999px}
+.doorprime i{font-style:normal;margin-left:6px}
+.doors{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.doors .btn{display:block;width:100%;box-sizing:border-box;text-align:center;
+  padding:16px 20px;font-size:15.5px;border-radius:999px;
+  background:var(--white);color:var(--navy-d);border:1.5px solid rgba(16,59,80,.16);box-shadow:none}
+.doors .btn:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+.doorall{margin:18px 0 0;font-size:16px}
+.doorall a{color:var(--navy);text-decoration:none;border-bottom:1px solid rgba(22,126,158,.4);
+  padding-bottom:2px}
+.doorall a:hover{border-bottom-color:var(--navy)}
+@media(max-width:620px){
+  .doorbar{padding:22px 0 26px}
+  .doorcard{padding:26px 20px 24px;border-radius:18px}
+  .doors{grid-template-columns:1fr;gap:10px}
+  .doorprime{padding:17px 20px;font-size:16px}
+}
+
+/* ---- light appearance, stated rather than inferred ---- */
+:root{color-scheme:light;--measure:1143px}
+input,select,textarea,button{color-scheme:light}
+
+/* ---- phone: photograph first, words on light ----
+   A dark hero filling a small screen shows little of the aircraft and
+   reads as heavy. On a phone the picture comes first at its own height,
+   then the headline and the lede sit on light ground beneath it. */
+@media(max-width:620px){
+  .hero{background:var(--white);color:var(--navy-d);padding-top:0}
+  .hero .grid,.hero .blob{display:none}
+  .hero .heroshot{position:relative;inset:auto;width:100%;height:264px;
+    border-radius:0 0 22px 22px;overflow:hidden}
+  .hero .heroshot img{object-position:60% 50%}
+  .hero .heroshot:after{background:linear-gradient(180deg,rgba(14,51,68,.28) 0%,rgba(14,51,68,.06) 60%,transparent 100%)}
+  .hero .wrap{padding-top:24px;padding-bottom:18px}
+  .hero h1{color:var(--navy-d)}
+  /* the gradient on the emphasised words is built for a dark ground; on
+     light it reads as nothing, so it takes the brand blue instead */
+  .hero h1 .grad{background:none;-webkit-background-clip:border-box;
+    background-clip:border-box;color:var(--navy);-webkit-text-fill-color:var(--navy)}
+  .hero p{color:#55707A}
+  .hero .col{max-width:none}
+  /* the counters go back to light ground with the rest */
+  .hero .herostats{border-top:1px solid var(--line)}
+  .hero .herostats b{color:var(--navy-d)}
+  .hero .herostats span{color:var(--navy)}
+  /* one obvious action, not a row of competing chrome */
+  .util .wrap{height:34px;font-size:12px}
+  .bar{height:62px}
+}
+
+/* ---- service card: picture first, one line of copy, one action ----
+   The photograph leads and carries the category; the description is a
+   single sentence; the action is a button rather than a text link. The
+   rows are fixed so a row of cards shares one baseline. */
+.card{grid-template-rows:auto auto 1fr auto !important}
+.card > svg{display:none}
+.card .cshot{order:-1;position:relative;margin:-26px -24px 18px;border-radius:16px 16px 0 0;
+  aspect-ratio:16/10;overflow:hidden;align-self:start}
+.card .cshot img{width:100%;height:100%;object-fit:cover;display:block;
+  filter:saturate(.88) contrast(.95) brightness(1.02)}
+/* a quiet wash so the photograph sits with the card instead of shouting over it */
+.card .cshot:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.06) 0%,rgba(14,51,68,.16) 100%)}
+.card .ctag{position:absolute;left:12px;bottom:12px;z-index:2;
+  background:rgba(14,51,68,.58);color:#fff;
+  -webkit-backdrop-filter:blur(8px) saturate(140%);backdrop-filter:blur(8px) saturate(140%);
+  font-family:"Barlow Semi Condensed";font-weight:600;font-size:10.5px;
+  letter-spacing:.11em;text-transform:uppercase;padding:5px 11px;border-radius:999px}
+.card h3{font-size:21px;letter-spacing:.01em}
+.card p{font-size:16px;line-height:1.55;color:#55707A}
+/* every action the same height whether its label runs to one line or two */
+.card > a{align-self:end;margin:0;min-height:54px;display:inline-flex;align-items:center;
+  justify-content:space-between;gap:10px;width:100%;box-sizing:border-box;
+  background:var(--ice);border:1px solid rgba(16,59,80,.12);border-radius:14px;
+  padding:10px 16px;font-family:"Barlow Semi Condensed";font-weight:600;font-size:13.5px;
+  line-height:1.25;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);
+  text-decoration:none;border-bottom:1px solid rgba(16,59,80,.12);
+  transition:background .2s,color .2s,border-color .2s}
+.card > a:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+.card > a i{font-style:normal;font-size:15px;flex:none}
+.card.acad .ctag{background:rgba(74,80,200,.85)}
+@media(max-width:699px){
+  .card .cshot{margin:-26px -24px 16px}
+}
+
+/* The photograph ran to the browser edge while everything below it stopped
+   at the content width, so the banner read as a different page. It now ends
+   where the content ends, with the same corner radius as the panels. */
+@media (min-width:1024px){
+  /* The banner is a panel inset from the page edges rather than a full-bleed
+     band, so it lines up with everything below it and the page breathes
+     around it. The photograph dissolves into the panel - no frame, no edge. */
+  .hero{max-width:1173px;margin:20px auto 0;border-radius:26px;overflow:hidden;
+    box-shadow:0 26px 60px -34px rgba(14,51,68,.42)}
+  .hero .wrap{padding-left:52px;padding-right:52px;padding-top:66px}
+  .hero .col{max-width:min(54%,600px)}
+  /* the aircraft is panned so the nose clears the fade, and the fade itself
+     finishes sooner, so the whole front of the aircraft sits on solid ground */
+  .hero .heroshot{right:0;top:0;bottom:0;width:min(74%,900px);
+    border-radius:0;box-shadow:none;
+    -webkit-mask-image:
+      linear-gradient(90deg,transparent 0%,rgba(0,0,0,.3) 9%,#000 30%,#000 100%),
+      linear-gradient(180deg,transparent 0%,#000 13%,#000 85%,transparent 100%);
+    mask-image:
+      linear-gradient(90deg,transparent 0%,rgba(0,0,0,.3) 9%,#000 30%,#000 100%),
+      linear-gradient(180deg,transparent 0%,#000 13%,#000 85%,transparent 100%);
+    -webkit-mask-composite:source-in;mask-composite:intersect}
+  .hero .heroshot img{object-position:64% 50%}
+  /* the words now sit over the fuselage, so the wash reaches further across */
+  .hero .heroshot:after{background:linear-gradient(90deg,rgba(14,51,68,.88) 0%,rgba(14,51,68,.62) 26%,rgba(16,59,80,.26) 52%,transparent 80%)}
+
+  .hero .herostats{padding:0}
+  .hero .herostats{background:linear-gradient(180deg,transparent 0%,rgba(14,51,68,.55) 60%)}
+  .hero .herostats .wrap{max-width:none;margin:0;padding:22px 52px 30px;
+    display:flex;flex-wrap:nowrap;align-items:baseline;justify-content:center;
+    gap:0 44px}
+  .hero .herostats .wrap > div{display:flex;align-items:baseline;gap:7px;white-space:nowrap}
+  .hero .herostats .wrap > div + div{padding-left:0}
+  .hero .herostats b{display:inline;font-size:clamp(19px,1.5vw,23px)}
+  .hero .herostats span{display:inline;margin:0;font-size:11px;letter-spacing:.09em;white-space:nowrap}
+}
+@media (min-width:1024px) and (max-width:1320px){
+  .hero .wrap{padding-left:38px;padding-right:38px}
+  .hero .col{max-width:48%}
+  .hero .heroshot{width:56%}
+  .hero .herostats .wrap{padding-left:30px;padding-right:30px;gap:0 26px}
+  .hero .herostats b{font-size:19px}
+  .hero .herostats span{font-size:10px;letter-spacing:.06em}
+}
+
+/* On a phone the cards are a carousel, so give them the same internal
+   shape the grid uses - photo, heading, one line, action at the foot. */
+@media (max-width:699px){
+  .cards{align-items:stretch}
+  .cards .card{display:grid;grid-template-rows:auto auto 1fr auto;height:auto;
+    align-self:stretch;min-height:420px;padding:26px 22px 20px}
+  .cards .card .cshot{order:-1;margin:-26px -22px 16px;aspect-ratio:16/10}
+  .cards .card > a{align-self:end}
+}
+
+/* Final word on the card action: one height for all twelve, whether the
+   label runs to one line or two. */
+.cards .card > a,
+.cards .card > a:link{min-height:56px;height:56px;padding:0 16px;
+  display:flex;align-items:center;justify-content:space-between}
+
+/* The Academy artwork is a wide panel, not a photograph: cropping it to the
+   card's window cut the headline off, so it is fitted whole on its own
+   backdrop instead. */
+.card.acad .cshot:after{background:linear-gradient(180deg,rgba(255,255,255,.04) 0%,rgba(74,80,200,.10) 100%)}
+
+/* The estimator sits inside a .sec, whose container runs 12px narrower than
+   a bare band; matching the gutter puts the ask panel on exactly the same
+   measure as the form below it. */
+@media (min-width:1024px){
+  /* One measure for the whole page. Every panel and every block of content
+     inside a section resolves to the same width and the same gutters, so
+     nothing steps in or out as the reader scrolls. */
+  /* Every band on the page is a panel on one measure: the banner, the ask
+     panel, the pale sections and the dark ones. Only the help bar and the
+     footer stay full width, as the base the page sits on. */
+  /* One measure, applied to the panels themselves and to nothing nested
+     inside them, so no inset compounds with another. */
+  .hero,.doorcard,.sec,.dual{
+    width:var(--measure);max-width:calc(100vw - 52px);
+    margin-left:auto;margin-right:auto;
+    border-radius:26px;overflow:hidden}
+  .sec::before,.dual::before,.hero::before{border-radius:26px}
+  /* content sits inside the panel's own gutter */
+  .sec{padding-left:40px;padding-right:40px}
+  .sec > .wrap{width:100%;max-width:none;margin:0;padding-left:0;padding-right:0}
+  .doorbar{padding:4px 0 26px}
+  .doorbar > .wrap{width:100%;max-width:none;margin:0;padding:0}
+}
+
+/* ---- one shape for the page ----
+   With the banner inset, a full-bleed band in the middle of the page reads
+   as a different layout. The dark bands become panels on the same measure
+   with the same radius. The help bar and the footer stay full width: they
+   are the base the page sits on, not content within it. */
+@media (min-width:1024px){
+  /* shape only - the width comes from the single measure rule above */
+  .dual{border-radius:26px;overflow:hidden}
+  .sec.contact{border-radius:26px}
+  .sec.contact::before{border-radius:26px}
+  .sec.academy{border-radius:26px;overflow:hidden}
+  .sec.academy::before{border-radius:26px}
+  .seam-caw{display:none}
+}
+
+
+/* The faint grid is part of the surface, so every panel carries it - the ask
+   panel and the banner were bare because neither is a .sec. */
+.doorbar,.doorcard,.hero{position:relative}
+.doorbar::before,.hero::before{content:"";position:absolute;inset:0;pointer-events:none;
+  z-index:0;border-radius:inherit;
+  background-size:var(--net) var(--net)}
+/* on the panel, not on the card inside it: the card starts 32px down and
+   stops short of the foot, so the grid broke off before the card's edges */
+.doorbar::before{background-image:linear-gradient(rgba(6,42,56,.05) 1px,transparent 1px),
+                  linear-gradient(90deg,rgba(6,42,56,.05) 1px,transparent 1px)}
+.hero::before{background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),
+              linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px)}
+.doorbar > *,.doorcard > *,.hero > *{position:relative;z-index:1}
+
+/* Each surface runs from light at the top to a shade deeper at the foot, so
+   a panel reads as a solid thing with a top and a bottom rather than a flat
+   fill. The same move on the cards, a touch lighter. */
+.doorcard{background:linear-gradient(180deg,#FBFDFD 0%,var(--ice) 55%,#E7EFF0 100%)}
+.card{background:linear-gradient(180deg,#FFFFFF 0%,#FAFCFC 62%,#F0F5F6 100%)}
+.te-form{background:linear-gradient(180deg,#FFFFFF 0%,#FBFDFD 60%,#F2F7F8 100%)}
+.sec.contact{background-image:linear-gradient(180deg,#154A62 0%,var(--navy-x) 100%)}
+.dual .a{background:linear-gradient(180deg,#1B8AAB 0%,var(--navy) 100%)}
+.dual .b{background:linear-gradient(180deg,#154A62 0%,var(--navy-x) 100%)}
+
+/* The card actions were set in condensed uppercase with wide tracking, which
+   is a label style, not a reading style. They read as sentences now, in the
+   body face, at a size meant to be read. */
+.cards .card > a,.cards .card > a:link{
+  font-family:"Source Sans 3",system-ui,sans-serif;font-weight:600;
+  font-size:15.5px;letter-spacing:0;text-transform:none;line-height:1.3}
+/* the same for the category pill, which was the smallest type on the page */
+.card .ctag{font-family:"Source Sans 3",system-ui,sans-serif;font-weight:600;
+  font-size:12px;letter-spacing:.02em;text-transform:none;padding:5px 12px}
+.card h3{font-size:22px;letter-spacing:.005em}
+.card p{font-size:16.5px;line-height:1.6;color:#4E6771}
+
+/* ============================================================
+   THE PAGE MEASURE — last word, after every earlier rule
+   Each panel resolves to exactly the same width and gutters; content
+   inside a panel fills it. Spacing between panels is uniform, and the
+   last panel clears the help bar so its rounded foot has room.
+   ============================================================ */
+@media (min-width:1024px){
+  .hero,.doorcard,.sec,.dual,footer{
+    max-width:calc(100vw - 52px) !important;
+    margin-left:auto !important;margin-right:auto !important;
+    border-radius:26px !important;overflow:hidden;
+    box-sizing:border-box}
+  .hero,.doorcard,.sec,.dual{margin-top:0 !important;margin-bottom:22px !important}
+  .hero{margin-top:20px !important}
+  .sec{padding-left:44px !important;padding-right:44px !important}
+  .sec > .wrap,.doorbar > .wrap{
+    width:100% !important;max-width:none !important;margin:0 !important;
+    padding-left:0 !important;padding-right:0 !important}
+  .doorbar{padding:0 0 22px}
+  .sec.contact{margin-bottom:28px !important}
+  .helpbar{margin-top:0}
+}
+
+/* ============================================================
+   TYPE SCALE — one set of styles for the whole site
+   The page had grown 42 distinct type styles: five button sizes, five
+   label treatments, nine body sizes, and two controls falling back to
+   Arial. This collapses them to one scale.
+   ============================================================ */
+/* 1. labels and eyebrows: one size, one tracking */
+.eyebrow,.kicker,.doorlead,.mlab,.fcount,.hl,.cinfo strong,.te-lab,
+.herostats span,.util .aog b{
+  font-family:"Barlow Semi Condensed",system-ui,sans-serif !important;
+  font-weight:600 !important;font-size:13px !important;
+  letter-spacing:.14em !important;text-transform:uppercase !important}
+
+/* 2. every button and pill the same, whatever it is made of */
+.btn,.fbtn,.spill,.nav a,.dtop,button.btn{
+  font-family:"Barlow Semi Condensed",system-ui,sans-serif !important;
+  font-weight:600 !important;font-size:15.5px !important;
+  letter-spacing:.09em !important;text-transform:uppercase !important}
+.doorprime{font-size:17px !important}
+/* the two round controls were rendering in Arial */
+.te-swap,.cnav{font-family:"Barlow Semi Condensed",system-ui,sans-serif !important}
+
+/* 3. body copy on three steps instead of nine */
+body,p,li,dd,input,select,textarea{font-size:17px}
+.sub,.lede,.doorsub{font-size:19px !important;line-height:1.6}
+.fine,.covnote,.te-note,.te-empty,.card p,.util{font-size:15.5px !important}
+/* the third way into the services, under two buttons at 15.5px - it was
+   reading as fine print rather than an action */
+.doorall{font-size:19px !important}
+.card p{line-height:1.6}
+
+/* 4. headings on a fixed ladder */
+.card h3{font-size:22px !important}
+.sec h3,.dual h3{font-size:24px}
+.sec h2,.dual h2{font-size:clamp(30px,3.4vw,40px)}
+.doorhead{font-size:clamp(26px,3vw,34px) !important}
+
+/* The last panel needs clear air before the dark footer block, or its
+   rounded foot reads as a notch cut into the band below. */
+@media (min-width:1024px){
+  .sec.contact{margin-bottom:46px !important}
+}
+
+/* the dialog's own closing step */
+.rq-sep{grid-column:1 / -1;margin:6px 0 0;padding-top:16px;
+  border-top:1px solid rgba(16,59,80,.14);
+  font-family:"Barlow Semi Condensed",system-ui,sans-serif;font-weight:600;
+  font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--navy)}
+.rq-done{width:100%;box-sizing:border-box;font-family:inherit;font-size:14.5px;
+  line-height:1.55;padding:14px 16px;border:1px solid var(--line);border-radius:12px;
+  background:var(--ice);color:var(--navy-d);resize:vertical}
+
+/* The help bar and the footer join the rest: nothing on the page runs to
+   the browser edge any more. */
+@media (min-width:1024px){
+  .helpbar,footer{
+    max-width:calc(100vw - 52px) !important;
+    margin-left:auto !important;margin-right:auto !important;
+    border-radius:26px !important;overflow:hidden}
+  .helpbar::before,footer::before{border-radius:26px}
+  .helpbar{margin-bottom:22px !important}
+  footer{margin-bottom:26px !important}
+  body{background:var(--white)}
+}
+
+/* ============================================================
+   STACKED CARDS — each panel laps the one above it
+   Taken from the CAW Academy pattern: a panel is rounded at the top only,
+   pulled up by the lap so it covers the square foot of the panel above,
+   and carries enough bottom padding that nothing of its own content can
+   land in the strip the next panel covers. No hairline borders: against
+   near-white a 1px line reads as a seam at every overlap.
+   ============================================================ */
+@media (min-width:1024px){
+  :root{--stack-lap:58px;--stack-radius:26px;--stack-foot:92px}
+
+  .hero,.doorbar,.sec,.dual,.helpbar,footer{
+    position:relative;border:0 !important;
+    border-radius:var(--stack-radius) var(--stack-radius) 0 0 !important;
+    margin-top:calc(var(--stack-lap) * -1) !important;
+    margin-bottom:0 !important;
+    padding-bottom:var(--stack-foot) !important}
+  .hero::before,.sec::before,.dual::before,.helpbar::before,footer::before{
+    border-radius:var(--stack-radius) var(--stack-radius) 0 0}
+
+  /* the banner starts the stack, the footer closes it */
+  .hero{margin-top:18px !important;box-shadow:none !important}
+  footer{border-radius:var(--stack-radius) !important;margin-bottom:26px !important}
+
+  /* the ask panel is the doorbar's surface, so the doorbar carries the shape */
+  .doorbar{width:var(--measure) !important;max-width:calc(100vw - 52px) !important;
+    margin-left:auto !important;margin-right:auto !important;
+    background:var(--ice);overflow:hidden;padding-top:40px !important}
+  .doorcard{width:100% !important;max-width:none !important;background:none;
+    border:0;border-radius:0;padding-left:44px;padding-right:44px}
+
+  /* each surface a shade apart, so the step lands only where two panels meet */
+  .sec{background:var(--white)}
+  .sec:nth-of-type(even){background:#FAFCFC}
+  .sec.svc{background:linear-gradient(180deg,#F7FAFB 0%,#EFF5F6 100%)}
+}
+
+/* ---- the banner reads left-to-right: aircraft, then the words ---- */
+@media (min-width:1024px){
+  .hero .heroshot{left:0;right:auto;width:min(74%,900px)}
+  .hero .heroshot img{object-position:36% 50%}
+  .hero .heroshot:after{background:linear-gradient(270deg,rgba(14,51,68,.88) 0%,rgba(14,51,68,.62) 26%,rgba(16,59,80,.26) 52%,transparent 80%)}
+  .hero .heroshot{
+    -webkit-mask-image:
+      linear-gradient(270deg,transparent 0%,rgba(0,0,0,.3) 9%,#000 30%,#000 100%),
+      linear-gradient(180deg,transparent 0%,#000 13%,#000 85%,transparent 100%);
+    mask-image:
+      linear-gradient(270deg,transparent 0%,rgba(0,0,0,.3) 9%,#000 30%,#000 100%),
+      linear-gradient(180deg,transparent 0%,#000 13%,#000 85%,transparent 100%)}
+  .hero .wrap{display:flex;justify-content:flex-end}
+  .hero .col{margin-left:auto;text-align:left}
+}
+
+/* The Academy artwork is a 2.2:1 panel. Forced into the cards' 16:10 window
+   it either letterboxed or lost the aircraft or the devices, so that one card
+   gets a window the shape of its artwork: nothing padded, nothing cropped. */
+.card.acad .cshot{background:#EEF0FA}
+.card.acad .cshot img{object-fit:cover;object-position:center;filter:none}
+
+/* ============================================================
+   BANNER — the CAW Academy construction
+   Two cards in one row: the photograph on the left, the words on the
+   right. The picture is not a background with text over it, which is what
+   forced the nose into the fade and the aircraft out of scale.
+
+   MEASURE THE AEROPLANE BEFORE CHANGING THE RATIO. On the 1800x1125
+   master its highest point is the cockpit crown at y 140 and its lowest
+   the nose-gear tyre at y 1090 - 950px of 1125. A window of W/H must
+   satisfy 1800/R >= 950, so R <= 1.89. 1.80 is used, which shows 1000px
+   and leaves ~50px of sky at each end. The cut is spent on sky, because
+   an aeroplane with its nose or its wheels sliced off reads as broken.
+
+   The photograph ends inside the card, not on a seam: its right edge is
+   MASKED away so the panel's own colour shows through. Painting a
+   gradient over it would lighten the fuselage instead of removing it.
+   ============================================================ */
+@media (min-width:1024px){
+  /* The hero's height is set by the copy beside the photo, so on a wide
+     viewport - where the copy runs to fewer lines - the photo box grew
+     wider than the source's 1.6 and cover took the difference off the
+     bottom, cutting the nose gear. Floor the hero at the height the photo
+     column needs: the column is 1.12/2.12 of the measure, and at 1.6 that
+     is 0.33 of it. */
+  .hero{min-height:calc(var(--w, var(--measure)) * 0.33)}
+  .hero{display:grid;grid-template-columns:1.12fr 1fr;align-items:stretch;
+    padding-bottom:0 !important}
+  .hero .grid,.hero .blob{display:none}
+
+  /* Keep the photo's z-index inside the hero. .hero sets no z-index of its
+     own, so a positioned child at z-index:1 was painting above the panel
+     that laps the hero - the photo punched a hard-edged strip through the
+     door panel's rounded top. It only showed once the hero lost its foot
+     and the photo reached the hero's bottom edge. */
+  .hero{isolation:isolate}
+  .hero .heroshot{position:relative;inset:auto;grid-column:1;grid-row:1;
+    width:100%;height:100%;min-height:0;overflow:hidden;z-index:1}
+  .hero .heroshot img{width:100%;height:100%;
+    aspect-ratio:1.8 / 1;object-fit:cover;object-position:20% 100%}
+  .hero .heroshot{
+    -webkit-mask-image:linear-gradient(90deg,#000 0%,#000 58%,rgba(0,0,0,.72) 78%,transparent 100%);
+    mask-image:linear-gradient(90deg,#000 0%,#000 58%,rgba(0,0,0,.72) 78%,transparent 100%)}
+  .hero .heroshot:after{display:none}
+
+  .hero > .wrap{grid-column:2;grid-row:1;display:flex;align-items:center;
+    padding:56px 44px 56px 0;width:auto;max-width:none;margin:0}
+  .hero .col{max-width:none;margin:0;text-align:left}
+  .hero h1{font-size:clamp(30px,3.1vw,44px);max-width:16ch}
+  .hero p{font-size:17px;max-width:46ch}
+
+  .hero .herostats{grid-column:1 / -1;grid-row:2;z-index:2;background:none}
+  .hero .herostats .wrap{padding:0 44px 34px;justify-content:center}
+}
+
+/* the header sits on the same measure as everything below it */
+@media (min-width:1024px){
+  .util .wrap,.bar{width:var(--measure);max-width:calc(100vw - 52px);
+    margin-left:auto;margin-right:auto;padding-left:0;padding-right:0}
+  .util{background:var(--navy-x)}
+  header .bar{padding-left:0;padding-right:0}
+}
+
+/* Every panel keeps a foot at least as deep as the lap, so none of its own
+   content can land in the strip the next panel covers - the counters were
+   disappearing under the ask panel for exactly this reason. */
+@media (min-width:1024px){
+  /* The hero is the exception: with the counters gone there is nothing in it
+     that the next panel could cover, so it keeps no foot. A foot here just
+     left a dead band of navy under the photo. The copy's own 56px bottom
+     padding already clears the 47px lap. */
+  /* A foot exactly the depth of the lap: the photo then ends precisely where
+     the next panel's top edge begins. Zero foot put the nose gear under the
+     door panel; a full --stack-foot left a dead navy band below the photo.
+     The lap is the only depth that hides neither. */
+  .hero{padding-bottom:var(--stack-lap) !important}
+  .hero .herostats .wrap{padding-bottom:0}
+
+  /* The dual panel carries no background of its own - the colour lives on
+     its two halves - so its foot rendered as a white strip above the next
+     panel. Hand the foot to the halves instead, and the colour runs to the
+     panel's bottom edge for the next card to lap onto. */
+  .dual{padding-bottom:0 !important}
+  .dual > div{padding-bottom:var(--stack-foot)}
+  /* and nothing may add space between panels: a margin here opens the white
+     gap the lap exists to close */
+  .hero,.doorbar,.sec,.dual,footer{margin-bottom:0 !important}
+  .sec.contact{margin-bottom:0 !important}
+  .doorbar{margin-top:calc(var(--stack-lap) * -1) !important}
+}
+
+/* the fan: width comes from the step set in site.js, falling back to the
+   single measure if the script has not run */
+@media (min-width:1024px){
+  .hero,.doorbar,.sec,.dual,footer{width:var(--w, var(--measure)) !important}
+  .doorcard{width:100% !important}
+}
+
+/* The card actions read as outlines on a pale card, which is almost no
+   contrast at all. They are filled now, so the eye lands on them. */
+.cards .card > a,.cards .card > a:link{
+  background:var(--navy) !important;color:#fff !important;
+  border:1px solid var(--navy) !important;
+  box-shadow:0 10px 22px -14px rgba(16,59,80,.7)}
+.cards .card > a:hover{background:var(--navy-d) !important;border-color:var(--navy-d) !important}
+.card.acad > a,.card.acad > a:link{background:var(--caw) !important;border-color:var(--caw) !important}
+.card.acad > a:hover{background:var(--caw-d) !important;border-color:var(--caw-d) !important}
+
+/* The contact panel was designed dark and its text is still white, but the
+   per-panel shading turned the panel near-white - heading, lede and the
+   office details were white on white. Colour them for the panel they are
+   actually on. */
+.sec.contact h2{color:var(--navy-d)}
+.sec.contact > .wrap p{color:#3A4A50}
+.sec.contact .cinfo{border-top-color:rgba(6,42,56,.14)}
+.sec.contact .cinfo div{border-bottom-color:rgba(6,42,56,.14)}
+.sec.contact .cinfo span{color:#3A4A50}
+.sec.contact .cinfo a{color:var(--navy)}
+.sec.contact .cinfo a:hover{color:var(--navy-d)}

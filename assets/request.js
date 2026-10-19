@@ -47,13 +47,24 @@
     if (!wrap.hidden && e.key === 'Escape') close();
   });
 
+  /* Who to reply to. Appended to every service form so the dialog is the
+     whole enquiry, not a step on the way to another page. */
+  var WHO = [
+    { k: '_name',  label: 'Your name',   t: 'text',  req: true },
+    { k: '_email', label: 'Email',       t: 'text',  req: true, ph: 'name@company.com' },
+    { k: '_tel',   label: 'Telephone',   t: 'text',  ph: 'Including country code' },
+    { k: '_org',   label: 'Company',     t: 'text' }
+  ];
+
   function open(id) {
     var f = forms && forms[id];
     if (!f) return false;
     current = f;
     wrap.querySelector('#rqTitle').textContent = f.title;
     wrap.querySelector('.rq-intro').textContent = f.intro || '';
-    formEl.innerHTML = f.fields.map(field).join('');
+    formEl.innerHTML = f.fields.map(field).join('') +
+      '<p class="rq-sep rq-wide">Where to send the answer</p>' +
+      WHO.map(field).join('');
     wrap.querySelector('.rq-err').hidden = true;
     lastFocus = document.activeElement;
     wrap.hidden = false;
@@ -116,7 +127,8 @@
 
   formEl.addEventListener('submit', function (e) {
     e.preventDefault();
-    var missing = current.fields.filter(function (f) { return f.req && !value(f); });
+    var all = current.fields.concat(WHO);
+    var missing = all.filter(function (f) { return f.req && !value(f); });
     var err = wrap.querySelector('.rq-err');
 
     formEl.querySelectorAll('.rq-field').forEach(function (d) { d.classList.remove('rq-bad'); });
@@ -132,7 +144,7 @@
       return;
     }
 
-    var lines = [current.title + ':'];
+    var lines = [current.title, ''];
     current.fields.forEach(function (f) {
       var v = value(f);
       if (!v) return;
@@ -140,11 +152,43 @@
       lines.push('- ' + f.label.replace(/\s*\(.*?\)$/, '') + ': ' + v);
     });
 
-    var q = 'service=' + encodeURIComponent(current.service) +
-            '&msg=' + encodeURIComponent(lines.join('\n'));
-    close();
-    location.href = 'contact.html?' + q;
+    lines.push('');
+    lines.push('Contact');
+    WHO.forEach(function (f) {
+      var v = value(f);
+      if (v) lines.push('- ' + f.label + ': ' + v);
+    });
+
+    /* No server to post to, so the enquiry leaves as a composed email and
+       the dialog stays where it is, confirming what was sent. */
+    var body = lines.join('\n');
+    var href = 'mailto:ops@cisflightsupport.com' +
+               '?subject=' + encodeURIComponent(current.title) +
+               '&body=' + encodeURIComponent(body);
+    window.location.href = href;
+    done(body);
   });
+
+  /* ---------- sent ---------- */
+  function done(body) {
+    wrap.querySelector('.rq-head h2').textContent = 'Ready to send';
+    wrap.querySelector('.rq-intro').textContent =
+      'Your email app should be opening with this enquiry in it. If nothing ' +
+      'happens, copy the text below and send it to ops@cisflightsupport.com.';
+    wrap.querySelector('.rq-body').innerHTML =
+      '<textarea class="rq-done" readonly rows="12"></textarea>';
+    wrap.querySelector('.rq-done').value = body;
+    wrap.querySelector('.rq-foot').innerHTML =
+      '<button type="button" class="btn ghost" data-close>Close</button>' +
+      '<button type="button" class="btn" id="rqCopy">Copy the text</button>';
+    var copy = wrap.querySelector('#rqCopy');
+    copy.addEventListener('click', function () {
+      var t = wrap.querySelector('.rq-done');
+      t.select();
+      if (navigator.clipboard) navigator.clipboard.writeText(t.value);
+      copy.textContent = 'Copied';
+    });
+  }
 
   /* ---------- triggers ---------- */
   fetch('assets/data/request-forms.json?t=' + Date.now())
