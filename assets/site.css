@@ -2075,7 +2075,11 @@
 /* A section that explains a service ends with the way to ask for it. The
    button spans the whole block - the step pills and the photo beside them -
    so it reads as the section's conclusion rather than a stray link. */
-.secreq{margin:26px 0 0}
+.secreq{margin:30px 0 26px}
 .secreq .btn{display:block;width:100%;box-sizing:border-box;text-align:center;
   padding:19px 24px;font-size:17px;letter-spacing:.06em}
-@media(max-width:620px){.secreq{margin-top:20px}.secreq .btn{padding:16px 18px;font-size:16px}}
+@media(max-width:620px){.secreq{margin:22px 0 18px}.secreq .btn{padding:16px 18px;font-size:16px}}
+/* a section that ends on this button needs room before whatever follows,
+   which is often a dark band butting straight up against it */
+.sec:has(> .wrap > .secreq:last-child){padding-bottom:78px}
+@media(max-width:620px){.sec:has(> .wrap > .secreq:last-child){padding-bottom:54px}}
