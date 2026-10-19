@@ -2033,24 +2033,28 @@
   .sec.svc .cdots{margin-top:8px}
   .sec.svc .rule{margin-block:10px}
 
-  /* the hero sits straight under the frozen bar, so it needs the same
-     rounded top the other panels have */
-  .hero{border-radius:26px 26px 0 0}
 
-  /* Academy: the banner is the tall element. Cap it against the screen
-     so the band and the trial button come with it. */
+  /* The banner is left at its natural size: capping it letterboxed the
+     artwork and cost more than the screenful was worth. This section runs
+     past one screen, and that is the right trade here. */
   .cawbanner{margin:4px 0 22px}
-  .cawbanner img{max-height:calc(var(--fit) - 290px);width:100%;
-    object-fit:contain;object-position:center}
-  .cawband{padding:18px 0;margin:0 0 22px}
-  .cawcta{margin:0}
+  .cawband{padding:20px 0;margin:0}
 
-  /* proximity, never mandatory: a section that still overruns the screen
-     on a short laptop must stay scrollable rather than trapping the reader */
-  html{scroll-snap-type:y proximity}
-  .sec,.dual.stk,.stats{scroll-snap-align:start}
-  footer,.helpbar{scroll-snap-align:none}
+  /* No page-level scroll snapping. It was tried here and taken out: the
+     services section holds a horizontal snap track, and a vertical snap on
+     the page fought it - the cards slid under the pointer while the page
+     was settling. Scrolling is plain again. */
 }
-@media (min-width:1024px) and (prefers-reduced-motion:reduce){
-  html{scroll-snap-type:none}
+
+/* The trial button sits beside the caption rather than under it. */
+.cawband{display:flex;flex-direction:row;align-items:center;justify-content:space-between;
+  gap:28px;flex-wrap:wrap}
+.cawband .cawtext{flex:1 1 440px;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.cawband .cawtext h2,.cawband .cawtext p{margin:0}
+.cawcta{flex:0 0 auto;margin:0}
+.cawcta .btn{font-size:17px;padding:16px 34px;white-space:nowrap}
+@media(max-width:760px){
+  .cawband{flex-direction:column;align-items:flex-start;gap:20px}
+  .cawcta{width:100%}
+  .cawcta .btn{width:100%;text-align:center}
 }
