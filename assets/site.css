@@ -2083,3 +2083,78 @@
    which is often a dark band butting straight up against it */
 .sec:has(> .wrap > .secreq:last-child){padding-bottom:78px}
 @media(max-width:620px){.sec:has(> .wrap > .secreq:last-child){padding-bottom:54px}}
+
+/* =========================================================
+   Structure: what a customer can ask for, before who we are
+   ========================================================= */
+
+/* Three doors in the hero. Before this the first service-specific
+   action on the page was three and a half screens down. */
+.herodoors{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}
+.herodoors .btn{font-size:16px;padding:15px 28px;background:#fff;color:var(--navy-d);
+  border:0;box-shadow:0 12px 30px -14px rgba(0,0,0,.55)}
+.herodoors .btn:hover{background:var(--aqua);color:var(--navy-d);box-shadow:0 16px 36px -14px rgba(0,0,0,.6)}
+.herodoors .btn:nth-child(1){background:var(--aqua);color:var(--navy-d)}
+.herodoors .btn:nth-child(1):hover{background:#fff}
+.heroall{margin:16px 0 0;font-size:15.5px}
+.heroall a{color:rgba(255,255,255,.82);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.35);
+  padding-bottom:2px}
+.heroall a:hover{color:#fff;border-bottom-color:var(--aqua)}
+@media(max-width:620px){
+  .herodoors{flex-direction:column;gap:10px;margin-top:24px}
+  .herodoors .btn{width:100%;text-align:center}
+}
+
+/* The catalogue as a grid on a wide screen: twelve services readable at a
+   glance instead of one at a time behind an arrow. site.js checks the
+   computed display and stands the carousel down when this applies. */
+@media (min-width:1024px){
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;
+    overflow:visible;scroll-snap-type:none;padding:30px 0 0;margin-top:0}
+  .card{flex:none;transform:none;opacity:1;cursor:default;scroll-snap-align:none;
+    display:flex;flex-direction:column}
+  .card:hover{transform:translateY(-5px);opacity:1;box-shadow:var(--shadow-lg)}
+  .card.is-active{transform:none;box-shadow:var(--shadow)}
+  .card.is-active h3{color:var(--navy)}
+  .card p{flex:0 0 auto}
+  .card .cshot{margin-top:auto}
+  .card > a{margin-top:16px}
+  .svccar .cnav,.sec.svc .cdots{display:none}
+}
+@media (min-width:1024px) and (max-width:1320px){
+  .cards{grid-template-columns:repeat(3,1fr)}
+}
+
+/* Short notice is the promise, so the number says what it is for. */
+.util .aog{display:inline-flex;align-items:baseline;gap:10px}
+.util .aog b{font-family:"Barlow Semi Condensed";font-weight:600;font-size:12px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--sand)}
+@media(max-width:760px){.util .aog b{display:none}}
+
+/* the three doors belong on one line */
+.hero .herodoors{max-width:none}
+.herodoors .btn{font-size:15.5px;padding:14px 24px;letter-spacing:.07em}
+/* the doors sit outside the text column so three fit on one line */
+.hero .herodoors{width:max-content;max-width:100%}
+
+/* The dropdown was a flat list of three different kinds of thing: eleven
+   services, a tool, two process explainers and a platform. 'How a turnaround
+   runs' sitting between Aviation advisory and CAW Academy read as a service
+   nobody sells. The services keep the grid; the rest sit below a rule under
+   their own label. */
+.menu{display:block}
+.menu .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px}
+.menu .mmore{margin-top:9px;padding-top:9px;border-top:1px solid rgba(6,42,56,.12)}
+.mlab{display:block;padding:0 12px 5px;font-family:"Barlow Semi Condensed";
+  font-weight:600;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:#8A9BA0}
+.sheetin .sub .mlab{padding:10px 0 4px;margin-top:6px;border-top:1px solid rgba(6,42,56,.12)}
+
+/* Interior pages opened on a tall band that restated the page title and
+   then said it again in the section below. The band is now a compact
+   header, so the page starts on its content. */
+@media (min-width:1024px){
+  .hero.pagehead .wrap{padding-top:58px;padding-bottom:58px}
+}
+.hero.pagehead h1{margin-bottom:0}
+.lede-in{margin:0 0 4px}

@@ -214,11 +214,16 @@
        last one on its right. When a scroll settles we shift by exactly one set
        width — invisible, because the three sets are identical. */
     var setW=0, loop=false;
+    /* On a wide screen the twelve services are laid out as a grid - the whole
+       catalogue at a glance - and the carousel machinery stands down: no
+       clones, no dots, no arrows, no scaled active card. */
+    function isGrid(){ return getComputedStyle(st).display==='grid'; }
     function reals(){ return $$('.card',st).filter(function(c){
       return !c.classList.contains('clone') && !c.classList.contains('hide'); }); }
     function visible(){ return $$('.card',st).filter(function(c){return !c.classList.contains('hide')}); }
     function buildLoop(){
       $$('.card.clone',st).forEach(function(c){ c.parentNode.removeChild(c); });
+      if(isGrid()){ loop=false; setW=0; return; }
       var rs=reals();
       loop = rs.length>2;
       setW = 0;
@@ -248,6 +253,10 @@
       else if(x >= setW*1.5) st.scrollLeft = x - setW;
     }
     function mark(){
+      if(isGrid()){
+        $$('.card',st).forEach(function(c){ c.classList.remove('is-active'); });
+        return;
+      }
       var mid=st.getBoundingClientRect().left+st.clientWidth/2, best=null, bd=1e9;
       visible().forEach(function(c){
         var r=c.getBoundingClientRect(), d=Math.abs(r.left+r.width/2-mid);
@@ -260,16 +269,19 @@
       arrows();
     }
     function centre(c,instant){
+      if(isGrid()){ c.scrollIntoView({block:'center',behavior:instant?'auto':'smooth'}); return; }
       st.scrollTo({left:c.offsetLeft-(st.clientWidth-c.offsetWidth)/2,
                    behavior:instant?'auto':'smooth'});
     }
     function rest(instant){
+      if(isGrid()) return;
       var rs=reals(); if(!rs.length) return;
       centre(rs[0],instant);
       setTimeout(mark,instant?0:220);
     }
     function buildDots(){
       sdots.innerHTML='';
+      if(isGrid()) return;
       reals().forEach(function(c){
         var d=document.createElement('i');
         d.addEventListener('click',function(){ centre(c); });
@@ -280,12 +292,14 @@
     st.addEventListener('scroll',function(){ clearTimeout(st._t);
       st._t=setTimeout(function(){ normalise(); mark(); },60); },{passive:true});
     st.addEventListener('click',function(e){
+      if(isGrid()) return;              /* in a grid a card is not a scroll target */
       if(e.target.closest('a')) return;
       var c=e.target.closest('.card');
       if(c && st.contains(c)) centre(c);
     });
     var sprev=$('#svcPrev'), snext=$('#svcNext');
     function arrows(){
+      if(isGrid()) return;
       var vs=visible(), cur=vs.findIndex(function(c){return c.classList.contains('is-active')});
       if(loop){
         sprev.disabled=false;
@@ -300,6 +314,7 @@
       snext.setAttribute('aria-label', last?'Back to the first service':'Next service');
     }
     function move(dir){
+      if(isGrid()) return;
       var vs=visible(), cur=vs.findIndex(function(c){return c.classList.contains('is-active')});
       if(cur<0) return;
       if(loop){ var nl=vs[cur+dir]; if(nl) centre(nl); return; }
