@@ -2088,22 +2088,6 @@
    Structure: what a customer can ask for, before who we are
    ========================================================= */
 
-/* Three doors in the hero. Before this the first service-specific
-   action on the page was three and a half screens down. */
-.herodoors{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}
-.herodoors .btn{font-size:16px;padding:15px 28px;background:#fff;color:var(--navy-d);
-  border:0;box-shadow:0 12px 30px -14px rgba(0,0,0,.55)}
-.herodoors .btn:hover{background:var(--aqua);color:var(--navy-d);box-shadow:0 16px 36px -14px rgba(0,0,0,.6)}
-.herodoors .btn:nth-child(1){background:var(--aqua);color:var(--navy-d)}
-.herodoors .btn:nth-child(1):hover{background:#fff}
-.heroall{margin:16px 0 0;font-size:15.5px}
-.heroall a{color:rgba(255,255,255,.82);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.35);
-  padding-bottom:2px}
-.heroall a:hover{color:#fff;border-bottom-color:var(--aqua)}
-@media(max-width:620px){
-  .herodoors{flex-direction:column;gap:10px;margin-top:24px}
-  .herodoors .btn{width:100%;text-align:center}
-}
 
 /* The catalogue as a grid on a wide screen: twelve services readable at a
    glance instead of one at a time behind an arrow. site.js checks the
@@ -2111,14 +2095,20 @@
 @media (min-width:1024px){
   .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;
     overflow:visible;scroll-snap-type:none;padding:30px 0 0;margin-top:0}
+  /* every card the same shape: heading block, copy, then the photo and the
+     call to action pinned to a common baseline, so the row reads as a row */
+  .cards{align-items:stretch}
   .card{flex:none;transform:none;opacity:1;cursor:default;scroll-snap-align:none;
-    display:flex;flex-direction:column}
+    display:grid;grid-template-rows:auto auto 1fr auto auto;height:100%;
+    padding:26px 24px 22px}
   .card:hover{transform:translateY(-5px);opacity:1;box-shadow:var(--shadow-lg)}
   .card.is-active{transform:none;box-shadow:var(--shadow)}
   .card.is-active h3{color:var(--navy)}
-  .card p{flex:0 0 auto}
-  .card .cshot{margin-top:auto}
-  .card > a{margin-top:16px}
+  .card h3{min-height:2.3em;display:flex;align-items:flex-start;margin-bottom:10px}
+  .card p{margin:0 0 16px;align-self:start}
+  .card .cshot{align-self:end;margin:0 0 16px}
+  .card .cshot img{width:100%;height:132px;object-fit:cover;display:block}
+  .card > a{align-self:end;margin:0;min-height:3.1em;display:flex;align-items:flex-end}
   .svccar .cnav,.sec.svc .cdots{display:none}
 }
 @media (min-width:1024px) and (max-width:1320px){
@@ -2158,3 +2148,26 @@
 }
 .hero.pagehead h1{margin-bottom:0}
 .lede-in{margin:0 0 4px}
+
+/* The three doors sit in a band of their own under the banner, each taking
+   an equal third of the page the way the other full-width calls to action do. */
+.doorbar{background:linear-gradient(180deg,var(--ice) 0%,#E4EEEE 100%);
+  border-bottom:1px solid rgba(6,42,56,.08);padding:30px 0 34px}
+.doorlead{margin:0 0 16px;text-align:center;font-family:"Barlow Semi Condensed";
+  font-weight:600;font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--navy)}
+.doors{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.doors .btn{display:block;width:100%;box-sizing:border-box;text-align:center;
+  padding:19px 20px;font-size:16.5px;letter-spacing:.07em}
+.doors .btn:nth-child(2),.doors .btn:nth-child(3){background:#fff;color:var(--navy-d);
+  border:1.5px solid rgba(6,42,56,.16);box-shadow:0 10px 26px -16px rgba(6,42,56,.45)}
+.doors .btn:nth-child(2):hover,.doors .btn:nth-child(3):hover{background:var(--navy);color:#fff;
+  border-color:var(--navy)}
+.doorall{margin:16px 0 0;text-align:center;font-size:15.5px}
+.doorall a{color:var(--navy);text-decoration:none;border-bottom:1px solid rgba(11,65,82,.35);
+  padding-bottom:2px}
+.doorall a:hover{border-bottom-color:var(--gold)}
+@media(max-width:760px){
+  .doorbar{padding:24px 0 26px}
+  .doors{grid-template-columns:1fr;gap:10px}
+  .doors .btn{padding:16px 18px;font-size:16px}
+}
