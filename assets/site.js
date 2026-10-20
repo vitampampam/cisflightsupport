@@ -237,6 +237,9 @@
         [head,tail].forEach(function(frag){
           var n=c.cloneNode(true);
           n.classList.add('clone'); n.classList.remove('is-active');
+          /* the clone keeps a pointer back to the card it copies, so the
+             carousel can be put back on the same service after a rebuild */
+          n.setAttribute('data-of', c.id || '');
           n.removeAttribute('id'); n.setAttribute('aria-hidden','true');
           $$('[id]',n).forEach(function(x){ x.removeAttribute('id'); });
           $$('a',n).forEach(function(a){ a.tabIndex=-1; });
@@ -351,12 +354,37 @@
       });
     });
     tell(null);
+    /* Rebuild only when the width really changed, and come back to the card
+       the reader was on. iOS fires resize every time the browser toolbar
+       slides in or out as you scroll - the height changes, the width does
+       not - and rebuilding on that threw the carousel back to the first
+       card mid-scroll, which is the "it resets by itself" fault. */
+    var lastW = window.innerWidth, keepId = null;
     window.addEventListener('resize',function(){
+      if (window.innerWidth === lastW) return;
+      lastW = window.innerWidth;
+      /* Note the card on the FIRST resize of a burst. The new width makes
+         a different card the centred one straight away, so by the time the
+         debounce fires is-active has already moved and reading it there
+         would just confirm the drift. */
+      if (keepId === null) {
+        var keep=$('.card.is-active',st);
+        keepId = keep ? (keep.id || keep.getAttribute('data-of') || '') : '';
+      }
       clearTimeout(st._r);
       st._r=setTimeout(function(){
+        var want = keepId; keepId = null;
         buildLoop(); buildDots();
-        var rs=reals(); if(rs.length) centre(rs[0],true);
-        mark(); arrows();
+        /* next frame: the clones have just been inserted and offsetLeft is
+           still the pre-rebuild layout until the browser reflows */
+        requestAnimationFrame(function(){
+          var rs=reals();
+          var target=null;
+          if(want) rs.forEach(function(c){ if(c.id===want) target=c; });
+          if(!target) target=rs[0];
+          if(target) centre(target,true);
+          mark(); arrows();
+        });
       },180);
     });
     buildLoop();
@@ -614,4 +642,36 @@
   window.addEventListener('resize', function () {
     clearTimeout(window._fanT); window._fanT = setTimeout(fan, 150);
   });
+})();
+
+/* ---- the service photos arrive before you reach them ----
+   The carousel is a horizontal scroller, and a lazy image inside one is
+   only fetched as its card is swiped into view: every swipe showed an
+   empty box that filled a moment later, which read as the cards reloading.
+   When the section is still a screen away, the remaining card photos are
+   loaded together; the clones point at the same files and paint from cache. */
+(function () {
+  var sec = document.getElementById('services') || document.getElementById('svcTrack');
+  if (!sec) return;
+  var done = false;
+  function warm() {
+    if (done) return;
+    done = true;
+    var imgs = document.querySelectorAll('#svcTrack img[loading="lazy"]');
+    [].forEach.call(imgs, function (i) { i.loading = 'eager'; });
+  }
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      for (var i = 0; i < es.length; i++) {
+        if (es[i].isIntersecting) { warm(); io.disconnect(); return; }
+      }
+    }, { rootMargin: '900px 0px' });
+    io.observe(sec);
+  } else {
+    warm();
+  }
+  /* and if the reader never scrolls that far, warm once the page is idle,
+     so the photos are there whenever they do arrive */
+  if (window.requestIdleCallback) window.requestIdleCallback(warm, { timeout: 7000 });
+  else setTimeout(warm, 5000);
 })();

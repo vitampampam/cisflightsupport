@@ -2290,7 +2290,12 @@ input,select,textarea,button{color-scheme:light}
   .hero .heroshot{position:relative;inset:auto;width:100%;height:264px;
     border-radius:0 0 22px 22px;overflow:hidden}
   .hero .heroshot img{object-position:60% 50%}
-  .hero .heroshot:after{background:linear-gradient(180deg,rgba(14,51,68,.28) 0%,rgba(14,51,68,.06) 60%,transparent 100%)}
+  /* No mask and no wash. Both were written for the older layout where the
+     photo sat behind the words and had to be held back; in the photo-first
+     layout the picture stands on its own, and the mask - transparent at the
+     top - was letting the white hero through and fading out the aircraft. */
+  .hero .heroshot{-webkit-mask-image:none !important;mask-image:none !important}
+  .hero .heroshot:after{display:none}
   .hero .wrap{padding-top:24px;padding-bottom:18px}
   .hero h1{color:var(--navy-d)}
   /* the gradient on the emphasised words is built for a dark ground; on
@@ -2742,11 +2747,51 @@ body,p,li,dd,input,select,textarea{font-size:17px}
 /* The contact panel was designed dark and its text is still white, but the
    per-panel shading turned the panel near-white - heading, lede and the
    office details were white on white. Colour them for the panel they are
-   actually on. */
-.sec.contact h2{color:var(--navy-d)}
-.sec.contact > .wrap p{color:#3A4A50}
-.sec.contact .cinfo{border-top-color:rgba(6,42,56,.14)}
-.sec.contact .cinfo div{border-bottom-color:rgba(6,42,56,.14)}
-.sec.contact .cinfo span{color:#3A4A50}
-.sec.contact .cinfo a{color:var(--navy)}
-.sec.contact .cinfo a:hover{color:var(--navy-d)}
+   actually on.
+   Scoped to the width where that shading applies: below it the panel keeps
+   its dark gradient and its white text, and an unscoped override put dark
+   text on the dark panel - the heading came out the very colour of its own
+   background. */
+@media (min-width:1024px){
+  .sec.contact h2{color:var(--navy-d)}
+  .sec.contact > .wrap p{color:#3A4A50}
+  .sec.contact .cinfo{border-top-color:rgba(6,42,56,.14)}
+  .sec.contact .cinfo div{border-bottom-color:rgba(6,42,56,.14)}
+  .sec.contact .cinfo span{color:#3A4A50}
+  .sec.contact .cinfo a{color:var(--navy)}
+  .sec.contact .cinfo a:hover{color:var(--navy-d)}
+}
+
+/* ===== phone and tablet: the same stacked-card lap the desktop has =====
+   Most panels already lapped 30px here, but three junctions did not: the
+   ask panel sat squarely under the banner, the footer under the contact
+   panel, and a 52px seam divider held the Academy panel away from the
+   pre-buy one. Each panel that gains a lap also gains a foot at least as
+   deep, so nothing of its own lands in the covered strip. */
+@media (max-width:1023px){
+  .seam-caw{display:none}
+  .doorbar,footer{position:relative;margin-top:-30px;
+    border-radius:30px 30px 0 0}
+  .hero{padding-bottom:30px}
+  .doorbar{padding-bottom:64px}
+}
+
+/* ===== phone: the trip calculator ==================================
+   It stood 726px tall for three inputs. Each field reserved a line for the
+   resolved airport name that stays empty until you type, the swap button
+   took a grid row of its own with a gap either side, and the options stack
+   ran on a 22px gap. Tightened, and the passenger count made a proper row
+   rather than a small box floating beside its label. */
+@media(max-width:620px){
+  .te-chosen{min-height:0}
+  .te-chosen:empty,.te-pick:empty{display:none;margin:0}
+  .te-route{gap:6px}
+  .te-swap{width:42px;height:42px;font-size:19px;margin:2px auto}
+  .te-field label{margin-bottom:6px}
+  .te-field input[type=text]{height:52px}
+  .te-opts{gap:14px;margin-top:18px;padding-top:16px}
+  .te-opts > .te-inline{width:100%;margin:0}
+  .te-opts > .te-inline:has(input[type=number]){justify-content:space-between}
+  .te-opts input[type=number]{width:104px;height:46px;text-align:center}
+  .te-go{width:100%}
+}

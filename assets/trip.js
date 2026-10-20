@@ -36,9 +36,53 @@
     .catch(function () { legs = []; });
 
   /* ---------- search ---------- */
+  /* People type on a plain latin keyboard: "Chisinau" for Chişinău, "Malmo"
+     for Malmö, "Dusseldorf" for Düsseldorf. Both the query and the airport
+     fields are folded to unaccented latin before matching, so either
+     spelling finds the airport. NFD splits a letter from its accent and the
+     accent is dropped; the few letters that have no decomposition are
+     mapped by hand, since NFD leaves those exactly as they were. */
+  var FOLD = {'ø':'o','ł':'l','đ':'d','ð':'d','þ':'th','ß':'ss',
+              'æ':'ae','œ':'oe','ı':'i','ħ':'h','ŋ':'n','ŧ':'t'};
+  function fold(s) {
+    s = String(s == null ? '' : s).toLowerCase();
+    if (s.normalize) s = s.normalize('NFD').replace(/[̀-ͯ]/g, '');
+    return s.replace(/[^\u0000-\u007f]/g, function (ch) { return FOLD[ch] || ch; });
+  }
+  /* folded once per airport and kept, rather than on every keystroke */
+  function folded(a) {
+    if (!a._f) a._f = { i: fold(a.i), a: fold(a.a || ''), c: fold(a.c || ''), n: fold(a.n) };
+    return a._f;
+  }
+
+  /* Folding gets you Chisinau for Chişinău, but not Munchen for Munich -
+     that is a different name, not an accent, and the data carries only the
+     English one. These are the local names a European caller is most likely
+     to type; each is matched as a prefix, so "munch" still finds Munich. */
+  var ALIAS = {
+    munchen:'munich', wien:'vienna', praha:'prague', warszawa:'warsaw',
+    moskva:'moscow', kyiv:'kiev', lisboa:'lisbon', roma:'rome',
+    milano:'milan', napoli:'naples', firenze:'florence', torino:'turin',
+    venezia:'venice', genova:'genoa', geneve:'geneva', zuerich:'zurich',
+    kobenhavn:'copenhagen', koebenhavn:'copenhagen', goteborg:'gothenburg',
+    bruxelles:'brussels', brussel:'brussels', antwerpen:'antwerp',
+    'den haag':'the hague', beograd:'belgrade', bucuresti:'bucharest',
+    athina:'athens', sevilla:'seville', lisbona:'lisbon', koeln:'cologne',
+    nuernberg:'nuremberg', hannover:'hanover', tallinna:'tallinn',
+    riia:'riga', vilnius:'vilnius', chisinau:'chisinau'
+  };
+  function expand(q) {
+    var out = [q];
+    for (var k in ALIAS) {
+      if (k.indexOf(q) === 0 && out.indexOf(ALIAS[k]) < 0) out.push(ALIAS[k]);
+    }
+    return out;
+  }
+
   function score(a, q) {
-    var icao = a.i.toLowerCase(), iata = (a.a || '').toLowerCase();
-    var city = (a.c || '').toLowerCase(), name = a.n.toLowerCase();
+    var f = folded(a);
+    var icao = f.i, iata = f.a;
+    var city = f.c, name = f.n;
     if (icao === q || iata === q) return 0;
     if (city === q) return 1;
     if (icao.indexOf(q) === 0 || iata.indexOf(q) === 0) return 2;
@@ -50,11 +94,16 @@
   }
 
   function search(q) {
-    q = q.trim().toLowerCase();
+    q = fold(q.trim());
     if (q.length < 2) return [];
+    var qs = expand(q);
     var hits = [];
     for (var i = 0; i < airports.length; i++) {
-      var s = score(airports[i], q);
+      var s = -1;
+      for (var j = 0; j < qs.length; j++) {
+        var sj = score(airports[i], qs[j]);
+        if (sj > -1 && (s === -1 || sj < s)) s = sj;
+      }
       if (s > -1) hits.push([s - airports[i].t * 0.3, airports[i]]);
     }
     hits.sort(function (a, b) { return a[0] - b[0]; });
