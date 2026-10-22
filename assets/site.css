@@ -2828,3 +2828,29 @@ body,p,li,dd,input,select,textarea{font-size:17px}
 .sheetx:hover,.sheetx:focus-visible{background:var(--navy-d);color:#fff;
   border-color:var(--navy-d)}
 @media(max-width:620px){.sheetx{top:14px;right:16px}}
+
+/* ===== tablet: the picture, the promise and the three actions on one screen
+   The photo-first hero pushed the ask panel about 460px below the fold on
+   an iPad in portrait, so a visitor arriving to book something saw only a
+   photograph. The picture stays the first thing, but it gives up height,
+   the headline tightens, and the ask panel drops the two lines that merely
+   repeat the headline above it - "How can we help?" and "Specialist
+   aviation support..." - keeping its title and the three actions. */
+@media(min-width:621px) and (max-width:1023px){
+  .hero .heroshot{height:266px;aspect-ratio:auto;max-height:none}
+  .hero .wrap{padding-top:22px;padding-bottom:0}
+  .hero h1{font-size:clamp(30px,4.4vw,38px);line-height:1.06;margin:0 0 10px}
+  .hero p{font-size:16.5px;line-height:1.55;margin:0}
+  /* never shallower than the 30px lap, or the lede's last line goes
+     under the panel that covers it */
+  .hero{padding-bottom:30px !important}
+
+  .doorbar{padding-top:18px !important}
+  .doorcard{padding:20px 30px 22px}
+  .doorlead,.doorsub{display:none}
+  .doorhead{font-size:clamp(22px,2.9vw,27px);margin:0 0 12px}
+  .doorprime{padding:16px 22px;font-size:16px}
+  .doors{margin-top:12px}
+  .doors .btn{padding:14px 16px;font-size:15px}
+  .doorall{margin-top:14px}
+}
