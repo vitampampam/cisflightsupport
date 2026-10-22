@@ -2063,6 +2063,10 @@
 .cawcta .btn{font-size:17px;padding:16px 34px;white-space:nowrap}
 @media(max-width:760px){
   .cawband{flex-direction:column;align-items:flex-start;gap:20px}
+  /* flex-basis follows the main axis, so the 440px that sets this block's
+     WIDTH in a row became its HEIGHT once the band stacked - 440px of box
+     for 188px of text, and a long empty gap above the trial button */
+  .cawband .cawtext{flex:0 0 auto;width:100%}
   .cawcta{width:100%}
   .cawcta .btn{width:100%;text-align:center}
 }
