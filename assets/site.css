@@ -2321,7 +2321,7 @@ input,select,textarea,button{color-scheme:light}
 @media(min-width:621px) and (max-width:1023px){
   .hero .heroshot{height:auto;aspect-ratio:16 / 9;max-height:460px;
     border-radius:0 0 26px 26px}
-  .hero .heroshot img{object-position:55% 55%}
+  .hero .heroshot img{object-position:50% 85%}
   .hero .wrap{padding-top:34px;padding-bottom:26px}
 }
 
@@ -2841,21 +2841,21 @@ body,p,li,dd,input,select,textarea{font-size:17px}
    repeat the headline above it - "How can we help?" and "Specialist
    aviation support..." - keeping its title and the three actions. */
 @media(min-width:621px) and (max-width:1023px){
-  .hero .heroshot{height:266px;aspect-ratio:auto;max-height:none}
-  .hero .wrap{padding-top:22px;padding-bottom:0}
-  .hero h1{font-size:clamp(30px,4.4vw,38px);line-height:1.06;margin:0 0 10px}
+  .hero .heroshot{height:auto;aspect-ratio:16 / 9;max-height:none}
+  .hero .wrap{padding-top:16px;padding-bottom:0}
+  .hero h1{font-size:clamp(30px,4.4vw,38px);line-height:1.06;margin:0 0 8px}
   .hero p{font-size:16.5px;line-height:1.55;margin:0}
   /* never shallower than the 30px lap, or the lede's last line goes
      under the panel that covers it */
   .hero{padding-bottom:30px !important}
 
-  .doorbar{padding-top:18px !important}
-  .doorcard{padding:20px 30px 22px}
+  .doorbar{padding-top:12px !important}
+  .doorcard{padding:12px 30px 16px}
   .doorlead,.doorsub{display:none}
-  .doorhead{font-size:clamp(22px,2.9vw,27px);margin:0 0 12px}
-  .doorprime{padding:16px 22px;font-size:16px}
+  .doorhead{font-size:clamp(22px,2.9vw,27px);margin:0 0 10px}
+  .doorprime{padding:12px 22px;font-size:16px}
   .doors{margin-top:12px}
-  .doors .btn{padding:14px 16px;font-size:15px}
+  .doors .btn{padding:11px 16px;font-size:15px}
   .doorall{margin-top:14px}
 }
 
@@ -2875,4 +2875,36 @@ body,p,li,dd,input,select,textarea{font-size:17px}
      frame cannot narrow far enough to cut the nose gear again. */
   .hero > .wrap{padding-top:34px !important;padding-bottom:34px !important}
   .hero p{font-size:16.5px;line-height:1.55}
+}
+
+/* ===== tablets: the twelve service lines as a carousel ==================
+   A grid of twelve on a tablet is either two columns of very tall cards
+   or, at 1366, four columns squeezed to 208px. A rail suits a touch
+   screen better: a card and a half of the next one is visible, so it
+   reads as something to swipe, and every card keeps a comfortable width.
+   Scoped to touch pointers, so a laptop at the same width keeps the grid.
+   The script stands the carousel up on its own once this stops being a
+   grid - it decides by the computed display. */
+@media (min-width:621px) and (max-width:1366px) and (pointer:coarse){
+  .sec.svc .cards{display:flex !important;grid-template-columns:none !important;
+    gap:20px;overflow-x:auto;overflow-y:visible;
+    scroll-snap-type:x mandatory;scroll-behavior:smooth;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+    padding:28px 44px 34px;scroll-padding-left:44px;
+    margin-top:0;align-items:stretch}
+  .sec.svc .cards::-webkit-scrollbar{display:none}
+
+  .sec.svc .cards .card{flex:0 0 300px;scroll-snap-align:start;
+    opacity:1;transform:none;cursor:default;
+    /* height:100% from the grid rules makes each card size to its own
+       content on a flex rail, and the row comes out ragged. Let the
+       stretch do it, so every card matches the tallest. */
+    height:auto;align-self:stretch;
+    transition:box-shadow .3s ease,border-color .3s ease}
+  .sec.svc .cards .card.is-active{transform:none;box-shadow:var(--shadow-lg)}
+
+  /* the arrows and the dots come back - without them a rail on a tablet
+     gives no sign that there is more to the right */
+  .svccar .cnav{display:flex !important;align-items:center;justify-content:center}
+  .sec.svc .cdots{display:flex !important}
 }
