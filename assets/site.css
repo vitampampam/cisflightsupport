@@ -2673,7 +2673,11 @@ body,p,li,dd,input,select,textarea{font-size:17px}
      bottom, cutting the nose gear. Floor the hero at the height the photo
      column needs: the column is 1.12/2.12 of the measure, and at 1.6 that
      is 0.33 of it. */
-  .hero{min-height:calc(var(--w, var(--measure)) * 0.33)}
+  /* plus the foot: min-height is on the border box, so the padding that
+     the next panel laps over comes out of the photo row otherwise -
+     which is how the nose gear started being cut again on a short
+     landscape viewport */
+  .hero{min-height:calc(var(--w, var(--measure)) * 0.33 + var(--stack-lap, 0px))}
   .hero{display:grid;grid-template-columns:1.12fr 1fr;align-items:stretch;
     padding-bottom:0 !important}
   .hero .grid,.hero .blob{display:none}
@@ -2853,4 +2857,22 @@ body,p,li,dd,input,select,textarea{font-size:17px}
   .doors{margin-top:12px}
   .doors .btn{padding:14px 16px;font-size:15px}
   .doorall{margin-top:14px}
+}
+
+/* ===== short viewports at desktop widths: an iPad in landscape ==========
+   Landscape has width to spare and almost no height: the banner is fine,
+   but the ask panel's title block pushed Arrange a charter past the fold.
+   The same two lines that repeat the headline come out, which is enough
+   on its own - the banner keeps its full composition. Laptops at 900px
+   and taller are not affected. */
+@media (min-width:1024px) and (max-height:860px){
+  .doorlead,.doorsub{display:none}
+  .doorbar{padding-top:22px !important}
+  .doorcard{padding-top:22px;padding-bottom:24px}
+  .doorhead{margin-bottom:16px}
+  /* the banner gives up some of its generous inner padding too. Its own
+     min-height still holds the photo column at 1.6 or taller, so the
+     frame cannot narrow far enough to cut the nose gear again. */
+  .hero > .wrap{padding-top:34px !important;padding-bottom:34px !important}
+  .hero p{font-size:16.5px;line-height:1.55}
 }
