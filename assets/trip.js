@@ -22,49 +22,7 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     });
   }
 
-  /* Static GitHub Pages reliability:
-     The complete airport/routing/aircraft snapshot is shipped INSIDE this
-     script so a failed JSON fetch or partially updated deployment cannot
-     disable Calculate. The editable JSON source files remain in assets/data.
-     Run tools/rebuild-estimator-data.py before publishing edits to them. */
-  var goButton = $('teGo');
-  var snapshot = (typeof CIS_ESTIMATOR_EMBEDDED !== 'undefined') ? CIS_ESTIMATOR_EMBEDDED : null;
-  function activateData(d) {
-    if (!d || !Array.isArray(d.airports) || d.airports.length < 100 ||
-        !Array.isArray(d.aircraft) || !Array.isArray(d.models) ||
-        !d.routing || !Array.isArray(d.routing.bands) ||
-        !d.config || !d.config.pricing) throw new Error('Incomplete estimator reference data');
-    airports = d.airports;
-    cats = d.aircraft;
-    routing = d.routing;
-    models = d.models;
-    config = d.config;
-    legs = (d.emptyLegs && d.emptyLegs.legs) || [];
-    wire();
-    if (goButton) { goButton.disabled = false; goButton.textContent = 'Calculate'; }
-    $('teHint').textContent = 'Choose your departure and destination, then press Calculate.';
-  }
-  if (snapshot) {
-    try { activateData(snapshot); }
-    catch (e) {
-      if (window.console) console.error('Estimator bundled data error:', e);
-      if (goButton) { goButton.disabled = true; goButton.textContent = 'Unavailable'; }
-      $('teHint').textContent = 'Estimator data is invalid. Please contact us for a manual quotation.';
-    }
-  } else {
-    // Backwards-compatible fallback for deployments of older unbundled code.
-    if (goButton) { goButton.disabled = true; goButton.textContent = 'Loading airports…'; }
-    Promise.all([
-      load('assets/data/airports.json'), load('assets/data/aircraft.json'),
-      load('assets/data/routing.json'), load('assets/data/aircraft-models.json'),
-      load('assets/data/estimator-config.json'), load('assets/data/empty-legs.json').catch(function(){return {legs:[]};})
-    ]).then(function(d){activateData({airports:d[0],aircraft:d[1],routing:d[2],models:d[3],config:d[4],emptyLegs:d[5]});})
-    .catch(function(e){
-      if (goButton) { goButton.disabled = true; goButton.textContent = 'Unavailable'; }
-      $('teHint').textContent = 'Trip estimator data could not be loaded. Please contact us for a quotation.';
-      if (window.console) console.error('Estimator data loading error:',e);
-    });
-  }
+  /* Initialize after all normalizer data and handlers have been declared below. */
 
   /* ---------- search ---------- */
   /* People type on a plain latin keyboard: "Chisinau" for Chişinău, "Malmo"
@@ -534,12 +492,19 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
       calculate();
     });
     $('teSwap').addEventListener('click', function () {
-      var a = from, b = to;
-      from = b; to = a;
-      $('teFrom').value = from ? airportLabel(from) : '';
-      $('teTo').value = to ? airportLabel(to) : '';
-      $('teFromName').textContent = from ? airportDetail(from) : '';
-      $('teToName').textContent = to ? airportDetail(to) : '';
+      // Swap the visible text as well as the selected airport objects. This
+      // also works when visitors have typed airport codes without selecting
+      // an autocomplete suggestion, or only filled in one of the fields.
+      var fromText = $('teFrom').value, toText = $('teTo').value;
+      var first = from || resolveAirport(fromText);
+      var second = to || resolveAirport(toText);
+      from = second; to = first;
+      $('teFrom').value = second ? airportLabel(second) : toText;
+      $('teTo').value = first ? airportLabel(first) : fromText;
+      $('teFromName').textContent = second ? airportDetail(second) : '';
+      $('teToName').textContent = first ? airportDetail(first) : '';
+      $('teFromPick').hidden = true;
+      $('teToPick').hidden = true;
       markStale();
     });
 
@@ -556,4 +521,49 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     /* arriving with ?from=&to= is a request for the answer, so run it */
     if (from && to) calculate();
   }
+  /* All fields, aliases, normalizers and cost constants are now initialized. */
+  /* Static GitHub Pages reliability:
+     The complete airport/routing/aircraft snapshot is shipped INSIDE this
+     script so a failed JSON fetch or partially updated deployment cannot
+     disable Calculate. The editable JSON source files remain in assets/data.
+     Run tools/rebuild-estimator-data.py before publishing edits to them. */
+  var goButton = $('teGo');
+  var snapshot = (typeof CIS_ESTIMATOR_EMBEDDED !== 'undefined') ? CIS_ESTIMATOR_EMBEDDED : null;
+  function activateData(d) {
+    if (!d || !Array.isArray(d.airports) || d.airports.length < 100 ||
+        !Array.isArray(d.aircraft) || !Array.isArray(d.models) ||
+        !d.routing || !Array.isArray(d.routing.bands) ||
+        !d.config || !d.config.pricing) throw new Error('Incomplete estimator reference data');
+    airports = d.airports;
+    cats = d.aircraft;
+    routing = d.routing;
+    models = d.models;
+    config = d.config;
+    legs = (d.emptyLegs && d.emptyLegs.legs) || [];
+    wire();
+    if (goButton) { goButton.disabled = false; goButton.textContent = 'Calculate'; }
+    $('teHint').textContent = 'Choose your departure and destination, then press Calculate.';
+  }
+  if (snapshot) {
+    try { activateData(snapshot); }
+    catch (e) {
+      if (window.console) console.error('Estimator bundled data error:', e);
+      if (goButton) { goButton.disabled = true; goButton.textContent = 'Unavailable'; }
+      $('teHint').textContent = 'Estimator data is invalid. Please contact us for a manual quotation.';
+    }
+  } else {
+    // Backwards-compatible fallback for deployments of older unbundled code.
+    if (goButton) { goButton.disabled = true; goButton.textContent = 'Loading airports…'; }
+    Promise.all([
+      load('assets/data/airports.json'), load('assets/data/aircraft.json'),
+      load('assets/data/routing.json'), load('assets/data/aircraft-models.json'),
+      load('assets/data/estimator-config.json'), load('assets/data/empty-legs.json').catch(function(){return {legs:[]};})
+    ]).then(function(d){activateData({airports:d[0],aircraft:d[1],routing:d[2],models:d[3],config:d[4],emptyLegs:d[5]});})
+    .catch(function(e){
+      if (goButton) { goButton.disabled = true; goButton.textContent = 'Unavailable'; }
+      $('teHint').textContent = 'Trip estimator data could not be loaded. Please contact us for a quotation.';
+      if (window.console) console.error('Estimator data loading error:',e);
+    });
+  }
+
 })();

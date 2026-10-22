@@ -3208,3 +3208,6 @@ footer a{color:#EAE6E6}
 .te-table td:last-child span{display:block;font-size:12px;line-height:1.6;overflow-wrap:anywhere;color:#666}
 @media(max-width:780px){.te-plan-fields{grid-template-columns:1fr 1fr}}
 @media(max-width:540px){.te-plan-fields{grid-template-columns:1fr;gap:12px}}
+
+/* Keep swap direction tappable even while airport suggestions are open on iPhone. */
+.te-swap{position:relative;z-index:30}

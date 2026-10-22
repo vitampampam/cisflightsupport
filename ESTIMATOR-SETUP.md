@@ -1,3 +1,25 @@
+## Critical estimator initialization and airport-swap fix (October 22, 2026)
+
+`assets/trip.js` previously initialized the embedded airport snapshot before creating
+its airport name normalizer (`FOLD`). When visiting a pre-filled URL such as
+`trip-estimator.html?from=EHAM&to=LUKK`, initialization tried to resolve the
+selected airports while the normalizer was still undefined. The error was
+incorrectly presented as “Estimator data is invalid”; it also skipped wiring the
+swap control.
+
+**Fixed:** The airport reference snapshot is initialized only after normalizer,
+pricing constants, and all event-handler definitions are ready. The airport-swap
+button swaps the raw field text as well as the selected airport objects, even if
+a visitor has not clicked a suggestion. Deep-linked routes, empty fields,
+manual airport inputs, and return trips have regression tests.
+
+**After publishing:** Both `assets/trip.js` and `trip-estimator.html` must be
+uploaded together. The stylesheet, routing model, and airport JSON files remain
+in the package. The page uses `assets/trip.js?v=224` so iPhone Safari and
+GitHub Pages should fetch the updated script rather than a cached old version.
+If the live page still says “Unavailable,” check whether GitHub Pages has
+finished deploying the new versions.
+
 ## Reliability fix (October 22, 2026)
 
 The old estimator disabled Calculate when **any** of five JSON requests failed on GitHub Pages, but reported all failures as if the airport database was missing. This is fixed: `assets/trip.js` now includes a self-contained snapshot of the airport, aircraft, routing, pricing, and empty-leg data. It initializes immediately without `fetch` calls for those files, so transient JSON 404s, deployment mismatches or offline JSON requests do not disable the calculator. All source JSON files are still included for the admin editor.
