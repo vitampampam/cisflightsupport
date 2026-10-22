@@ -1,11 +1,367 @@
 [
-  {"id":"pc12ngx","name":"Pilatus PC-12 NGX","category":"turboprop","pax":6,"tas":290,"range":1650,"note":"Indicative planning profile, not certified performance"},
-  {"id":"phenom300e","name":"Embraer Phenom 300E","category":"light","pax":6,"tas":440,"range":2010,"note":"Indicative speed below published high-speed cruise; range conditional on payload"},
-  {"id":"cj3","name":"Cessna Citation CJ3+","category":"light","pax":6,"tas":405,"range":1850,"note":"Indicative planning profile, not certified performance"},
-  {"id":"xls","name":"Cessna Citation XLS+","category":"midsize","pax":8,"tas":425,"range":1950,"note":"Indicative planning profile, not certified performance"},
-  {"id":"challenger350","name":"Bombardier Challenger 350","category":"supermid","pax":9,"tas":455,"range":3200,"note":"Indicative planning profile, not certified performance"},
-  {"id":"challenger3500","name":"Bombardier Challenger 3500","category":"supermid","pax":9,"tas":460,"range":3400,"note":"Indicative cruise TAS; manufacturer maximum range is conditional"},
-  {"id":"longitude","name":"Cessna Citation Longitude","category":"supermid","pax":9,"tas":460,"range":3400,"note":"Indicative planning profile, not certified performance"},
-  {"id":"falcon7x","name":"Dassault Falcon 7X","category":"ulr","pax":12,"tas":460,"range":5950,"note":"Indicative cruise TAS; range is conditional on payload and reserves"},
-  {"id":"global7500","name":"Bombardier Global 7500","category":"ulr","pax":14,"tas":480,"range":7300,"note":"Indicative planning profile, not certified performance"}
+  {
+    "id": "kingair350i",
+    "name": "Beechcraft King Air 350i",
+    "category": "turboprop",
+    "pax": 8,
+    "tas": 295,
+    "range": 1800,
+    "rate_eur": 2800,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission"
+  },
+  {
+    "id": "kingair360",
+    "name": "Beechcraft King Air 360",
+    "category": "turboprop",
+    "pax": 8,
+    "tas": 300,
+    "range": 1806,
+    "rate_eur": 3000,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission"
+  },
+  {
+    "id": "pc12ngx",
+    "name": "Pilatus PC-12 NGX",
+    "category": "turboprop",
+    "pax": 6,
+    "tas": 290,
+    "range": 1650,
+    "note": "Indicative planning profile, not certified performance",
+    "rate_eur": 2400
+  },
+  {
+    "id": "cj2plus",
+    "name": "Cessna Citation CJ2+",
+    "category": "light",
+    "pax": 6,
+    "tas": 390,
+    "range": 1600,
+    "rate_eur": 3700,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission",
+    "popular_europe": true
+  },
+  {
+    "id": "cj3",
+    "name": "Cessna Citation CJ3+",
+    "category": "light",
+    "pax": 6,
+    "tas": 405,
+    "range": 1850,
+    "note": "Indicative planning profile, not certified performance",
+    "rate_eur": 3950,
+    "popular_europe": true
+  },
+  {
+    "id": "mustang",
+    "name": "Cessna Citation Mustang",
+    "category": "light",
+    "pax": 4,
+    "tas": 325,
+    "range": 1150,
+    "rate_eur": 3000,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission",
+    "popular_europe": true
+  },
+  {
+    "id": "phenom300e",
+    "name": "Embraer Phenom 300E",
+    "category": "light",
+    "pax": 6,
+    "tas": 440,
+    "range": 2010,
+    "note": "Indicative speed below published high-speed cruise; range conditional on payload",
+    "rate_eur": 4600,
+    "popular_europe": true
+  },
+  {
+    "id": "pc24",
+    "name": "Pilatus PC-24",
+    "category": "light",
+    "pax": 7,
+    "tas": 420,
+    "range": 2000,
+    "rate_eur": 4850,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission",
+    "popular_europe": true
+  },
+  {
+    "id": "cj4gen2",
+    "name": "Cessna Citation CJ4 Gen2",
+    "category": "light",
+    "pax": 7,
+    "tas": 435,
+    "range": 2165,
+    "rate_eur": 4700,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission"
+  },
+  {
+    "id": "m2gen2",
+    "name": "Cessna Citation M2 Gen2",
+    "category": "light",
+    "pax": 5,
+    "tas": 385,
+    "range": 1550,
+    "rate_eur": 3550,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission"
+  },
+  {
+    "id": "phenom100ex",
+    "name": "Embraer Phenom 100EX",
+    "category": "light",
+    "pax": 4,
+    "tas": 385,
+    "range": 1178,
+    "rate_eur": 3400,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission"
+  },
+  {
+    "id": "citationexcel",
+    "name": "Cessna Citation Excel",
+    "category": "midsize",
+    "pax": 7,
+    "tas": 400,
+    "range": 1900,
+    "rate_eur": 4900,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission",
+    "popular_europe": true
+  },
+  {
+    "id": "latitude",
+    "name": "Cessna Citation Latitude",
+    "category": "midsize",
+    "pax": 9,
+    "tas": 430,
+    "range": 2700,
+    "rate_eur": 6150,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission",
+    "popular_europe": true
+  },
+  {
+    "id": "xlsgen2",
+    "name": "Cessna Citation XLS Gen2",
+    "category": "midsize",
+    "pax": 8,
+    "tas": 425,
+    "range": 2100,
+    "rate_eur": 5550,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission",
+    "popular_europe": true
+  },
+  {
+    "id": "xls",
+    "name": "Cessna Citation XLS+",
+    "category": "midsize",
+    "pax": 8,
+    "tas": 425,
+    "range": 1950,
+    "note": "Indicative planning profile, not certified performance",
+    "rate_eur": 5350,
+    "popular_europe": true
+  },
+  {
+    "id": "learjet75",
+    "name": "Bombardier Learjet 75",
+    "category": "midsize",
+    "pax": 7,
+    "tas": 445,
+    "range": 2040,
+    "rate_eur": 5600,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission"
+  },
+  {
+    "id": "praetor500",
+    "name": "Embraer Praetor 500",
+    "category": "midsize",
+    "pax": 8,
+    "tas": 450,
+    "range": 3340,
+    "rate_eur": 6700,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission"
+  },
+  {
+    "id": "hawker900xp",
+    "name": "Hawker 900XP",
+    "category": "midsize",
+    "pax": 8,
+    "tas": 420,
+    "range": 2733,
+    "rate_eur": 5750,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission"
+  },
+  {
+    "id": "challenger300",
+    "name": "Bombardier Challenger 300",
+    "category": "supermid",
+    "pax": 9,
+    "tas": 450,
+    "range": 3100,
+    "rate_eur": 6900,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission",
+    "popular_europe": true
+  },
+  {
+    "id": "challenger350",
+    "name": "Bombardier Challenger 350",
+    "category": "supermid",
+    "pax": 9,
+    "tas": 455,
+    "range": 3200,
+    "note": "Indicative planning profile, not certified performance",
+    "rate_eur": 7400,
+    "popular_europe": true
+  },
+  {
+    "id": "challenger3500",
+    "name": "Bombardier Challenger 3500",
+    "category": "supermid",
+    "pax": 9,
+    "tas": 460,
+    "range": 3400,
+    "note": "Indicative cruise TAS; manufacturer maximum range is conditional",
+    "rate_eur": 7900,
+    "popular_europe": true
+  },
+  {
+    "id": "longitude",
+    "name": "Cessna Citation Longitude",
+    "category": "supermid",
+    "pax": 9,
+    "tas": 460,
+    "range": 3400,
+    "note": "Indicative planning profile, not certified performance",
+    "rate_eur": 8300
+  },
+  {
+    "id": "praetor600",
+    "name": "Embraer Praetor 600",
+    "category": "supermid",
+    "pax": 9,
+    "tas": 465,
+    "range": 4018,
+    "rate_eur": 8200,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission"
+  },
+  {
+    "id": "g280",
+    "name": "Gulfstream G280",
+    "category": "supermid",
+    "pax": 9,
+    "tas": 465,
+    "range": 3600,
+    "rate_eur": 7950,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission"
+  },
+  {
+    "id": "challenger650",
+    "name": "Bombardier Challenger 650",
+    "category": "heavy",
+    "pax": 12,
+    "tas": 460,
+    "range": 4000,
+    "rate_eur": 10900,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission",
+    "popular_europe": true
+  },
+  {
+    "id": "falcon2000lxs",
+    "name": "Dassault Falcon 2000LXS",
+    "category": "heavy",
+    "pax": 10,
+    "tas": 465,
+    "range": 4000,
+    "rate_eur": 10500,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission",
+    "popular_europe": true
+  },
+  {
+    "id": "falcon900lx",
+    "name": "Dassault Falcon 900LX",
+    "category": "heavy",
+    "pax": 12,
+    "tas": 455,
+    "range": 4750,
+    "rate_eur": 11300,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission"
+  },
+  {
+    "id": "legacy650e",
+    "name": "Embraer Legacy 650E",
+    "category": "heavy",
+    "pax": 12,
+    "tas": 455,
+    "range": 3900,
+    "rate_eur": 9700,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission"
+  },
+  {
+    "id": "g450",
+    "name": "Gulfstream G450",
+    "category": "heavy",
+    "pax": 12,
+    "tas": 460,
+    "range": 4350,
+    "rate_eur": 10900,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission"
+  },
+  {
+    "id": "global6000",
+    "name": "Bombardier Global 6000",
+    "category": "ulr",
+    "pax": 13,
+    "tas": 470,
+    "range": 6000,
+    "rate_eur": 14500,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission",
+    "popular_europe": true
+  },
+  {
+    "id": "global7500",
+    "name": "Bombardier Global 7500",
+    "category": "ulr",
+    "pax": 14,
+    "tas": 480,
+    "range": 7300,
+    "note": "Indicative planning profile, not certified performance",
+    "rate_eur": 18600
+  },
+  {
+    "id": "falcon7x",
+    "name": "Dassault Falcon 7X",
+    "category": "ulr",
+    "pax": 12,
+    "tas": 460,
+    "range": 5950,
+    "note": "Indicative cruise TAS; range is conditional on payload and reserves",
+    "rate_eur": 14100
+  },
+  {
+    "id": "falcon8x",
+    "name": "Dassault Falcon 8X",
+    "category": "ulr",
+    "pax": 14,
+    "tas": 475,
+    "range": 6450,
+    "rate_eur": 16500,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission"
+  },
+  {
+    "id": "g550",
+    "name": "Gulfstream G550",
+    "category": "ulr",
+    "pax": 14,
+    "tas": 470,
+    "range": 6750,
+    "rate_eur": 15300,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission"
+  },
+  {
+    "id": "g650er",
+    "name": "Gulfstream G650ER",
+    "category": "ulr",
+    "pax": 14,
+    "tas": 485,
+    "range": 7500,
+    "rate_eur": 18300,
+    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission"
+  }
 ]

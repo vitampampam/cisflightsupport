@@ -768,3 +768,146 @@
     });
   });
 })();
+
+
+/* Contact form: brand-matched accessible service selector. The existing native
+   select remains the source of truth for form submission and URL preselection. */
+(function () {
+  var fields = document.querySelectorAll('.form select#sv');
+  if (!fields.length) return;
+  Array.prototype.forEach.call(fields, function (select, instance) {
+    if (select.dataset.serviceEnhanced) return;
+    var field = select.closest('.f');
+    if (!field) return;
+    var label = field.querySelector('label[for="sv"]');
+    var shell = document.createElement('div');
+    shell.className = 'cis-service-picker';
+    select.parentNode.insertBefore(shell, select);
+    shell.appendChild(select);
+    var toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'cis-service-trigger';
+    toggle.setAttribute('aria-haspopup', 'listbox');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Service required');
+    var title = document.createElement('span');
+    title.className = 'cis-service-value';
+    var arrow = document.createElement('span');
+    arrow.className = 'cis-service-arrow';
+    arrow.setAttribute('aria-hidden', 'true');
+    toggle.appendChild(title); toggle.appendChild(arrow);
+    var popup = document.createElement('div');
+    popup.className = 'cis-service-options';
+    popup.id = 'cis-service-options-' + instance;
+    popup.setAttribute('role', 'listbox');
+    popup.setAttribute('aria-label', 'Service required');
+    popup.hidden = true;
+    toggle.setAttribute('aria-controls', popup.id);
+    shell.appendChild(toggle); shell.appendChild(popup);
+    var options = [];
+    var isOpen = false;
+    Array.prototype.forEach.call(select.options, function (option, i) {
+      var item = document.createElement('button');
+      item.type = 'button'; item.className = 'cis-service-option';
+      item.id = popup.id + '-opt-' + i;
+      item.setAttribute('role', 'option');
+      item.setAttribute('tabindex', '-1');
+      item.textContent = option.textContent;
+      item.dataset.index = String(i);
+      item.addEventListener('click', function (event) {
+        event.preventDefault(); choose(i); close(true);
+      });
+      item.addEventListener('keydown', function (event) {
+        var key = event.key;
+        if (key === 'ArrowDown' || key === 'ArrowUp') {
+          event.preventDefault();
+          focusOption((i + (key === 'ArrowDown' ? 1 : options.length - 1)) % options.length);
+        } else if (key === 'Home' || key === 'End') {
+          event.preventDefault(); focusOption(key === 'Home' ? 0 : options.length - 1);
+        } else if (key === 'Escape') {
+          event.preventDefault(); close(true);
+        } else if (key === 'Tab') {
+          close(false);
+        } else if (key === 'Enter' || key === ' ') {
+          event.preventDefault(); choose(i); close(true);
+        }
+      });
+      popup.appendChild(item); options.push(item);
+    });
+    function sync() {
+      var i = select.selectedIndex < 0 ? 0 : select.selectedIndex;
+      var text = select.options[i] ? select.options[i].textContent : 'Select a service';
+      title.textContent = text;
+      title.classList.toggle('is-placeholder', !select.value);
+      toggle.setAttribute('aria-label', 'Service required: ' + text);
+      options.forEach(function (item, j) {
+        var active = j === i;
+        item.classList.toggle('is-selected', active);
+        item.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+    }
+    function choose(i) {
+      if (select.selectedIndex !== i) {
+        select.selectedIndex = i;
+        select.dispatchEvent(new Event('input', { bubbles: true }));
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      sync();
+    }
+    function focusOption(i) {
+      if (options[i]) { options[i].focus(); options[i].scrollIntoView({ block: 'nearest' }); }
+    }
+    function open(focus) {
+      if (isOpen) return;
+      sync();
+      popup.hidden = false; isOpen = true;
+      shell.classList.add('is-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      var rect = toggle.getBoundingClientRect();
+      var height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      /* Keep the popup above the mobile fixed callbar and browser safe area. */
+      var callbar = document.querySelector('.callbar');
+      var bottomInset = callbar && getComputedStyle(callbar).position === 'fixed'
+        ? callbar.getBoundingClientRect().height : 0;
+      var below = height - rect.bottom - bottomInset;
+      var above = rect.top;
+      var upwards = below < 270 && above > below;
+      shell.classList.toggle('is-up', upwards);
+      popup.style.maxHeight = Math.max(130, Math.min(340, (upwards ? above : below) - 20)) + 'px';
+      if (focus) focusOption(Math.max(0, select.selectedIndex));
+    }
+    function close(focus) {
+      if (!isOpen) return;
+      isOpen = false; popup.hidden = true;
+      shell.classList.remove('is-open', 'is-up');
+      toggle.setAttribute('aria-expanded', 'false');
+      if (focus) toggle.focus();
+    }
+    toggle.addEventListener('click', function () {
+      if (isOpen) close(false); else open(true);
+    });
+    toggle.addEventListener('keydown', function (event) {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault(); open(true);
+      } else if (event.key === 'Escape') {
+        event.preventDefault(); close(true);
+      }
+    });
+    if (label) label.addEventListener('click', function (event) {
+      event.preventDefault(); if (isOpen) close(true); else open(true);
+    });
+    document.addEventListener('pointerdown', function (event) {
+      if (isOpen && !shell.contains(event.target)) close(false);
+    });
+    document.addEventListener('keydown', function (event) {
+      if (isOpen && event.key === 'Escape') { event.preventDefault(); close(true); }
+    });
+    select.addEventListener('change', sync);
+    window.addEventListener('resize', function () { close(false); });
+    select.dataset.serviceEnhanced = 'true';
+    select.classList.add('cis-service-native');
+    select.tabIndex = -1;
+    select.setAttribute('aria-hidden', 'true');
+    sync();
+  });
+})();

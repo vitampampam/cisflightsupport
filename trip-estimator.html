@@ -104,6 +104,17 @@
             <input type="date" id="teReturnDate">
           </label>
         </div>
+        <details class="te-aircraft-compare" id="teAircraftCompare">
+          <summary>Compare aircraft performance <span id="teCompareCount">and indicative charter rates</span></summary>
+          <p class="te-aircraft-scroll-hint">Swipe sideways for cruise speed, range and hourly rate →</p>
+          <div class="te-aircraft-scroll" role="region" aria-label="Aircraft performance comparison" tabindex="0">
+            <table class="te-aircraft-table">
+              <thead><tr><th>Aircraft model</th><th>Passengers</th><th>Planning cruise</th><th>Reference range</th><th>Est. €/flight hr</th></tr></thead>
+              <tbody id="teAircraftCompareRows"></tbody>
+            </table>
+          </div>
+          <p class="te-aircraft-disclaimer">Illustrative European charter benchmarks, not live offers. Cruise speeds are planning assumptions; reference ranges are not guaranteed nonstop capability. Fuel-stop estimates apply an additional reserve margin. Availability, payload, winds and operator pricing vary.</p>
+        </details>
         <div class="te-opts">
           <label class="te-inline"><input type="checkbox" id="teReturn"> Return trip</label>
           <label class="te-inline te-avoid-label" title="Estimate a detour around Russia, Belarus and Ukraine. This is an approximate geographic model, not live airspace data.">
@@ -202,6 +213,6 @@
 <script src="assets/request.js?v=210"></script>
 <script src="assets/fleet.js?v=207"></script>
 <script src="assets/route-model.js?v=231"></script>
-<script src="assets/trip.js?v=240"></script>
+<script src="assets/trip.js?v=242"></script>
 </body>
 </html>

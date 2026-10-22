@@ -120,3 +120,8 @@ The coverage page is hidden, not deleted (the fleet page now un-hides itself whe
 
 ## Trip estimator static-data reliability
 The calculator uses a complete generated airport/routing/aircraft data snapshot embedded in `assets/trip.js`. It does not need successful JSON fetches to enable Calculate. If you edit files in `assets/data/`, run `python3 tools/rebuild-estimator-data.py` and update the `assets/trip.js?v=` cache suffix in `trip-estimator.html` before publishing. See `ESTIMATOR-SETUP.md`.
+
+
+## Expanded aircraft model comparison (October 2026)
+
+The trip estimator offers 35 aircraft models (26 new), a collapsed performance comparison below its aircraft selector and model-specific indicative EUR/hour benchmarks. The data and sources are documented in `AIRCRAFT-DATA-SOURCES.md`. Editing `assets/data/aircraft-models.json` requires rebuilding the embedded snapshot with `python tools/rebuild-estimator-data.py` before publishing. All displayed values are estimates, not certified operational performance or confirmed charter offers.
