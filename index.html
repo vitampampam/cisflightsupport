@@ -138,10 +138,21 @@
             <p class="te-chosen" id="teToName"></p>
           </div>
         </div>
+        <div class="te-plan-fields" aria-label="Planning details">
+          <label class="te-plan-field" for="teAircraft">Aircraft model
+            <select id="teAircraft"><option value="">Compare all aircraft categories</option></select>
+          </label>
+          <label class="te-plan-field" for="teDate">Departure date (UTC)
+            <input type="date" id="teDate">
+          </label>
+          <label class="te-plan-field" id="teReturnDateWrap" for="teReturnDate" hidden>Return date (UTC)
+            <input type="date" id="teReturnDate">
+          </label>
+        </div>
         <div class="te-opts">
           <label class="te-inline"><input type="checkbox" id="teReturn"> Return trip</label>
-          <label class="te-inline" title="EU, UK and US registered aircraft cannot overfly Russia or Belarus">
-            <input type="checkbox" id="teAvoid" checked> EU/UK/US registered
+          <label class="te-inline" title="Apply an indicative detour around coarse restricted-area polygons; validate actual airspace with an operator">
+            <input type="checkbox" id="teAvoid" checked> Avoid marked areas
           </label>
           <label class="te-inline">Passengers
             <input type="number" id="tePax" min="1" max="16" value="4" inputmode="numeric">
@@ -163,10 +174,12 @@
         </div>
 
         <p class="te-ext" id="teExt"></p>
+        <p class="te-weather" id="teWeather" aria-live="polite"></p>
+        <p class="te-pricing" id="tePricing" aria-live="polite"></p>
 
         <table class="te-table">
           <thead>
-            <tr><th>Aircraft category</th><th>Block time</th><th>Stops</th><th>Indicative cost</th></tr>
+            <tr><th>Aircraft category</th><th>Block time</th><th>Stops</th><th id="teCostHeading">Indicative cost</th></tr>
           </thead>
           <tbody id="teRows"></tbody>
         </table>
@@ -178,11 +191,13 @@
           airport and handling fees, crew duty limits and the ferry legs to and from you.
         </p>
         <p class="te-note">
-          Distances are estimated track miles, not a filed flight plan: great circle plus a routing
-          allowance that is largest on short sectors, plus departure and arrival track miles. Block time
-          assumes no wind. Hourly rates are category averages for the European ad-hoc charter market;
-          one-way trips include an allowance for positioning. Categories in grey cannot make the sector
-          without more stops than are sensible, or cannot seat the party.
+          <b>Advisory estimates only, not a flight plan.</b> Airspace avoidance uses coarse geographical
+          polygons, not published airways, route availability, NOTAMs, or validated SID/STAR procedures.
+          Cruise speeds, aircraft ranges, airport/handling costs, navigation allowances, tech stops,
+          and overnight costs are approximate editable benchmarks. Wind forecasts are included only
+          when an appropriately licensed source is configured; otherwise still-air assumptions apply.
+          Only an aircraft operator or approved flight-planning provider can confirm route legality,
+          performance, schedules, charges, and charter prices.
         </p>
 
         <div class="te-cta">
@@ -542,7 +557,10 @@
 <script src="assets/site.js?v=211"></script>
 <script src="assets/request.js?v=210"></script>
 <script src="assets/fleet.js?v=207"></script>
-<script src="assets/trip.js?v=207"></script>
+<!-- Both the homepage widget and the standalone estimator use the same route model and calculator. -->
+<!-- calculator-compatible-homepage-v231 -->
+<script src="assets/route-model.js?v=231"></script>
+<script src="assets/trip.js?v=231"></script>
 <script>
 /* critical: gallery controls, independent of the external bundle */
 (function(){

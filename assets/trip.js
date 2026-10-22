@@ -549,7 +549,7 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     catch (e) {
       if (window.console) console.error('Estimator bundled data error:', e);
       if (goButton) { goButton.disabled = true; goButton.textContent = 'Unavailable'; }
-      $('teHint').textContent = 'Estimator data is invalid. Please contact us for a manual quotation.';
+      $('teHint').textContent = 'The calculator could not start. Please refresh this page. If the issue continues, contact us for a quotation.';
     }
   } else {
     // Backwards-compatible fallback for deployments of older unbundled code.

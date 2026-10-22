@@ -1,3 +1,29 @@
+## Homepage calculator repair — October 22, 2026
+
+ROOT CAUSE: `index.html` was still using the old calculator markup and loaded
+`assets/trip.js?v=207` without `assets/route-model.js`. The newer trip.js
+requires `#teAircraft`, `#teDate`, `#teReturnDate`, `#teWeather`,
+`#tePricing`, and `#teCostHeading`. On the homepage `wire()` threw a
+`Cannot read properties of null (reading addEventListener)` exception;
+the generic error handler incorrectly displayed “Estimator data is invalid.”
+This happened even with the From and To fields empty and prevented the swap
+listener being registered.
+
+FIXED:
+- Homepage and standalone estimator now use identical calculator form markup.
+- Homepage loads route-model.js before trip.js.
+- Both HTML pages use ?v=231 on calculator scripts, to bust stale Safari caches.
+- A startup failure is not mislabeled as corrupt airport data.
+- Regressions now include homepage and standalone widget, empty inputs,
+  manually typed airport codes, Calculate, swap, one-way and return.
+
+TO DEPLOY: Upload the complete ZIP contents to the site root, including
+`assets/`. Alternatively replace only these four files, keeping paths:
+`index.html`, `trip-estimator.html`, `assets/trip.js`, and
+`assets/route-model.js`. Ensure the homepage HTML contains
+`calculator-compatible-homepage-v231`. GitHub Pages publication/cache may
+take time; force-reload Safari if you still see the old button.
+
 ## Critical estimator initialization and airport-swap fix (October 22, 2026)
 
 `assets/trip.js` previously initialized the embedded airport snapshot before creating
