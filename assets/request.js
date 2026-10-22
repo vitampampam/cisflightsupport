@@ -114,17 +114,51 @@
     wrap.querySelector('.rq-err').hidden = true;
     lastFocus = document.activeElement;
     wrap.hidden = false;
+    syncViewport();
     document.body.style.overflow = 'hidden';
     wrap.querySelector('.rq-body').scrollTop = 0;
+    /* On touch phones an automatic focus summons the iOS keyboard and can
+       scroll the fixed dialog off-screen before the visitor reads the title.
+       Only auto-focus when there is room for a desktop/tablet dialog. */
     var first = formEl.querySelector('input,select,textarea');
-    if (first) setTimeout(function () { first.focus(); }, 40);
+    if (first && window.matchMedia('(min-width:721px) and (pointer:fine)').matches) {
+      setTimeout(function () { if (!wrap.hidden) first.focus({ preventScroll: true }); }, 40);
+    }
     return true;
   }
 
+  /* Safari's on-screen keyboard shrinks the visual viewport without always
+     resizing CSS viewport units. Follow its visible region while the dialog
+     is open, so the submit/cancel controls are never stranded behind it. */
+  function syncViewport() {
+    var vv = window.visualViewport;
+    if (!wrap.hidden && vv && window.matchMedia('(max-width:720px)').matches) {
+      wrap.style.top = vv.offsetTop + 'px';
+      wrap.style.left = vv.offsetLeft + 'px';
+      wrap.style.width = vv.width + 'px';
+      wrap.style.height = vv.height + 'px';
+      wrap.style.bottom = 'auto';
+      wrap.style.right = 'auto';
+    } else {
+      wrap.style.top = '';
+      wrap.style.left = '';
+      wrap.style.width = '';
+      wrap.style.height = '';
+      wrap.style.bottom = '';
+      wrap.style.right = '';
+    }
+  }
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', syncViewport);
+    window.visualViewport.addEventListener('scroll', syncViewport);
+  }
+  window.addEventListener('resize', syncViewport);
+
   function close() {
     wrap.hidden = true;
+    syncViewport();
     document.body.style.overflow = '';
-    if (lastFocus) lastFocus.focus();
+    if (lastFocus) lastFocus.focus({ preventScroll: true });
   }
 
   /* ---------- field markup ---------- */
