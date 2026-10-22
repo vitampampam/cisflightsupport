@@ -2931,3 +2931,11 @@ body,p,li,dd,input,select,textarea{font-size:17px}
 @media (min-width:1024px) and (min-height:900px){
   .hero > .wrap{padding-top:72px !important;padding-bottom:72px !important}
 }
+
+/* Safari drops the label of a button that sits inside a backdrop-filtered
+   sticky header while the page scrolls under it - the pill still paints,
+   the words do not. The filter re-rasterises its backdrop root as the
+   content moves and the text goes with it. Giving these two their own
+   compositing layer takes them out of that root, so they paint on their
+   own and the label stays put. */
+header .nav .btn,header .burger{transform:translateZ(0)}
