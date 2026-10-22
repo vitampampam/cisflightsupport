@@ -385,10 +385,15 @@
         --shadow:0 14px 40px rgba(6,42,56,.10);--shadow-lg:0 24px 60px rgba(6,42,56,.18)}
 
   /* header as glass, shrinks on scroll */
-  header{background:rgba(255,255,255,.72);backdrop-filter:blur(20px) saturate(180%);
-    -webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid rgba(6,42,56,.10);
+  /* No backdrop filter on the sticky header. WebKit re-rasterises a
+     filter's backdrop root as content scrolls under it, and the label of
+     the filled pill inside it kept vanishing - worst where the darkest,
+     most layered panels pass behind, approaching the footer. The header
+     is opaque instead: at rest nothing sits under it, so this looks the
+     same, and once stuck it reads as a solid bar rather than frosted. */
+  header{background:#fff;border-bottom:1px solid rgba(6,42,56,.10);
     box-shadow:none;transition:box-shadow .3s ease,background .3s ease}
-  header.stuck{box-shadow:0 8px 30px rgba(6,42,56,.10);background:rgba(255,255,255,.86)}
+  header.stuck{box-shadow:0 8px 30px rgba(6,42,56,.10);background:#fff}
   .bar{transition:height .3s ease}
   header.stuck .bar{height:66px}
   .nav a{border-radius:999px;transition:background .25s,color .25s,border-color .25s}
@@ -399,8 +404,7 @@
   /* The panel opens over the hero photo. At .86 the picture came through
      enough to grey out the labels, so the glass is nearly solid now and the
      text carries a little more weight; the blur still does the rest. */
-  .menu{border-radius:16px;border-top-width:1px;background:rgba(255,255,255,.985);
-    backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
+  .menu{border-radius:16px;border-top-width:1px;background:#fff;
     border-color:rgba(6,42,56,.14);
     box-shadow:0 26px 60px -20px rgba(6,42,56,.38),0 2px 8px rgba(6,42,56,.10)}
   .menu a{border-radius:10px;font-weight:500;color:var(--navy-d)}
