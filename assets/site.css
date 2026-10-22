@@ -3224,6 +3224,10 @@ footer a{color:#EAE6E6}
  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='m3.5 6 4.5 4.5L12.5 6' stroke='%23836D51' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
  background-position:right 18px center;background-repeat:no-repeat;background-size:16px}
 .te-model-control{position:relative;min-width:0}
+.te-plan-fields{position:relative;z-index:6;overflow:visible}
+.te-plan-field{position:relative;z-index:1}
+.te-model-control.is-open,.te-plan-field.is-open{z-index:220}
+.te-aircraft-compare,.te-opts,.te-empty,.te-out,.te-legs{position:relative;z-index:1}
 .te-model-control.te-custom-ready select{display:none}
 .te-model-trigger{width:100%;min-height:54px;padding:13px 20px 13px 18px;
  display:flex;align-items:center;justify-content:space-between;gap:15px;text-align:left;

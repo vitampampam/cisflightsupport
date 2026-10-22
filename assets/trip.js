@@ -520,6 +520,8 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
       list.hidden = true;
       trigger.setAttribute('aria-expanded','false');
       control.classList.remove('te-model-up');
+      control.classList.remove('is-open');
+      control.parentElement && control.parentElement.classList.remove('is-open');
       if(focusBack)trigger.focus();
     }
     function focusIndex(i) {
@@ -535,6 +537,8 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
         trigger.getBoundingClientRect().top>330);
       list.hidden=false;
       trigger.setAttribute('aria-expanded','true');
+      control.classList.add('is-open');
+      control.parentElement && control.parentElement.classList.add('is-open');
       focusIndex(selectedIndex());
     }
     function choose(i) {
