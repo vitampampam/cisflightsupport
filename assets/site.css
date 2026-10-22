@@ -2303,7 +2303,10 @@ input,select,textarea,button{color-scheme:light}
      light it reads as nothing, so it takes the brand blue instead */
   .hero h1 .grad{background:none;-webkit-background-clip:border-box;
     background-clip:border-box;color:var(--navy);-webkit-text-fill-color:var(--navy)}
-  .hero p{color:#55707A}
+  /* the same serif caption as the tablet - the photo-first layout reads
+     as one thing across phone and tablet */
+  .hero p{font-family:"Source Serif 4",Georgia,serif;font-size:17px;
+    line-height:1.6;color:#4A5560}
   .hero .col{max-width:none}
   /* the counters go back to light ground with the rest */
   .hero .herostats{border-top:1px solid var(--line)}
@@ -2851,10 +2854,13 @@ body,p,li,dd,input,select,textarea{font-size:17px}
   .hero .col h1{margin:0}
   .hero .col p{margin:0;padding-top:4px}
   .hero h1{font-size:clamp(30px,4.4vw,38px);line-height:1.06;margin:0 0 8px}
-  .hero p{font-size:16.5px;line-height:1.55;margin:0}
-  /* never shallower than the 30px lap, or the lede's last line goes
-     under the panel that covers it */
-  .hero{padding-bottom:30px !important}
+  .hero p{font-family:"Source Serif 4",Georgia,serif;font-size:17.5px;
+    line-height:1.62;letter-spacing:.002em;color:#4A5560;margin:0}
+  /* the lap is 30px, so a 30px foot put the caption's last line exactly
+     on the panel's top edge - no overlap in Chromium, but Safari wraps a
+     line wider and tipped it underneath. The foot carries the lap plus a
+     clear gap. */
+  .hero{padding-bottom:58px !important}
 
   .doorbar{padding-top:12px !important}
   .doorcard{padding:12px 30px 16px}
