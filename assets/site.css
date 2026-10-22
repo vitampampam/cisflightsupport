@@ -3254,7 +3254,10 @@ footer a{color:#EAE6E6}
 .te-dist-compact span{font-family:'Inter',Arial,sans-serif;letter-spacing:0;text-transform:none}
 .te-dist-compact .te-subdistance{display:block;margin-top:6px;color:#777;font:400 13px/1.5 'Inter',Arial,sans-serif}
 .te-dist-compact .te-subdistance span{display:inline;font:inherit;color:inherit}
-.te-customer-note{text-align:center;margin:18px auto 12px;color:#575458;font:400 14px/1.6 'Inter',Arial,sans-serif;max-width:68ch}
+/* Let the customer estimate notice use the full available width.
+   One line on desktop, natural wrapping on smaller screens. */
+.te-customer-note{text-align:center;margin:18px auto 12px;color:#575458;
+  font:400 14px/1.6 'Inter',Arial,sans-serif;max-width:none}
 .te-method{border-top:1px solid #E4E0E0;border-bottom:1px solid #E4E0E0;margin-top:22px}
 .te-method summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;
  gap:15px;padding:17px 8px;color:#303033;font:600 14px/1.4 'Montserrat',Arial,sans-serif}
