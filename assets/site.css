@@ -3191,3 +3191,10 @@ footer a{color:#EAE6E6}
     backdrop-filter:none;
   }
 }
+
+/* Trip estimator: cost scope and model transparency, all viewport sizes. */
+.te-pricing{font-family:"Inter",Arial,sans-serif;font-size:14.5px;line-height:1.65;
+  color:#303033;background:#F7F5F5;border:1px solid #DDDCDC;border-radius:12px;
+  padding:14px 18px;margin:0 2px 18px}
+.te-table td:nth-child(4) span{font-size:12.5px;color:#777;line-height:1.45}
+@media(max-width:760px){.te-pricing{font-size:14px;padding:12px 14px}}

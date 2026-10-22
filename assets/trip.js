@@ -8,6 +8,7 @@
   var R_NM = 3440.065;                 // earth radius in nautical miles
   var airports = null, cats = null, legs = null;
   var from = null, to = null;
+  var fields = {};
 
   /* ---------- data ---------- */
   function load(url) {
@@ -17,6 +18,8 @@
     });
   }
 
+  var goButton = $('teGo');
+  if (goButton) { goButton.disabled = true; goButton.textContent = 'Loading airports…'; }
   Promise.all([
     load('assets/data/airports.json'),
     load('assets/data/aircraft.json'),
@@ -26,7 +29,9 @@
     cats = d[1];
     routing = d[2];
     wire();
+    if (goButton) { goButton.disabled = false; goButton.textContent = 'Calculate'; }
   }).catch(function (e) {
+    if (goButton) goButton.textContent = 'Unavailable';
     $('teHint').textContent = 'The airport list could not be loaded. Please send us the route instead and we will work it out.';
     if (window.console) console.error(e);
   });
@@ -110,8 +115,38 @@
     return hits.slice(0, 8).map(function (h) { return h[1]; });
   }
 
-  function label(a) {
-    return a.i + (a.a ? ' / ' + a.a : '') + ' — ' + (a.c ? a.c + ', ' : '') + a.n;
+  /* Keep city and ICAO in the input itself, rather than showing a bare
+     code that visitors may not recognize. The airport and IATA stay below. */
+  function airportLabel(a) {
+    return (a.c || a.n) + ' (' + a.i + ')';
+  }
+
+  function airportDetail(a) {
+    return a.n + (a.a ? ' · ' + a.a : '');
+  }
+
+  /* The previous calculator only accepted a click on an autocomplete row.
+     Typing a valid city (Amsterdam) or code (LUKK) and pressing Calculate
+     left from/to null, making the calculator appear broken. Resolve exact
+     unique city/name matches and ICAO/IATA codes automatically. Never
+     guess a city with multiple airports, e.g. London. */
+  function resolveAirport(value) {
+    if (!airports) return null;
+    var raw = String(value || '').trim();
+    if (!raw) return null;
+    var selectedFormat = raw.match(/\(([A-Za-z0-9]{3,4})\)\s*$/);
+    var q = fold(selectedFormat ? selectedFormat[1] : raw);
+    var exactCode = airports.filter(function (a) {
+      var f = folded(a);
+      return f.i === q || (f.a && f.a === q);
+    });
+    if (exactCode.length === 1) return exactCode[0];
+    if (selectedFormat) return null;
+    var exactPlace = airports.filter(function (a) {
+      var f = folded(a);
+      return f.c === q || f.n === q;
+    });
+    return exactPlace.length === 1 ? exactPlace[0] : null;
   }
 
   /* ---------- geometry ---------- */
@@ -192,17 +227,22 @@
   }
 
   /* great circle -> planned track miles */
-  function trackMiles(nm, blocks) {
+  /* These additions are heuristic, NOT measured ATS airway or published
+     SID/STAR route distances. No licensed AIRAC route data is available. */
+  function routeEstimate(nm, blocks) {
     var f = bandFactor(nm);
     blocks.forEach(function (r) { f = Math.max(f, r.factor); });
     var term = routing ? routing.terminal_nm : 25;
     var cap = routing && routing.terminal_cap ? routing.terminal_cap : 0.18;
-    return nm * f + Math.min(term, nm * cap);
+    var terminal = Math.min(term, nm * cap);
+    var enroute = nm * (f - 1);
+    return {greatCircle: nm, enroute: enroute, terminal: terminal,
+            track: nm + enroute + terminal};
   }
 
   var USABLE = 0.88;      // of normal range, planned (reserves, winds, payload)
   var TAXI_H = 0.25;      // taxi out + in
-  var TERMINAL_H = 0.15;  // climb and descent inefficiency vs cruise TAS
+  var TERMINAL_H = 0.25;  // 15 min extra for climb/descent vs constant cruise TAS
   var STOP_H = 1.0;       // descent, turn, climb for a tech stop
   var STOP_FEE = 2500;    // landing, handling and fuel uplift at a tech stop
 
@@ -239,6 +279,9 @@
   }
 
   function calculate() {
+    /* Resolve a city or code typed directly, even without opening the list. */
+    if (fields.from) fields.from.resolve();
+    if (fields.to) fields.to.resolve();
     var out = $('teOut'), note = $('teNote');
     if (out) out.classList.remove('te-stale');
     if (note) note.hidden = true;
@@ -249,6 +292,7 @@
     var out = $('teOut'), hint = $('teHint');
     if (!from || !to) {
       out.hidden = true; hint.hidden = false;
+      $('teLegs').hidden = true;
       /* Reset the wording. Typing over a chosen airport clears the choice
          but used to leave whatever the hint last said on screen - so after
          EGLL to EGLL, typing LFPB and pressing Calculate still read
@@ -256,12 +300,14 @@
          codes on screen plainly differed. */
       var typed = ($('teFrom').value.trim() && !from) || ($('teTo').value.trim() && !to);
       hint.textContent = typed
-        ? 'Pick the airport from the list so we use the right one.'
+        ? 'Please choose ' + ((!from && $('teFrom').value.trim()) ? 'the departure airport' : 'the destination airport') +
+          ' from the suggestions. City names with multiple airports need a specific selection.'
         : 'Pick a departure and a destination, then press Calculate.';
       return;
     }
     if (from.i === to.i) {
       out.hidden = true; hint.hidden = false;
+      $('teLegs').hidden = true;
       hint.textContent = 'Departure and destination are the same airport.';
       return;
     }
@@ -271,6 +317,7 @@
     var pax = parseInt(paxRaw, 10);
     if (paxRaw !== '' && (!/^\d+$/.test(paxRaw) || pax < 1)) {
       out.hidden = true; hint.hidden = false;
+      $('teLegs').hidden = true;
       hint.textContent = 'Passengers has to be a whole number, one or more.';
       return;
     }
@@ -280,7 +327,8 @@
 
     var nm = distanceNm(from, to);                 // great circle
     var blocks = crossings(from, to);              // closed airspace on the direct path
-    var track = trackMiles(nm, blocks);            // planned track miles
+    var route = routeEstimate(nm, blocks);         // heuristic, not charted route
+    var track = route.track;                       // estimated track miles
     var ret = $('teReturn').checked;
     var shown = ret ? track * 2 : track;
 
@@ -290,24 +338,32 @@
     $('teNm').textContent = Math.round(shown).toLocaleString('en-GB');
     $('teKm').textContent = Math.round(shown * 1.852).toLocaleString('en-GB');
 
-    var pct = Math.round((track / nm - 1) * 100);
-    var ext = 'Great circle ' + Math.round(nm).toLocaleString('en-GB') +
-              ' nm' + (ret ? ' each way' : '') +
-              ' — about ' + pct + '% is added for airways, SIDs and STARs';
+    var ext = 'Estimated distance' + (ret ? ' per direction' : '') + ': ' +
+      Math.round(nm).toLocaleString('en-GB') + ' nm great circle + ' +
+      Math.round(route.enroute).toLocaleString('en-GB') + ' nm general routing allowance + ' +
+      Math.round(route.terminal).toLocaleString('en-GB') + ' nm terminal allowance. ' +
+      'These are approximate allowances, NOT distances from air-navigation charts, ' +
+      'published SID/STAR procedures, a validated airway route or live ATC restrictions.';
     if (blocks.length) {
-      ext += ', and for routing around ' +
-             blocks.map(function (r) { return r.name; }).join(' and ');
+      ext += ' A simplified additional detour factor was applied for possible ' +
+             'routing around ' + blocks.map(function (r) { return r.name; }).join(' and ') +
+             '; it is not a verified available route.';
     }
-    ext += '.';
     var ep = endpointBlocks(from, to);
     if (ep.length) {
-      ext += ' Note: an EU, UK or US registered aircraft cannot operate to or from ' +
+      ext += ' Route/registry eligibility at ' +
              ep.map(function (r) { return r.name; }).join(' or ') +
-             ' — this sector would need an operator from another registry.';
+             ' needs operator review before a trip can be quoted.';
     }
     $('teExt').textContent = ext;
+    $('teCostHeading').textContent = ret ? 'Total return-trip cost' : 'One-way total cost';
+    $('tePricing').textContent = ret
+      ? 'Return trip = two passenger flights, outbound and back. The totals below include two sector flight times and their technical stops, with no separate positioning allowance. A return usually costs MORE in total than a single one-way flight, but can cost LESS per passenger flight. Aircraft waiting time, overnight stays and additional positioning are not modeled.'
+      : 'One way = one passenger flight. The indicative price includes an assumed 0.8 h aircraft positioning allowance, which may be much higher or lower in a real quote. Block time excludes this positioning.';
 
     var rows = cats.map(function (c) {
+      /* For a return, estimate two passenger sectors, not one.
+         Rates are category-level benchmarks, NOT a quoted tail number. */
       var e = estimate(c, track, !ret);
       var hrs = ret ? e.hours * 2 : e.hours;
       var cost = ret ? e.cost * 2 : e.cost;
@@ -318,10 +374,12 @@
                : tight ? 'too many passengers'
                : (e.stops ? e.stops + (e.stops > 1 ? ' fuel stops' : ' fuel stop') : 'non-stop');
       return '<tr' + cls + '>' +
-        '<td><b>' + c.name + '</b><span>' + c.examples + ' · ' + c.pax + ' pax</span></td>' +
+        '<td><b>' + c.name + '</b><span>' + c.examples + ' · ' + c.pax + ' pax</span>' +
+          '<span>' + c.tas + ' kt cruise TAS · €' + c.rate.toLocaleString('en-GB') + '/block h</span></td>' +
         '<td>' + hhmm(hrs) + '</td>' +
         '<td>' + note + '</td>' +
-        '<td>' + ((!e.viable || tight) ? '—' : money(cost)) + '</td>' +
+        '<td>' + ((!e.viable || tight) ? '—' : money(cost) +
+          (ret ? '<span>Two sectors · approx. ' + money(cost / 2) + '/sector</span>' : '')) + '</td>' +
         '</tr>';
     }).join('');
     $('teRows').innerHTML = rows;
@@ -386,18 +444,26 @@
       if (!list.length) { close(); return; }
       pick.innerHTML = list.map(function (a, n) {
         return '<button type="button" role="option" data-n="' + n + '">' +
-          '<b>' + a.i + '</b> ' + (a.c ? a.c + ', ' : '') + a.n +
+          '<b>' + airportLabel(a) + '</b> — ' + a.n +
           (a.a ? '<i>' + a.a + '</i>' : '') + '</button>';
       }).join('');
       pick.hidden = false;
     }
 
     function choose(a) {
+      if (!a) return;
       set(a);
-      input.value = a.i;
-      name.textContent = (a.c ? a.c + ', ' : '') + a.n;
+      input.value = airportLabel(a);
+      name.textContent = airportDetail(a);
       close();
       markStale();
+    }
+
+    function resolve() {
+      if (!input.value.trim()) return;
+      var match = resolveAirport(input.value);
+      if (match) choose(match);
+      else open(search(input.value)); // let the visitor pick an ambiguous airport
     }
 
     input.addEventListener('input', function () {
@@ -405,6 +471,19 @@
       open(search(input.value));
       markStale();
     });
+    /* On leaving a field, normalize a valid city or code to City (ICAO),
+       even if the visitor never selected an autocomplete suggestion. */
+    input.addEventListener('change', function () {
+      var match = resolveAirport(input.value);
+      if (match) choose(match);
+    });
+    /* Reopen suggestions when returning to an unresolved field; otherwise
+       a Calculate click on an ambiguous city could leave them dismissed. */
+    function reopenPicker() {
+      if (!resolveAirport(input.value)) open(search(input.value));
+    }
+    input.addEventListener('focus', reopenPicker);
+    input.addEventListener('click', reopenPicker);
     input.addEventListener('keydown', function (e) {
       if (pick.hidden) return;
       var btns = pick.querySelectorAll('button');
@@ -416,7 +495,7 @@
         btns.forEach(function (b, n) { b.classList.toggle('on', n === idx); });
       } else if (e.key === 'Enter') {
         e.preventDefault();
-        choose(items[idx > -1 ? idx : 0]);
+        choose(idx > -1 ? items[idx] : (resolveAirport(input.value) || items[0]));
       } else if (e.key === 'Escape') { close(); }
     });
     pick.addEventListener('click', function (e) {
@@ -426,11 +505,12 @@
     document.addEventListener('click', function (e) {
       if (!pick.contains(e.target) && e.target !== input) close();
     });
+    return {resolve: resolve};
   }
 
   function wire() {
-    attach('teFrom', 'teFromPick', 'teFromName', function (a) { from = a; });
-    attach('teTo', 'teToPick', 'teToName', function (a) { to = a; });
+    fields.from = attach('teFrom', 'teFromPick', 'teFromName', function (a) { from = a; });
+    fields.to = attach('teTo', 'teToPick', 'teToName', function (a) { to = a; });
     $('teGo').addEventListener('click', calculate);
     $('teReturn').addEventListener('change', markStale);
     $('teAvoid').addEventListener('change', markStale);
@@ -448,10 +528,10 @@
     $('teSwap').addEventListener('click', function () {
       var a = from, b = to;
       from = b; to = a;
-      $('teFrom').value = from ? from.i : '';
-      $('teTo').value = to ? to.i : '';
-      $('teFromName').textContent = from ? (from.c ? from.c + ', ' : '') + from.n : '';
-      $('teToName').textContent = to ? (to.c ? to.c + ', ' : '') + to.n : '';
+      $('teFrom').value = from ? airportLabel(from) : '';
+      $('teTo').value = to ? airportLabel(to) : '';
+      $('teFromName').textContent = from ? airportDetail(from) : '';
+      $('teToName').textContent = to ? airportDetail(to) : '';
       markStale();
     });
 
@@ -462,8 +542,8 @@
       if (!v) return;
       var hit = airports.filter(function (a) { return a.i === v || a.a === v; })[0];
       if (!hit) return;
-      if (k === 'from') { from = hit; $('teFrom').value = hit.i; $('teFromName').textContent = (hit.c ? hit.c + ', ' : '') + hit.n; }
-      else { to = hit; $('teTo').value = hit.i; $('teToName').textContent = (hit.c ? hit.c + ', ' : '') + hit.n; }
+      if (k === 'from') { from = hit; $('teFrom').value = airportLabel(hit); $('teFromName').textContent = airportDetail(hit); }
+      else { to = hit; $('teTo').value = airportLabel(hit); $('teToName').textContent = airportDetail(hit); }
     });
     /* arriving with ?from=&to= is a request for the answer, so run it */
     if (from && to) calculate();

@@ -61,16 +61,33 @@ The site appears at `https://vitampampam.github.io/cisflightsupport/`.
   `{"from":"EDMA","to":"OMDB","date":"2026-11-04","category":"supermid","seats":8,"price_eur":19500}`
   With an empty list the panel tells the visitor nothing is listed and invites their dates.
 
-Model:
-- Track miles = great circle x a distance-banded factor (12% under 200 nm down to 2.5%
-  over 4,000 nm) + up to 25 nm for SID/STAR track miles, capped at 18% of the sector.
-- Routes crossing Russia, Belarus or Ukraine take that country's detour factor instead,
-  unless the trip starts or ends there — then the tool says an EU/UK/US registered
-  aircraft cannot operate there at all.
-- Planned range = 88% of normal range. Block time = track / TAS + 15 min climb and
-  descent + 15 min taxi + 1 h per fuel stop.
-- Cost = (block hours + 0.8 h positioning on one-ways) x rate + EUR 2,500 per tech stop,
-  shown as a band of +/-15%. It is an estimate, not a quotation, and the page says so.
+Model and limitations (reviewed October 2026):
+- Airport coordinates from the static airport list -> great-circle distance using haversine.
+- Planned track = great-circle * distance-band factor (approx. 1.025-1.12, or a simplified
+  polygon-based detour factor) + up to 25 nm terminal allowance (max 18% of sector).
+  **This is NOT charted IFR navigation or actual SID/STAR geometry.** It does not consume
+  aeronautical charts, AIRAC nav databases, EUROCONTROL RAD/IFPS route validation,
+  live NOTAMs, wind forecasts, or aircraft performance charts. The simplified polygons
+  are not an authoritative source for current airspace restrictions.
+- Range allowance = 88% of nominal category range; technical stops =
+  max(0, ceil(track / (range * 0.88)) - 1). Categories needing >2 stops are filtered.
+- Block hours for each passenger sector = track / category TAS + **0.25 hours (15 minutes)**
+  climb/descent + **0.25 hours (15 minutes)** taxi + 1 hour per fuel stop.
+  (Previous code used 0.15 hours for climb/descent, accidentally 9 minutes.)
+- One-way indicative cost = (block hours + 0.8 hours assumed positioning) * category
+  hourly rate + €2,500 per technical stop. The positioning allowance is fictional
+  until a specific aircraft and its actual base are known.
+- Return indicative cost = **two passenger sectors**, each with that block time and
+  fuel-stop fee, without the assumed one-way positioning allowance. Return total
+  normally exceeds one-way total, although its price per passenger sector can be lower.
+  Aircraft waiting/overnight or extra ferry legs are not modeled, and real operators
+  may calculate very different return prices depending on dates.
+- Displayed costs have an illustrative ±15% band; this is NOT a reliable confidence
+  interval or a price quote. Category rates/speeds/ranges editable in `admin.html`.
+- To provide real aeronautical route mileage and SID/STAR modeling: integrate an
+  authorised, date-specific AIRAC-aware flight-planning/route provider and aircraft
+  performance data through a server-side integration; validate routes with qualified
+  operators. Do not substitute generic track allowances for operational planning.
 
 ## Per-service request forms
 

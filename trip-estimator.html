@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=211">
+<link rel="stylesheet" href="assets/site.css?v=213">
 </head>
 <body>
 <div class="progress" id="progress" aria-hidden="true"></div>
@@ -110,10 +110,11 @@
         </div>
 
         <p class="te-ext" id="teExt"></p>
+        <p class="te-pricing" id="tePricing" aria-live="polite"></p>
 
         <table class="te-table">
           <thead>
-            <tr><th>Aircraft category</th><th>Block time</th><th>Stops</th><th>Indicative cost</th></tr>
+            <tr><th>Aircraft category</th><th>Block time</th><th>Stops</th><th id="teCostHeading">Indicative cost</th></tr>
           </thead>
           <tbody id="teRows"></tbody>
         </table>
@@ -125,11 +126,16 @@
           airport and handling fees, crew duty limits and the ferry legs to and from you.
         </p>
         <p class="te-note">
-          Distances are estimated track miles, not a filed flight plan: great circle plus a routing
-          allowance that is largest on short sectors, plus departure and arrival track miles. Block time
-          assumes no wind. Hourly rates are category averages for the European ad-hoc charter market;
-          one-way trips include an allowance for positioning. Categories in grey cannot make the sector
-          without more stops than are sensible, or cannot seat the party.
+          Not a navigation or flight-planning service. The route distance starts with airport-to-airport
+          great-circle distance and adds generic allowances for en-route and terminal travel. Actual
+          navigation charts, airways, SIDs, STARs, ATC restrictions, winds and filed flight paths are NOT
+          used. Aircraft speeds and ranges are broad category averages; time assumes no wind and includes
+          15 minutes for taxi and 15 minutes for climb/descent, plus an hour per estimated fuel stop.
+          Indicative prices use the editable category hourly rates and €2,500 per technical stop. One-way
+          prices assume 0.8 hours positioning; return prices count two passenger sectors but not aircraft
+          waiting, overnight stays or extra positioning. Category prices and a ±15% displayed band are
+          illustrative, not guaranteed; actual charter prices can vary substantially. Rows in gray may
+          be unsuitable for the distance or passenger count.
         </p>
 
         <div class="te-cta">
@@ -187,6 +193,6 @@
 <script src="assets/site.js?v=211"></script>
 <script src="assets/request.js?v=210"></script>
 <script src="assets/fleet.js?v=207"></script>
-<script src="assets/trip.js?v=207"></script>
+<script src="assets/trip.js?v=213"></script>
 </body>
 </html>
