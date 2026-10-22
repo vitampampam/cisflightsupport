@@ -953,5 +953,56 @@
         "ph": "Airport and dates, aircraft type or registration"
       }
     ]
+  },
+  "general": {
+    "title": "Send an enquiry",
+    "intro": "Tell us what you need and we will come back with what we can cover, what it costs and what we need from you.",
+    "fields": [
+      {
+        "k": "service",
+        "label": "Which service",
+        "t": "select",
+        "opts": [
+          "Not sure yet",
+          "Ground handling",
+          "Passenger services",
+          "Crew support",
+          "VIP lounge and meet-and-greet",
+          "Catering",
+          "Flight dispatch, slots and permits",
+          "Charter organisation",
+          "Maintenance consultancy",
+          "Pre-buy inspection",
+          "Buying or selling an aircraft",
+          "Aviation advisory",
+          "CAW Academy training"
+        ]
+      },
+      {
+        "k": "where",
+        "label": "Airport or station",
+        "t": "text",
+        "ph": "ICAO or city, if it applies"
+      },
+      {
+        "k": "when",
+        "label": "Dates",
+        "t": "text",
+        "ph": "Or how soon you need it"
+      },
+      {
+        "k": "aircraft",
+        "label": "Aircraft type and registration",
+        "t": "text",
+        "ph": "Falcon 7X, D-ABCD"
+      },
+      {
+        "k": "detail",
+        "label": "What do you need from us",
+        "t": "textarea",
+        "req": true,
+        "ph": "As much or as little as you have"
+      }
+    ]
   }
 }
