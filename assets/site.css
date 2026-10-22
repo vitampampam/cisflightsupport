@@ -3026,3 +3026,21 @@ footer a{color:#EAE6E6}
 :focus-visible{outline-color:#B00016}
 /* Keep the CAW Academy's own distinctive artwork and identity colors. */
 @media(max-width:640px){.hero h1{font-size:clamp(38px,9vw,49px)}.sec h2{font-size:clamp(32px,8vw,42px)}}
+
+
+/* iPad navigation + homepage intro refinements (2026-10-22)
+   Visual-only changes: keep menu links, content, grid and scripts intact. */
+@media (min-width:641px) and (max-width:1180px){
+  /* Bring the first menu link closer to the top without crowding the close control. */
+  .sheetin{padding-top:70px}
+  /* The Services link and the first subsection both drew a horizontal rule. */
+  .sheetin > a[href$="#services"]{border-bottom:0}
+  .sheetin .sub .mlab:first-child{border-top:0;margin-top:0;padding-top:4px}
+}
+/* Increase the homepage hero description only; mobile stays as it was. */
+@media (min-width:641px) and (max-width:1180px){
+  .hero:not(.pagehead) .col > p{font-size:19.5px;line-height:1.55}
+}
+@media (min-width:1181px){
+  .hero:not(.pagehead) .col > p{font-size:20px;line-height:1.55}
+}
