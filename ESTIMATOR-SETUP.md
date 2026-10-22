@@ -1,3 +1,13 @@
+## Reliability fix (October 22, 2026)
+
+The old estimator disabled Calculate when **any** of five JSON requests failed on GitHub Pages, but reported all failures as if the airport database was missing. This is fixed: `assets/trip.js` now includes a self-contained snapshot of the airport, aircraft, routing, pricing, and empty-leg data. It initializes immediately without `fetch` calls for those files, so transient JSON 404s, deployment mismatches or offline JSON requests do not disable the calculator. All source JSON files are still included for the admin editor.
+
+**When updating aircraft rates, airport data, routing settings, models, or empty legs:** run `python3 tools/rebuild-estimator-data.py` before uploading. This regenerates the bundled snapshot in `assets/trip.js`. If the bundle is not rebuilt, the public calculator will continue using the previous snapshot, even if the JSON data files change. Bump the `?v=` cache suffix of `assets/trip.js` in `trip-estimator.html` after an update.
+
+For reliable GitHub Pages deployment, upload the **entire** ZIP contents preserving the `assets/` subfolders. Do not upload the ZIP itself as a file in the repository. This is a reliability fix, not a live-route or EUROCONTROL connection.
+
+---
+
 # CIS Flight Support — enhanced public trip estimator
 
 Updated October 2026. This is a **commercial-enquiry estimator**, not a dispatch-grade flight planner or an EUROCONTROL NM connection. The website remains static and works on GitHub Pages with no backend; the wind integration is **optional** and requires licensed credentials and separate hosting.

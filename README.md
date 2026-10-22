@@ -116,3 +116,7 @@ available to pick in the editor.
 The coverage page is hidden, not deleted (the fleet page now un-hides itself when a listing is published): links carry `class="temp-off"`,
 `fleet.html` and `coverage.html` carry a `noindex` meta. To restore, delete the `.temp-off` rule at the end of
 `assets/site.css` and that meta tag.
+
+
+## Trip estimator static-data reliability
+The calculator uses a complete generated airport/routing/aircraft data snapshot embedded in `assets/trip.js`. It does not need successful JSON fetches to enable Calculate. If you edit files in `assets/data/`, run `python3 tools/rebuild-estimator-data.py` and update the `assets/trip.js?v=` cache suffix in `trip-estimator.html` before publishing. See `ESTIMATOR-SETUP.md`.
