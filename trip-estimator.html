@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=240">
+<link rel="stylesheet" href="assets/site.css?v=241">
 </head>
 <body>
 <div class="progress" id="progress" aria-hidden="true"></div>
@@ -106,8 +106,9 @@
         </div>
         <div class="te-opts">
           <label class="te-inline"><input type="checkbox" id="teReturn"> Return trip</label>
-          <label class="te-inline" title="Apply an indicative detour around coarse restricted-area polygons; validate actual airspace with an operator">
-            <input type="checkbox" id="teAvoid" checked> Avoid marked areas
+          <label class="te-inline te-avoid-label" title="Estimate a detour around Russia, Belarus and Ukraine. This is an approximate geographic model, not live airspace data.">
+            <input type="checkbox" id="teAvoid" checked aria-label="Avoid Russia, Belarus and Ukraine when estimating the route">
+            <span>Avoid Russia, Belarus &amp; Ukraine</span>
           </label>
           <label class="te-inline">Passengers
             <input type="number" id="tePax" min="1" max="16" value="4" inputmode="numeric">
