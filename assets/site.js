@@ -133,7 +133,8 @@
 
   /* cards rise into place as they enter; the one behind eases back slightly */
   (function(){
-    if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if(matchMedia('(prefers-reduced-motion: reduce)').matches ||
+       matchMedia('(max-width:1023px) and (pointer:coarse)').matches) return;
     var stack=[].slice.call(document.querySelectorAll('.sec, .dual'));
     if(!stack.length) return;
     stack.forEach(function(s){ s.classList.add('stk'); });
@@ -227,7 +228,13 @@
     function visible(){ return $$('.card',st).filter(function(c){return !c.classList.contains('hide')}); }
     function buildLoop(){
       $$('.card.clone',st).forEach(function(c){ c.parentNode.removeChild(c); });
-      if(isGrid()){ loop=false; setW=0; return; }
+      /* On touch screens the 3× loop duplicates all twelve photos and causes
+         expensive image repaint/eviction on iOS when the browser chrome moves.
+         Use one persistent set: swipe, arrows, dots and wrap-to-first remain. */
+      if(isGrid() || (window.matchMedia &&
+          window.matchMedia('(pointer:coarse) and (max-width:1366px)').matches)){
+        loop=false; setW=0; return;
+      }
       var rs=reals();
       loop = rs.length>2;
       setW = 0;
@@ -657,36 +664,18 @@
   });
 })();
 
-/* ---- the service photos arrive before you reach them ----
-   The carousel is a horizontal scroller, and a lazy image inside one is
-   only fetched as its card is swiped into view: every swipe showed an
-   empty box that filled a moment later, which read as the cards reloading.
-   When the section is still a screen away, the remaining card photos are
-   loaded together; the clones point at the same files and paint from cache. */
+/* ---- preload service cards once, as soon as the page opens ----
+   Images are eagerly requested in the HTML (low priority after the hero),
+   and this fallback covers pages with cards created dynamically. The browser
+   manages a single resource/cache entry for each unique image URL. */
 (function () {
-  var sec = document.getElementById('services') || document.getElementById('svcTrack');
-  if (!sec) return;
-  var done = false;
-  function warm() {
-    if (done) return;
-    done = true;
-    var imgs = document.querySelectorAll('#svcTrack img[loading="lazy"]');
-    [].forEach.call(imgs, function (i) { i.loading = 'eager'; });
+  var imgs=document.querySelectorAll('#svcTrack .cshot img');
+  if(!imgs.length) return;
+  for(var i=0;i<imgs.length;i++){
+    imgs[i].loading='eager';
+    if(i>1 && !imgs[i].getAttribute('fetchpriority'))
+      imgs[i].setAttribute('fetchpriority','low');
   }
-  if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (es) {
-      for (var i = 0; i < es.length; i++) {
-        if (es[i].isIntersecting) { warm(); io.disconnect(); return; }
-      }
-    }, { rootMargin: '900px 0px' });
-    io.observe(sec);
-  } else {
-    warm();
-  }
-  /* and if the reader never scrolls that far, warm once the page is idle,
-     so the photos are there whenever they do arrive */
-  if (window.requestIdleCallback) window.requestIdleCallback(warm, { timeout: 7000 });
-  else setTimeout(warm, 5000);
 })();
 
 /* ---- the general enquiry form ----

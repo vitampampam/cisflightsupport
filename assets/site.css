@@ -3116,3 +3116,78 @@ footer a{color:#EAE6E6}
     line-height:1.3;
   }
 }
+
+
+/* ---------------------------------------------------------------
+   2026-10-22 · iPhone readability & no-repaint mobile performance.
+   Limited to small touch screens so tablet/desktop visuals stay as-is.
+   --------------------------------------------------------------- */
+@media (max-width:640px) and (pointer:coarse){
+  /* The first-class photograph remains untouched; use higher contrast on
+     the dark caption panel beneath it. */
+  .hero:not(.pagehead){
+    background:linear-gradient(118deg,#222225 0%,#2B272A 60%,#3C252C 100%);
+  }
+  .hero:not(.pagehead) h1{
+    font-family:"Cormorant Garamond",Georgia,serif;
+    font-size:clamp(37px,9.35vw,45px);
+    font-weight:600;
+    line-height:1.08;
+    letter-spacing:-.012em;
+    color:#FFF !important;
+    text-shadow:0 1px 2px rgba(0,0,0,.12);
+  }
+  .hero:not(.pagehead) h1 .grad{
+    background:none;
+    background-clip:border-box;
+    -webkit-background-clip:border-box;
+    color:#FF91A0 !important;
+    -webkit-text-fill-color:#FF91A0 !important;
+  }
+  .hero:not(.pagehead) .col > p{
+    font-family:"Inter",Arial,sans-serif;
+    font-size:17px;
+    line-height:1.58;
+    font-weight:400;
+    letter-spacing:0;
+    color:#F5F0F1 !important;
+    max-width:38ch;
+    margin-top:19px;
+    margin-bottom:0;
+  }
+  /* A final gap keeps the last sentence clear of the following overlap. */
+  .hero:not(.pagehead) > .wrap{
+    padding-bottom:calc(70px + env(safe-area-inset-bottom));
+  }
+  /* Red buttons need white labels, including after a tap/visited state. */
+  .callbar .p,
+  .callbar .p:link,
+  .callbar .p:visited,
+  .callbar .p:hover,
+  .callbar .p:active{
+    background:#B00016;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+  }
+  /* Mobile Safari repaints large transformed sections as you scroll.
+     Do not reserve permanent compositing layers or animate cards on touch. */
+  .sec.stk,.dual.stk{
+    will-change:auto;
+    transform:none !important;
+    backface-visibility:visible;
+  }
+  .sec .rv,.sec .rv.in,.tile.rv,.person.rv{
+    opacity:1 !important;
+    transform:none !important;
+    transition:none !important;
+  }
+  #svcTrack .card .cshot img{
+    filter:none;
+  }
+  /* Frosted fixed bars can trigger additional paint every scroll frame. */
+  .callbar{
+    background:#252326;
+    -webkit-backdrop-filter:none;
+    backdrop-filter:none;
+  }
+}
