@@ -85,10 +85,21 @@
             <p class="te-chosen" id="teToName"></p>
           </div>
         </div>
+        <div class="te-plan-fields" aria-label="Planning details">
+          <label class="te-plan-field" for="teAircraft">Aircraft model
+            <select id="teAircraft"><option value="">Compare all aircraft categories</option></select>
+          </label>
+          <label class="te-plan-field" for="teDate">Departure date (UTC)
+            <input type="date" id="teDate">
+          </label>
+          <label class="te-plan-field" id="teReturnDateWrap" for="teReturnDate" hidden>Return date (UTC)
+            <input type="date" id="teReturnDate">
+          </label>
+        </div>
         <div class="te-opts">
           <label class="te-inline"><input type="checkbox" id="teReturn"> Return trip</label>
-          <label class="te-inline" title="EU, UK and US registered aircraft cannot overfly Russia or Belarus">
-            <input type="checkbox" id="teAvoid" checked> EU/UK/US registered
+          <label class="te-inline" title="Apply an indicative detour around coarse restricted-area polygons; validate actual airspace with an operator">
+            <input type="checkbox" id="teAvoid" checked> Avoid marked areas
           </label>
           <label class="te-inline">Passengers
             <input type="number" id="tePax" min="1" max="16" value="4" inputmode="numeric">
@@ -110,6 +121,7 @@
         </div>
 
         <p class="te-ext" id="teExt"></p>
+        <p class="te-weather" id="teWeather" aria-live="polite"></p>
         <p class="te-pricing" id="tePricing" aria-live="polite"></p>
 
         <table class="te-table">
@@ -126,16 +138,13 @@
           airport and handling fees, crew duty limits and the ferry legs to and from you.
         </p>
         <p class="te-note">
-          Not a navigation or flight-planning service. The route distance starts with airport-to-airport
-          great-circle distance and adds generic allowances for en-route and terminal travel. Actual
-          navigation charts, airways, SIDs, STARs, ATC restrictions, winds and filed flight paths are NOT
-          used. Aircraft speeds and ranges are broad category averages; time assumes no wind and includes
-          15 minutes for taxi and 15 minutes for climb/descent, plus an hour per estimated fuel stop.
-          Indicative prices use the editable category hourly rates and €2,500 per technical stop. One-way
-          prices assume 0.8 hours positioning; return prices count two passenger sectors but not aircraft
-          waiting, overnight stays or extra positioning. Category prices and a ±15% displayed band are
-          illustrative, not guaranteed; actual charter prices can vary substantially. Rows in gray may
-          be unsuitable for the distance or passenger count.
+          <b>Advisory estimates only, not a flight plan.</b> Airspace avoidance uses coarse geographical
+          polygons, not published airways, route availability, NOTAMs, or validated SID/STAR procedures.
+          Cruise speeds, aircraft ranges, airport/handling costs, navigation allowances, tech stops,
+          and overnight costs are approximate editable benchmarks. Wind forecasts are included only
+          when an appropriately licensed source is configured; otherwise still-air assumptions apply.
+          Only an aircraft operator or approved flight-planning provider can confirm route legality,
+          performance, schedules, charges, and charter prices.
         </p>
 
         <div class="te-cta">
@@ -193,6 +202,7 @@
 <script src="assets/site.js?v=211"></script>
 <script src="assets/request.js?v=210"></script>
 <script src="assets/fleet.js?v=207"></script>
-<script src="assets/trip.js?v=213"></script>
+<script src="assets/route-model.js?v=216"></script>
+<script src="assets/trip.js?v=216"></script>
 </body>
 </html>

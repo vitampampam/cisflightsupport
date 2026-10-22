@@ -1,0 +1,11 @@
+[
+  {"id":"pc12ngx","name":"Pilatus PC-12 NGX","category":"turboprop","pax":6,"tas":290,"range":1650,"note":"Indicative planning profile, not certified performance"},
+  {"id":"phenom300e","name":"Embraer Phenom 300E","category":"light","pax":6,"tas":440,"range":2010,"note":"Indicative speed below published high-speed cruise; range conditional on payload"},
+  {"id":"cj3","name":"Cessna Citation CJ3+","category":"light","pax":6,"tas":405,"range":1850,"note":"Indicative planning profile, not certified performance"},
+  {"id":"xls","name":"Cessna Citation XLS+","category":"midsize","pax":8,"tas":425,"range":1950,"note":"Indicative planning profile, not certified performance"},
+  {"id":"challenger350","name":"Bombardier Challenger 350","category":"supermid","pax":9,"tas":455,"range":3200,"note":"Indicative planning profile, not certified performance"},
+  {"id":"challenger3500","name":"Bombardier Challenger 3500","category":"supermid","pax":9,"tas":460,"range":3400,"note":"Indicative cruise TAS; manufacturer maximum range is conditional"},
+  {"id":"longitude","name":"Cessna Citation Longitude","category":"supermid","pax":9,"tas":460,"range":3400,"note":"Indicative planning profile, not certified performance"},
+  {"id":"falcon7x","name":"Dassault Falcon 7X","category":"ulr","pax":12,"tas":460,"range":5950,"note":"Indicative cruise TAS; range is conditional on payload and reserves"},
+  {"id":"global7500","name":"Bombardier Global 7500","category":"ulr","pax":14,"tas":480,"range":7300,"note":"Indicative planning profile, not certified performance"}
+]

@@ -1,0 +1,23 @@
+// Run with: node tests/route-model.test.cjs
+const assert=require('node:assert/strict');
+const fs=require('node:fs'), vm=require('node:vm'), path=require('node:path');
+const root=path.join(__dirname,'..');
+const context={}; vm.runInNewContext(fs.readFileSync(path.join(root,'assets/route-model.js'),'utf8'),context);
+const model=context.CisRouteModel;
+const restricted=JSON.parse(fs.readFileSync(path.join(root,'assets/data/routing.json'),'utf8')).restricted;
+const airportList=JSON.parse(fs.readFileSync(path.join(root,'assets/data/airports.json'),'utf8'));
+const a=Object.fromEntries(airportList.map(a=>[a.i,a]));
+assert(Math.abs(model.distance(a.EHAM,a.EDDF)-model.distance(a.EDDF,a.EHAM))<1e-8);
+const short=model.estimate(a.EHAM,a.EDDF,restricted);
+assert.equal(short.hit.length,0);assert.equal(short.detour,0);
+const ukraine=model.estimate(a.EHAM,a.LUKK,restricted);
+assert(ukraine.hit.some(x=>x.id==='UA'));
+assert(ukraine.detour>0);
+assert(ukraine.nm>=ukraine.direct);
+for(let i=1;i<ukraine.path.length;i++)assert(model.clear(ukraine.path[i-1],ukraine.path[i],restricted),'detour segment crosses a polygon');
+const russian=model.estimate(a.EHAM,a.UUEE,restricted);
+assert(russian.blocked.some(x=>x.id==='RU'));
+const eastern=model.estimate(a.EHAM,a.UACC,restricted);
+assert(!eastern.unroutable,'long-distance restricted detour should be geometrically solvable');
+assert(eastern.detour>0);
+console.log('PASS: symmetry, unimpeded geometry, Ukrainian detour, Russian endpoint handling, longer detour');

@@ -3198,3 +3198,13 @@ footer a{color:#EAE6E6}
   padding:14px 18px;margin:0 2px 18px}
 .te-table td:nth-child(4) span{font-size:12.5px;color:#777;line-height:1.45}
 @media(max-width:760px){.te-pricing{font-size:14px;padding:12px 14px}}
+
+/* Enhanced trip estimator – visual style matches the existing page. */
+.te-plan-fields{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:16px;margin:18px 0 8px}
+.te-plan-field{display:flex;flex-direction:column;gap:8px;color:#B00016;font:600 13px/1.3 "Montserrat",sans-serif;letter-spacing:.08em;text-transform:uppercase}
+.te-plan-field input,.te-plan-field select{width:100%;min-height:51px;min-width:0;padding:12px 14px;border:1px solid #D7D5D5;border-radius:12px;background:#fff;color:#323234;font:500 15px/1.4 "Inter",sans-serif;letter-spacing:normal;text-transform:none}
+.te-plan-field[hidden]{display:none!important}
+.te-weather{font-size:14px;color:#494348;border-left:3px solid #B00016;background:#FAF7F7;padding:10px 14px;margin:15px 0}
+.te-table td:last-child span{display:block;font-size:12px;line-height:1.6;overflow-wrap:anywhere;color:#666}
+@media(max-width:780px){.te-plan-fields{grid-template-columns:1fr 1fr}}
+@media(max-width:540px){.te-plan-fields{grid-template-columns:1fr;gap:12px}}

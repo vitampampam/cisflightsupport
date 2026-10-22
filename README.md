@@ -61,33 +61,20 @@ The site appears at `https://vitampampam.github.io/cisflightsupport/`.
   `{"from":"EDMA","to":"OMDB","date":"2026-11-04","category":"supermid","seats":8,"price_eur":19500}`
   With an empty list the panel tells the visitor nothing is listed and invites their dates.
 
-Model and limitations (reviewed October 2026):
-- Airport coordinates from the static airport list -> great-circle distance using haversine.
-- Planned track = great-circle * distance-band factor (approx. 1.025-1.12, or a simplified
-  polygon-based detour factor) + up to 25 nm terminal allowance (max 18% of sector).
-  **This is NOT charted IFR navigation or actual SID/STAR geometry.** It does not consume
-  aeronautical charts, AIRAC nav databases, EUROCONTROL RAD/IFPS route validation,
-  live NOTAMs, wind forecasts, or aircraft performance charts. The simplified polygons
-  are not an authoritative source for current airspace restrictions.
-- Range allowance = 88% of nominal category range; technical stops =
-  max(0, ceil(track / (range * 0.88)) - 1). Categories needing >2 stops are filtered.
-- Block hours for each passenger sector = track / category TAS + **0.25 hours (15 minutes)**
-  climb/descent + **0.25 hours (15 minutes)** taxi + 1 hour per fuel stop.
-  (Previous code used 0.15 hours for climb/descent, accidentally 9 minutes.)
-- One-way indicative cost = (block hours + 0.8 hours assumed positioning) * category
-  hourly rate + €2,500 per technical stop. The positioning allowance is fictional
-  until a specific aircraft and its actual base are known.
-- Return indicative cost = **two passenger sectors**, each with that block time and
-  fuel-stop fee, without the assumed one-way positioning allowance. Return total
-  normally exceeds one-way total, although its price per passenger sector can be lower.
-  Aircraft waiting/overnight or extra ferry legs are not modeled, and real operators
-  may calculate very different return prices depending on dates.
-- Displayed costs have an illustrative ±15% band; this is NOT a reliable confidence
-  interval or a price quote. Category rates/speeds/ranges editable in `admin.html`.
-- To provide real aeronautical route mileage and SID/STAR modeling: integrate an
-  authorised, date-specific AIRAC-aware flight-planning/route provider and aircraft
-  performance data through a server-side integration; validate routes with qualified
-  operators. Do not substitute generic track allowances for operational planning.
+### Enhanced planning model (October 2026)
+
+The estimator now additionally includes a coarse geometric restricted-area detour
+engine (`assets/route-model.js`), editable example aircraft-model profiles
+(`assets/data/aircraft-models.json`), optional travel dates, an itemized pricing
+allowance model (`assets/data/estimator-config.json`), and an optional adapter
+for licensed wind forecasts. If no weather provider is configured, figures are
+still-air estimates. Detailed integration instructions, methodology, source links
+and limitations: **[ESTIMATOR-SETUP.md](ESTIMATOR-SETUP.md)**.
+
+**Do not confuse the estimated geometry with EUROCONTROL validated routing.**
+The website still does NOT consume an AIRAC database, actual ATS airways,
+validated SID/STAR geometry, live NOTAMs, NM RAD/IFPS validation, actual operator
+quotations or verified airport charges. Geographic country polygons are simplified.
 
 ## Per-service request forms
 

@@ -1,0 +1,13 @@
+{
+  "wind_endpoint": "",
+  "wind_notice": "Wind forecast unavailable; times assume still air. See README to connect a licensed forecast provider.",
+  "pricing": {
+    "airport_handling_eur_per_sector": 1200,
+    "navigation_eur_per_100nm": 45,
+    "fuel_stop_eur": 2500,
+    "crew_overnight_eur_per_night": 1200,
+    "one_way_positioning_h": 0.8,
+    "display_variation": 0.15
+  },
+  "note": "ALL cost allowances are illustrative EUR benchmarks, not actual airport or EUROCONTROL route charges. Weather endpoint must be authorized for commercial use."
+}

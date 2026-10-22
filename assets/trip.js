@@ -6,7 +6,8 @@
 
   var $ = function (id) { return document.getElementById(id); };
   var R_NM = 3440.065;                 // earth radius in nautical miles
-  var airports = null, cats = null, legs = null;
+  var airports = null, cats = null, legs = null, models = [], config = null, routing = null;
+  var activeForecast = null, lastNotice = "";
   var from = null, to = null;
   var fields = {};
 
@@ -23,11 +24,15 @@
   Promise.all([
     load('assets/data/airports.json'),
     load('assets/data/aircraft.json'),
-    load('assets/data/routing.json')
+    load('assets/data/routing.json'),
+    load('assets/data/aircraft-models.json'),
+    load('assets/data/estimator-config.json')
   ]).then(function (d) {
     airports = d[0];
     cats = d[1];
     routing = d[2];
+    models = d[3];
+    config = d[4];
     wire();
     if (goButton) { goButton.disabled = false; goButton.textContent = 'Calculate'; }
   }).catch(function (e) {
@@ -149,111 +154,95 @@
     return exactPlace.length === 1 ? exactPlace[0] : null;
   }
 
-  /* ---------- geometry ---------- */
-  function rad(d) { return d * Math.PI / 180; }
-
-  function distanceNm(a, b) {
-    var la1 = rad(a.y), la2 = rad(b.y), dla = rad(b.y - a.y), dlo = rad(b.x - a.x);
-    var h = Math.sin(dla / 2) * Math.sin(dla / 2) +
-            Math.cos(la1) * Math.cos(la2) * Math.sin(dlo / 2) * Math.sin(dlo / 2);
-    return 2 * R_NM * Math.asin(Math.min(1, Math.sqrt(h)));
-  }
-
-
-  /* ---------- routing model ----------
-     Track miles are not great-circle miles. Extension is largest on short sectors,
-     where SIDs, STARs and radar vectors dominate, and converges towards 2-3% on
-     long ones. Closed airspace is a separate, much larger penalty: an EU, UK or
-     US registered aircraft cannot overfly Russia or Belarus, which reshapes
-     anything routing towards Central Asia. Values live in routing.json. */
-  var routing = null;
-
+  /* ---------- advisory routing ----------
+     Geometric detours avoid coarse restricted-country polygons when possible.
+     NOT an ATS airway, SID/STAR, RAD/NOTAM or AIRAC-valid route. */
   function bandFactor(nm) {
-    if (!routing) return 1.04;
     for (var i = 0; i < routing.bands.length; i++) {
       if (nm <= routing.bands[i].upto) return routing.bands[i].factor;
     }
     return 1.03;
   }
-
-  /* point in polygon, ray casting on [lat,lon] rings */
-  function inRings(rings, la, lo) {
-    for (var r = 0; r < rings.length; r++) {
-      var ring = rings[r], inside = false;
-      for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-        var yi = ring[i][0], xi = ring[i][1], yj = ring[j][0], xj = ring[j][1];
-        if ((yi > la) !== (yj > la) && lo < (xj - xi) * (la - yi) / (yj - yi) + xi) inside = !inside;
-      }
-      if (inside) return true;
+  function routeEstimate(a, b) {
+    var nm = window.CisRouteModel.distance(a,b);
+    var active = $('teAvoid').checked ? routing.restricted : [];
+    var geo = window.CisRouteModel.estimate(a,b,active);
+    if(geo.blocked || geo.unroutable)return geo;
+    /* The published SID/STAR track miles are not available. The terminal
+       and en-route allowances below remain explicitly heuristic. */
+    var terminal = Math.min(routing.terminal_nm, nm * routing.terminal_cap);
+    var enroute = geo.nm * (bandFactor(nm)-1);
+    return {greatCircle:nm, geometry:geo.nm, detour:geo.detour, hit:geo.hit,
+      enroute:enroute, terminal:terminal, track:geo.nm+enroute+terminal,
+      method:geo.method, path:geo.path};
+  }
+  function unitPax(c){return typeof c.pax === 'number' ? c.pax : parseInt(String(c.pax).split('–').pop(),10);}
+  function selectedAircraft(){
+    var id = $('teAircraft').value;
+    if(!id) return cats;
+    var m = models.filter(function(x){return x.id===id})[0];
+    if(!m)return cats;
+    var category=cats.filter(function(c){return c.id===m.category})[0];
+    if(!category)return cats;
+    return [{id:m.id,name:m.name,examples:'Specific aircraft planning profile',pax:m.pax,
+      tas:m.tas,range:m.range,rate:category.rate,cabin:m.note,category:m.category}];
+  }
+  function dateOnly(id){return ($(id).value||'').trim();}
+  function nightsAway(){
+    var first=dateOnly('teDate'),last=dateOnly('teReturnDate');
+    if(!first||!last)return 0;
+    var delta=(Date.parse(last+'T00:00:00Z')-Date.parse(first+'T00:00:00Z'))/86400000;
+    return Math.max(0,Math.min(30,Math.round(delta)));
+  }
+  function outputWind(){
+    var cfg=config||{},endpoint=String(cfg.wind_endpoint||'').trim();
+    var departure=dateOnly('teDate'),returnDate=dateOnly('teReturnDate');
+    if(!endpoint||!departure){
+      return Promise.resolve({out:0,back:0,active:false,note:cfg.wind_notice||'Still-air calculation; wind data not connected.'});
     }
-    return false;
-  }
-
-  /* which restricted countries does the direct track pass through?
-     Departing from or arriving in one is not a crossing — you are going there. */
-  function endpointBlocks(a, b) {
-    if (!routing || !$('teAvoid').checked) return [];
-    return routing.restricted.filter(function (r) {
-      return inRings(r.rings, a.y, a.x) || inRings(r.rings, b.y, b.x);
-    });
-  }
-
-  function crossings(a, b) {
-    if (!routing || !$('teAvoid').checked) return [];
-    var ends = {};
-    routing.restricted.forEach(function (r) {
-      if (inRings(r.rings, a.y, a.x) || inRings(r.rings, b.y, b.x)) ends[r.id] = true;
-    });
-
-    var hit = {}, steps = Math.max(16, Math.round(distanceNm(a, b) / 20));
-    var la1 = rad(a.y), lo1 = rad(a.x), la2 = rad(b.y), lo2 = rad(b.x);
-    var d = 2 * Math.asin(Math.sqrt(
-      Math.pow(Math.sin((la2 - la1) / 2), 2) +
-      Math.cos(la1) * Math.cos(la2) * Math.pow(Math.sin((lo2 - lo1) / 2), 2)));
-    if (!d) return [];
-    for (var s = 0; s <= steps; s++) {
-      var f = s / steps;
-      var A = Math.sin((1 - f) * d) / Math.sin(d), B = Math.sin(f * d) / Math.sin(d);
-      var x = A * Math.cos(la1) * Math.cos(lo1) + B * Math.cos(la2) * Math.cos(lo2);
-      var y = A * Math.cos(la1) * Math.sin(lo1) + B * Math.cos(la2) * Math.sin(lo2);
-      var z = A * Math.sin(la1) + B * Math.sin(la2);
-      var plat = Math.atan2(z, Math.sqrt(x * x + y * y)) * 180 / Math.PI;
-      var plon = Math.atan2(y, x) * 180 / Math.PI;
-      routing.restricted.forEach(function (r) {
-        if (!ends[r.id] && inRings(r.rings, plat, plon)) hit[r.id] = r;
-      });
-    }
-    return Object.keys(hit).map(function (k) { return hit[k]; });
-  }
-
-  /* great circle -> planned track miles */
-  /* These additions are heuristic, NOT measured ATS airway or published
-     SID/STAR route distances. No licensed AIRAC route data is available. */
-  function routeEstimate(nm, blocks) {
-    var f = bandFactor(nm);
-    blocks.forEach(function (r) { f = Math.max(f, r.factor); });
-    var term = routing ? routing.terminal_nm : 25;
-    var cap = routing && routing.terminal_cap ? routing.terminal_cap : 0.18;
-    var terminal = Math.min(term, nm * cap);
-    var enroute = nm * (f - 1);
-    return {greatCircle: nm, enroute: enroute, terminal: terminal,
-            track: nm + enroute + terminal};
+    // Only a configured, licensed endpoint is queried. Never embed API keys
+    // or use a non-commercial weather tier on this business website.
+    var params=new URLSearchParams({from:from.i,to:to.i,lat1:String(from.y),lon1:String(from.x),
+      lat2:String(to.y),lon2:String(to.x),departure:departure,return_date:returnDate||departure});
+    var url=endpoint+(endpoint.indexOf('?')>=0?'&':'?')+params.toString();
+    return Promise.race([
+      fetch(url,{credentials:'omit'}).then(function(r){if(!r.ok)throw Error('forecast not available');return r.json()}),
+      new Promise(function(_,reject){setTimeout(function(){reject(Error('wind request timed out'));},4500);})
+    ]).then(function(data){
+      var a=Number(data.outbound_tailwind_kt),b=Number(data.return_tailwind_kt);
+      if(!isFinite(a)||!isFinite(b))throw Error('invalid wind response');
+      return {out:Math.max(-130,Math.min(130,a)),back:Math.max(-130,Math.min(130,b)),
+        active:true,note:'Forecast wind component (approximate): outbound '+Math.round(a)+
+        ' kt tailwind; return '+Math.round(b)+' kt tailwind. Forecast/model: '+
+        String(data.provider||'configured provider')+'.'};
+    }).catch(function(){return {out:0,back:0,active:false,
+      note:'Wind forecast unavailable for this date or location; showing still-air estimates.'};});
   }
 
   var USABLE = 0.88;      // of normal range, planned (reserves, winds, payload)
   var TAXI_H = 0.25;      // taxi out + in
   var TERMINAL_H = 0.25;  // 15 min extra for climb/descent vs constant cruise TAS
   var STOP_H = 1.0;       // descent, turn, climb for a tech stop
-  var STOP_FEE = 2500;    // landing, handling and fuel uplift at a tech stop
-
-  function estimate(cat, track, oneWay) {
-    var usable = cat.range * USABLE;
-    var stops = Math.max(0, Math.ceil(track / usable) - 1);
-    var hours = track / cat.tas + TERMINAL_H + TAXI_H + stops * STOP_H;
-    /* one-way work still pays for the aircraft to reach you and go home again */
-    var ferry = oneWay && routing && routing.positioning_h ? routing.positioning_h : 0;
-    var cost = (hours + ferry) * cat.rate + stops * STOP_FEE;
-    return { stops: stops, hours: hours, cost: cost, viable: stops <= 2 };
+  function estimate(cat, route, wind, returnTrip) {
+    var p=config.pricing;
+    var track=route.track;
+    var stops=Math.max(0,Math.ceil(track/(cat.range*USABLE))-1);
+    function flightHours(tailwind){
+      // Tailwind speeds up flight; headwind slows it down; bound model noise.
+      var groundspeed=Math.max(cat.tas*0.65,cat.tas+tailwind);
+      return track/groundspeed+TERMINAL_H+TAXI_H+stops*STOP_H;
+    }
+    var outH=flightHours(wind.out),backH=returnTrip?flightHours(wind.back):0;
+    var hrs=outH+backH,sectors=returnTrip?2:1;
+    var pos=returnTrip?0:Number(p.one_way_positioning_h||0.8)*cat.rate;
+    var flying=hrs*cat.rate;
+    var stopsCost=stops*Number(p.fuel_stop_eur||2500)*sectors;
+    var airport=sectors*Number(p.airport_handling_eur_per_sector||0);
+    var nav=sectors*track/100*Number(p.navigation_eur_per_100nm||0);
+    var overnight=returnTrip?nightsAway()*Number(p.crew_overnight_eur_per_night||0):0;
+    return {stops:stops,hours:hrs,cost:flying+pos+stopsCost+airport+nav+overnight,
+      flying:flying,positioning:pos,stopFees:stopsCost,airport:airport,nav:nav,overnight:overnight,
+      groundspeed:cat.tas+wind.out,viable:stops<=2};
   }
 
   function hhmm(h) {
@@ -262,8 +251,9 @@
   }
 
   function money(n) {
-    var lo = Math.round(n * 0.85 / 1000) * 1000;
-    var hi = Math.round(n * 1.15 / 1000) * 1000;
+    var spread=Number((config && config.pricing && config.pricing.display_variation)||0.15);
+    var lo = Math.round(n * (1-spread) / 500) * 500;
+    var hi = Math.round(n * (1+spread) / 500) * 500;
     var f = function (v) { return '€' + v.toLocaleString('en-GB'); };
     return f(lo) + ' – ' + f(hi);
   }
@@ -285,10 +275,15 @@
     var out = $('teOut'), note = $('teNote');
     if (out) out.classList.remove('te-stale');
     if (note) note.hidden = true;
-    render();
+    if (!from || !to) { render(null); return; }
+    if (goButton) {goButton.disabled=true;goButton.textContent='Calculating…';}
+    outputWind().then(function(wind){
+      activeForecast=wind;
+      render(wind);
+    }).finally(function(){if(goButton){goButton.disabled=false;goButton.textContent='Calculate';}});
   }
 
-  function render() {
+  function render(wind) {
     var out = $('teOut'), hint = $('teHint');
     if (!from || !to) {
       out.hidden = true; hint.hidden = false;
@@ -322,91 +317,77 @@
       return;
     }
     if (!pax || pax < 1) pax = 1;
+    if ($('teReturn').checked && dateOnly('teDate') && dateOnly('teReturnDate') &&
+        dateOnly('teReturnDate') < dateOnly('teDate')) {
+      out.hidden = true; hint.hidden = false;
+      hint.textContent = 'Return date cannot be earlier than the outbound departure date.';
+      return;
+    }
 
     hint.hidden = true; out.hidden = false;
 
-    var nm = distanceNm(from, to);                 // great circle
-    var blocks = crossings(from, to);              // closed airspace on the direct path
-    var route = routeEstimate(nm, blocks);         // heuristic, not charted route
-    var track = route.track;                       // estimated track miles
-    var ret = $('teReturn').checked;
-    var shown = ret ? track * 2 : track;
-
-    /* On a return trip the block time and the cost below already count both
-       sectors, so the distance has to as well - showing a one-way figure
-       beside a return time read as a contradiction. */
-    $('teNm').textContent = Math.round(shown).toLocaleString('en-GB');
-    $('teKm').textContent = Math.round(shown * 1.852).toLocaleString('en-GB');
-
-    var ext = 'Estimated distance' + (ret ? ' per direction' : '') + ': ' +
-      Math.round(nm).toLocaleString('en-GB') + ' nm great circle + ' +
-      Math.round(route.enroute).toLocaleString('en-GB') + ' nm general routing allowance + ' +
-      Math.round(route.terminal).toLocaleString('en-GB') + ' nm terminal allowance. ' +
-      'These are approximate allowances, NOT distances from air-navigation charts, ' +
-      'published SID/STAR procedures, a validated airway route or live ATC restrictions.';
-    if (blocks.length) {
-      ext += ' A simplified additional detour factor was applied for possible ' +
-             'routing around ' + blocks.map(function (r) { return r.name; }).join(' and ') +
-             '; it is not a verified available route.';
+    var route=routeEstimate(from,to);
+    if(route.blocked||route.unroutable){
+      out.hidden=true;hint.hidden=false;$('teLegs').hidden=true;
+      hint.textContent=route.blocked
+        ? 'Origin or destination is within an airspace area marked restricted in this simplified dataset. Route eligibility requires operator review.'
+        : 'Unable to draw an indicative geometric detour around the marked restricted airspace. Please request a manually planned route.';
+      return;
     }
-    var ep = endpointBlocks(from, to);
-    if (ep.length) {
-      ext += ' Route/registry eligibility at ' +
-             ep.map(function (r) { return r.name; }).join(' or ') +
-             ' needs operator review before a trip can be quoted.';
-    }
-    $('teExt').textContent = ext;
-    $('teCostHeading').textContent = ret ? 'Total return-trip cost' : 'One-way total cost';
-    $('tePricing').textContent = ret
-      ? 'Return trip = two passenger flights, outbound and back. The totals below include two sector flight times and their technical stops, with no separate positioning allowance. A return usually costs MORE in total than a single one-way flight, but can cost LESS per passenger flight. Aircraft waiting time, overnight stays and additional positioning are not modeled.'
-      : 'One way = one passenger flight. The indicative price includes an assumed 0.8 h aircraft positioning allowance, which may be much higher or lower in a real quote. Block time excludes this positioning.';
-
-    var rows = cats.map(function (c) {
-      /* For a return, estimate two passenger sectors, not one.
-         Rates are category-level benchmarks, NOT a quoted tail number. */
-      var e = estimate(c, track, !ret);
-      var hrs = ret ? e.hours * 2 : e.hours;
-      var cost = ret ? e.cost * 2 : e.cost;
-      var seats = parseInt(String(c.pax).split('–').pop(), 10);
-      var tight = pax > seats;
-      var cls = (!e.viable || tight) ? ' class="te-no"' : '';
-      var note = !e.viable ? 'beyond sensible range'
-               : tight ? 'too many passengers'
-               : (e.stops ? e.stops + (e.stops > 1 ? ' fuel stops' : ' fuel stop') : 'non-stop');
-      return '<tr' + cls + '>' +
-        '<td><b>' + c.name + '</b><span>' + c.examples + ' · ' + c.pax + ' pax</span>' +
-          '<span>' + c.tas + ' kt cruise TAS · €' + c.rate.toLocaleString('en-GB') + '/block h</span></td>' +
-        '<td>' + hhmm(hrs) + '</td>' +
-        '<td>' + note + '</td>' +
-        '<td>' + ((!e.viable || tight) ? '—' : money(cost) +
-          (ret ? '<span>Two sectors · approx. ' + money(cost / 2) + '/sector</span>' : '')) + '</td>' +
-        '</tr>';
+    var track=route.track,ret=$('teReturn').checked,shown=ret?track*2:track;
+    $('teNm').textContent=Math.round(shown).toLocaleString('en-GB');
+    $('teKm').textContent=Math.round(shown*1.852).toLocaleString('en-GB');
+    var ext='Geodesic distance '+Math.round(route.greatCircle)+' nm; '+
+      (route.detour>1 ? 'restricted-area geometric detour +'+Math.round(route.detour)+' nm; ' : '')+
+      'en-route allowance +'+Math.round(route.enroute)+' nm; terminal/SID-STAR allowance +'+
+      Math.round(route.terminal)+' nm. '+
+      'Geometry uses coarse restricted-country polygons and a grid search, NOT published airways, actual SID/STAR tracks, NOTAMs or an approved AIRAC route.';
+    if(route.hit.length)ext+=' Simplified avoidance applied for '+route.hit.map(function(x){return x.name}).join(', ')+'.';
+    $('teExt').textContent=ext;
+    $('teCostHeading').textContent=ret?'Return-trip indicative total':'One-way indicative total';
+    var aircraft=selectedAircraft(),p=config.pricing;
+    var windData=wind||{out:0,back:0,active:false,note:'No wind forecast attached.'};
+    var days=ret?nightsAway():0;
+    $('teWeather').textContent=windData.note;
+    $('tePricing').textContent=(ret?
+      'Return estimates include outbound and inbound flight hours, two sets of handling and navigation allowances, stops in each direction, and '+days+' assumed crew overnight(s). No additional positioning is modeled for the return.' :
+      'One-way estimates include a benchmark 0.8-hour aircraft positioning allowance, plus handling and navigation allowances.')+
+      ' Amounts are assumptions, not actual airport, NM route-charge or operator tariff data.';
+    var rows=aircraft.map(function(c){
+      var e=estimate(c,route,windData,ret),tight=pax>unitPax(c);
+      var invalid=!e.viable||tight;
+      var cls=invalid?' class="te-no"':'';
+      var note=!e.viable?'beyond sensible range':tight?'too many passengers':
+        (e.stops?e.stops+(e.stops>1?' stops/sector':' stop/sector'):'non-stop');
+      var price=invalid?'—':money(e.cost);
+      var details=invalid?'':('<span>Flying €'+Math.round(e.flying).toLocaleString('en-GB')+
+        ' · Positioning €'+Math.round(e.positioning).toLocaleString('en-GB')+
+        ' · Ground €'+Math.round(e.airport).toLocaleString('en-GB')+
+        ' · Nav allowance €'+Math.round(e.nav).toLocaleString('en-GB')+
+        ' · Stops €'+Math.round(e.stopFees).toLocaleString('en-GB')+
+        (e.overnight?' · Overnight €'+Math.round(e.overnight).toLocaleString('en-GB'):'')+'</span>');
+      return '<tr'+cls+'><td><b>'+c.name+'</b><span>'+c.examples+' · '+unitPax(c)+
+        ' pax</span><span>'+c.tas+' kt cruise TAS · €'+c.rate.toLocaleString('en-GB')+
+        '/block h (planning benchmark)</span></td><td>'+hhmm(e.hours)+'</td><td>'+note+'</td><td>'+price+
+        (ret&&!invalid?'<span>Two sectors · about '+money(e.cost/2)+'/sector</span>':'')+details+'</td></tr>';
     }).join('');
-    $('teRows').innerHTML = rows;
-
-    /* duration shown as a range across the categories that can do the sector */
-    var hrsList = cats.map(function (c) {
-      var e = estimate(c, track, !ret);
-      var seats = parseInt(String(c.pax).split('\u2013').pop(), 10);
-      if (!e.viable || pax > seats) return null;
-      return ret ? e.hours * 2 : e.hours;
-    }).filter(function (v) { return v !== null; });
-
-    if (!hrsList.length) {
-      $('teDur').textContent = '—';
-    } else {
-      var lo = Math.min.apply(null, hrsList), hi = Math.max.apply(null, hrsList);
-      $('teDur').textContent = (Math.abs(hi - lo) < 0.1)
-        ? hhmm(lo)
-        : hhmm(lo) + ' – ' + hhmm(hi);
+    $('teRows').innerHTML=rows;
+    var hrsList=aircraft.map(function(c){
+      var e=estimate(c,route,windData,ret);
+      return (e.viable&&pax<=unitPax(c))?e.hours:null;
+    }).filter(function(v){return v!==null});
+    if(!hrsList.length)$('teDur').textContent='—';
+    else {
+      var lo=Math.min.apply(null,hrsList),hi=Math.max.apply(null,hrsList);
+      $('teDur').textContent=Math.abs(hi-lo)<.1?hhmm(lo):hhmm(lo)+' – '+hhmm(hi);
     }
-
-    var q = 'service=Charter organisation&msg=' + encodeURIComponent(
-      'Quote request: ' + from.i + ' (' + (from.c || from.n) + ') to ' + to.i +
-      ' (' + (to.c || to.n) + ')' + (ret ? ', return' : ', one way') +
-      ', ' + pax + ' passengers. Approximately ' + Math.round(shown) +
-      ' nm track miles. Dates and times: ');
-    $('teSend').href = 'contact.html?' + q;
+    $('teSend').href='contact.html?service=Charter organisation&msg='+encodeURIComponent(
+      'Quote request: '+from.i+' ('+(from.c||from.n)+') to '+to.i+' ('+(to.c||to.n)+')'+
+      (ret?', return':', one way')+', '+pax+' passengers; '+
+      'departure date '+(dateOnly('teDate')||'to confirm')+
+      (ret?'; return date '+(dateOnly('teReturnDate')||'to confirm'):'')+
+      '; requested aircraft '+($('teAircraft').selectedOptions[0].textContent||'compare all')+
+      '; estimated '+Math.round(shown)+' nm, non-operational routing.');
 
     showLegs();
   }
@@ -515,6 +496,12 @@
     $('teReturn').addEventListener('change', markStale);
     $('teAvoid').addEventListener('change', markStale);
     $('tePax').addEventListener('input', markStale);
+    ['teAircraft','teDate','teReturnDate'].forEach(function(id){$(id).addEventListener('change',markStale)});
+    $('teReturn').addEventListener('change',function(){
+      $('teReturnDateWrap').hidden=!$('teReturn').checked;
+    });
+    var options=models.map(function(m){return '<option value="'+m.id+'">'+m.name+'</option>'}).join('');
+    $('teAircraft').insertAdjacentHTML('beforeend',options);
     /* Enter anywhere in the form runs it, as long as a suggestion list
        is not open - there Enter still picks the highlighted airport. */
     var formEl = document.querySelector('.te-form');
