@@ -2843,6 +2843,13 @@ body,p,li,dd,input,select,textarea{font-size:17px}
 @media(min-width:621px) and (max-width:1023px){
   .hero .heroshot{height:auto;aspect-ratio:16 / 9;max-height:none}
   .hero .wrap{padding-top:16px;padding-bottom:0}
+  /* the lede moves alongside the headline rather than under it, which
+     takes a block of height out of the first screen and leaves it to the
+     actions */
+  .hero .col{display:grid;grid-template-columns:minmax(0,0.88fr) minmax(0,1.12fr);
+    gap:0 30px;align-items:start}
+  .hero .col h1{margin:0}
+  .hero .col p{margin:0;padding-top:4px}
   .hero h1{font-size:clamp(30px,4.4vw,38px);line-height:1.06;margin:0 0 8px}
   .hero p{font-size:16.5px;line-height:1.55;margin:0}
   /* never shallower than the 30px lap, or the lede's last line goes
@@ -2865,7 +2872,10 @@ body,p,li,dd,input,select,textarea{font-size:17px}
    The same two lines that repeat the headline come out, which is enough
    on its own - the banner keeps its full composition. Laptops at 900px
    and taller are not affected. */
-@media (min-width:1024px) and (max-height:860px){
+/* Touch only. A laptop window that happens to be 800px tall has room
+   for the whole thing - all three actions finish at 762 there - and
+   trimming it just left the banner small with dead space below. */
+@media (min-width:1024px) and (max-height:860px) and (pointer:coarse){
   .doorlead,.doorsub{display:none}
   .doorbar{padding-top:22px !important}
   .doorcard{padding-top:22px;padding-bottom:24px}
@@ -2907,4 +2917,11 @@ body,p,li,dd,input,select,textarea{font-size:17px}
      gives no sign that there is more to the right */
   .svccar .cnav{display:flex !important;align-items:center;justify-content:center}
   .sec.svc .cdots{display:flex !important}
+}
+
+/* On a tall desktop window the banner can afford to be more generous.
+   Held to 900px and up so a laptop window at 800 keeps all three actions
+   on screen - there they finish at 762 with the banner at its normal size. */
+@media (min-width:1024px) and (min-height:900px){
+  .hero > .wrap{padding-top:72px !important;padding-bottom:72px !important}
 }

@@ -255,9 +255,19 @@
     /* keep the scroll inside the middle set, so there is always a set either side */
     function normalise(){
       if(!loop || !setW) return;
-      var x=st.scrollLeft;
-      if(x < setW*0.5) st.scrollLeft = x + setW;
-      else if(x >= setW*1.5) st.scrollLeft = x - setW;
+      var x=st.scrollLeft, nx=null;
+      if(x < setW*0.5) nx = x + setW;
+      else if(x >= setW*1.5) nx = x - setW;
+      if(nx === null) return;
+      /* This hop puts the identical card back under the reader, so it has
+         to be invisible. The rail carries scroll-behavior:smooth, which
+         makes even a plain assignment animate - the whole set slid past
+         on its own, which is what looked like the carousel resetting. */
+      var prev = st.style.scrollBehavior;
+      st.style.scrollBehavior = 'auto';
+      st.scrollLeft = nx;
+      void st.offsetWidth;                 /* flush before restoring */
+      st.style.scrollBehavior = prev;
     }
     function mark(){
       if(isGrid()){
