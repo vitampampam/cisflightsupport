@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=225">
+<link rel="stylesheet" href="assets/site.css?v=240">
 </head>
 <body>
 <div class="progress" id="progress" aria-hidden="true"></div>
@@ -86,9 +86,17 @@
           </div>
         </div>
         <div class="te-plan-fields" aria-label="Planning details">
-          <label class="te-plan-field" for="teAircraft">Aircraft model
-            <select id="teAircraft"><option value="">Compare all aircraft categories</option></select>
-          </label>
+          <div class="te-plan-field">
+            <label for="teAircraft">Aircraft model</label>
+            <div class="te-model-control" id="teModelControl">
+              <select id="teAircraft"><option value="">Compare all aircraft categories</option></select>
+              <button class="te-model-trigger" id="teModelTrigger" type="button"
+                      aria-haspopup="listbox" aria-expanded="false" aria-controls="teModelOptions" hidden>
+                <span id="teModelValue">Compare all aircraft categories</span><span class="te-model-chevron" aria-hidden="true"></span>
+              </button>
+              <div class="te-model-list" id="teModelOptions" role="listbox" aria-label="Aircraft model" hidden></div>
+            </div>
+          </div>
           <label class="te-plan-field" for="teDate">Departure date (UTC)
             <input type="date" id="teDate">
           </label>
@@ -114,15 +122,10 @@
       <p class="te-empty" id="teHint">Pick a departure and a destination, then press Calculate.</p>
 
       <div class="te-out" id="teOut" hidden>
-        <div class="te-dist">
-          <div><b id="teNm">—</b><span>track miles (nm)</span></div>
-          <div><b id="teKm">—</b><span>kilometres</span></div>
-          <div><b id="teDur">—</b><span>trip duration</span></div>
+        <div class="te-dist te-dist-compact">
+          <div><b id="teNm">—</b><span>Estimated distance (nm)</span><small class="te-subdistance"><span id="teKm">—</span> km</small></div>
+          <div><b id="teDur">—</b><span>Estimated flight time</span></div>
         </div>
-
-        <p class="te-ext" id="teExt"></p>
-        <p class="te-weather" id="teWeather" aria-live="polite"></p>
-        <p class="te-pricing" id="tePricing" aria-live="polite"></p>
 
         <table class="te-table">
           <thead>
@@ -131,21 +134,16 @@
           <tbody id="teRows"></tbody>
         </table>
 
-        <p class="te-disc">
-          <b>This is an estimate, not a commercial offer.</b>
-          Nothing shown here is a quotation, a price promise or a booking. Real prices come from the
-          operator holding the aircraft on the day and depend on the tail, its base, the dates, slots,
-          airport and handling fees, crew duty limits and the ferry legs to and from you.
-        </p>
-        <p class="te-note">
-          <b>Advisory estimates only, not a flight plan.</b> Airspace avoidance uses coarse geographical
-          polygons, not published airways, route availability, NOTAMs, or validated SID/STAR procedures.
-          Cruise speeds, aircraft ranges, airport/handling costs, navigation allowances, tech stops,
-          and overnight costs are approximate editable benchmarks. Wind forecasts are included only
-          when an appropriately licensed source is configured; otherwise still-air assumptions apply.
-          Only an aircraft operator or approved flight-planning provider can confirm route legality,
-          performance, schedules, charges, and charter prices.
-        </p>
+        <p class="te-customer-note">Indicative estimate only. We'll confirm the route, availability and final price with an operator.</p>
+        <details class="te-method">
+          <summary>How this estimate works <span>Routing and pricing assumptions</span></summary>
+          <div class="te-method-content">
+            <p class="te-ext" id="teExt"></p>
+            <p class="te-weather" id="teWeather" aria-live="polite"></p>
+            <p class="te-pricing" id="tePricing" aria-live="polite"></p>
+            <p><strong>Not a flight plan or quotation.</strong> The route uses simplified geographic allowances, not published airways, validated SID/STAR procedures or live NOTAMs. Aircraft performance, fees, positioning and stops use planning benchmarks, not verified operator tariffs. Flight time assumes still air unless a licensed weather feed is connected. Actual flight legality, schedule, charges and availability require an operator's confirmation.</p>
+          </div>
+        </details>
 
         <div class="te-cta">
           <a class="btn" id="teSend" href="contact.html">Contact us about this trip</a>
@@ -203,6 +201,6 @@
 <script src="assets/request.js?v=210"></script>
 <script src="assets/fleet.js?v=207"></script>
 <script src="assets/route-model.js?v=231"></script>
-<script src="assets/trip.js?v=231"></script>
+<script src="assets/trip.js?v=240"></script>
 </body>
 </html>

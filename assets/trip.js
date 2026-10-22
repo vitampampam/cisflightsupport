@@ -339,16 +339,9 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
       var note=!e.viable?'beyond sensible range':tight?'too many passengers':
         (e.stops?e.stops+(e.stops>1?' stops/sector':' stop/sector'):'non-stop');
       var price=invalid?'—':money(e.cost);
-      var details=invalid?'':('<span>Flying €'+Math.round(e.flying).toLocaleString('en-GB')+
-        ' · Positioning €'+Math.round(e.positioning).toLocaleString('en-GB')+
-        ' · Ground €'+Math.round(e.airport).toLocaleString('en-GB')+
-        ' · Nav allowance €'+Math.round(e.nav).toLocaleString('en-GB')+
-        ' · Stops €'+Math.round(e.stopFees).toLocaleString('en-GB')+
-        (e.overnight?' · Overnight €'+Math.round(e.overnight).toLocaleString('en-GB'):'')+'</span>');
-      return '<tr'+cls+'><td><b>'+c.name+'</b><span>'+c.examples+' · '+unitPax(c)+
-        ' pax</span><span>'+c.tas+' kt cruise TAS · €'+c.rate.toLocaleString('en-GB')+
-        '/block h (planning benchmark)</span></td><td>'+hhmm(e.hours)+'</td><td>'+note+'</td><td>'+price+
-        (ret&&!invalid?'<span>Two sectors · about '+money(e.cost/2)+'/sector</span>':'')+details+'</td></tr>';
+      return '<tr'+cls+'><td><b>'+c.name+'</b><span>Up to '+unitPax(c)+
+        ' passengers</span></td><td>'+hhmm(e.hours)+'</td><td>'+note+'</td><td>'+price+
+        (ret&&!invalid?'<span>Approx. '+money(e.cost/2)+' per flight</span>':'')+'</td></tr>';
     }).join('');
     $('teRows').innerHTML=rows;
     var hrsList=aircraft.map(function(c){
@@ -377,12 +370,8 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     var match = legs.filter(function (l) {
       return (l.from === from.i && l.to === to.i) || (l.from === to.i && l.to === from.i);
     });
-    box.hidden = false;
-    if (!match.length) {
-      body.innerHTML = '<p class="te-note">Nothing listed on this route at the moment. ' +
-        'Empty legs appear at short notice — tell us your dates and we will watch for one.</p>';
-      return;
-    }
+    box.hidden = !match.length;
+    if (!match.length) { body.innerHTML = ''; return; }
     body.innerHTML = '<ul class="te-leglist">' + match.map(function (l) {
       var c = cats.filter(function (x) { return x.id === l.category; })[0];
       return '<li><b>' + l.from + ' → ' + l.to + '</b>' +
@@ -468,6 +457,102 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     return {resolve: resolve};
   }
 
+
+  /* Brand-consistent aircraft chooser, progressively enhanced from the native
+     select. The select remains the source of truth for pricing, requests,
+     screen readers if JS fails, and programmatic change events. */
+  function setupAircraftMenu() {
+    var select = $('teAircraft');
+    var control = $('teModelControl');
+    var trigger = $('teModelTrigger');
+    var list = $('teModelOptions');
+    var chosen = $('teModelValue');
+    if (!select || !control || !trigger || !list || !chosen) return;
+    var nodes = [];
+    var opened = false;
+    function selectedIndex() {return Math.max(0,select.selectedIndex);}
+    function paint() {
+      var index = selectedIndex();
+      chosen.textContent = select.options[index] ? select.options[index].textContent : 'Select aircraft';
+      trigger.setAttribute('aria-label','Aircraft model: '+chosen.textContent);
+      nodes.forEach(function(node,i){
+        node.setAttribute('aria-selected',i===index?'true':'false');
+        node.classList.toggle('is-selected',i===index);
+      });
+    }
+    function close(focusBack) {
+      opened = false;
+      list.hidden = true;
+      trigger.setAttribute('aria-expanded','false');
+      control.classList.remove('te-model-up');
+      if(focusBack)trigger.focus();
+    }
+    function focusIndex(i) {
+      if(!nodes.length)return;
+      i = Math.max(0,Math.min(nodes.length-1,i));
+      nodes[i].focus();
+      nodes[i].scrollIntoView({block:'nearest'});
+    }
+    function open() {
+      opened=true;
+      control.classList.toggle('te-model-up',
+        trigger.getBoundingClientRect().bottom + Math.min(330,window.innerHeight*.5) > window.innerHeight &&
+        trigger.getBoundingClientRect().top>330);
+      list.hidden=false;
+      trigger.setAttribute('aria-expanded','true');
+      focusIndex(selectedIndex());
+    }
+    function choose(i) {
+      select.selectedIndex=i;
+      select.dispatchEvent(new Event('change',{bubbles:true}));
+      paint();
+      close(true);
+    }
+    Array.prototype.forEach.call(select.options,function(option,i){
+      var node=document.createElement('button');
+      node.type='button';
+      node.className='te-model-option';
+      node.setAttribute('role','option');
+      node.id='teModelOption'+i;
+      node.textContent=option.textContent;
+      node.addEventListener('click',function(){choose(i)});
+      node.addEventListener('keydown',function(e){
+        var current=nodes.indexOf(node);
+        if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+          e.preventDefault();e.stopPropagation();
+          focusIndex(current+(e.key==='ArrowDown'?1:-1));
+        }else if(e.key==='Home'||e.key==='End'){
+          e.preventDefault();e.stopPropagation();
+          focusIndex(e.key==='Home'?0:nodes.length-1);
+        }else if(e.key==='Escape'){
+          e.preventDefault();e.stopPropagation();close(true);
+        }else if(e.key==='Enter'||e.key===' '){
+          e.preventDefault();e.stopPropagation();choose(current);
+        }
+      });
+      list.appendChild(node);nodes.push(node);
+    });
+    trigger.addEventListener('click',function(){opened?close(true):open()});
+    trigger.addEventListener('keydown',function(e){
+      if(e.key==='ArrowDown'||e.key==='ArrowUp'||e.key===' '||e.key==='Enter'){
+        e.preventDefault();e.stopPropagation();open();
+        if(e.key==='ArrowUp')focusIndex(nodes.length-1);
+      }else if(e.key==='Escape'){close(false)}
+    });
+    document.addEventListener('pointerdown',function(e){
+      if(opened&&!control.contains(e.target))close(false);
+    });
+    document.addEventListener('focusin',function(e){
+      if(opened&&!control.contains(e.target))close(false);
+    });
+    select.addEventListener('change',paint);
+    control.classList.add('te-custom-ready');
+    select.tabIndex=-1;
+    select.setAttribute('aria-hidden','true');
+    trigger.hidden=false;
+    paint();
+  }
+
   function wire() {
     fields.from = attach('teFrom', 'teFromPick', 'teFromName', function (a) { from = a; });
     fields.to = attach('teTo', 'teToPick', 'teToName', function (a) { to = a; });
@@ -481,11 +566,13 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     });
     var options=models.map(function(m){return '<option value="'+m.id+'">'+m.name+'</option>'}).join('');
     $('teAircraft').insertAdjacentHTML('beforeend',options);
+    setupAircraftMenu();
     /* Enter anywhere in the form runs it, as long as a suggestion list
        is not open - there Enter still picks the highlighted airport. */
     var formEl = document.querySelector('.te-form');
     formEl && formEl.addEventListener('keydown', function (e) {
       if (e.key !== 'Enter') return;
+      if (e.target.closest && e.target.closest('.te-model-control')) return;
       var open = document.querySelector('.te-pick:not([hidden])');
       if (open) return;
       e.preventDefault();
