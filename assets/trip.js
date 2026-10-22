@@ -247,12 +247,35 @@
 
   function render() {
     var out = $('teOut'), hint = $('teHint');
-    if (!from || !to) { out.hidden = true; hint.hidden = false; return; }
+    if (!from || !to) {
+      out.hidden = true; hint.hidden = false;
+      /* Reset the wording. Typing over a chosen airport clears the choice
+         but used to leave whatever the hint last said on screen - so after
+         EGLL to EGLL, typing LFPB and pressing Calculate still read
+         "Departure and destination are the same airport" while the two
+         codes on screen plainly differed. */
+      var typed = ($('teFrom').value.trim() && !from) || ($('teTo').value.trim() && !to);
+      hint.textContent = typed
+        ? 'Pick the airport from the list so we use the right one.'
+        : 'Pick a departure and a destination, then press Calculate.';
+      return;
+    }
     if (from.i === to.i) {
       out.hidden = true; hint.hidden = false;
       hint.textContent = 'Departure and destination are the same airport.';
       return;
     }
+    /* A negative or fractional passenger count used to calculate happily
+       and then travel into the enquiry as "-2 passengers". */
+    var paxRaw = $('tePax').value.trim();
+    var pax = parseInt(paxRaw, 10);
+    if (paxRaw !== '' && (!/^\d+$/.test(paxRaw) || pax < 1)) {
+      out.hidden = true; hint.hidden = false;
+      hint.textContent = 'Passengers has to be a whole number, one or more.';
+      return;
+    }
+    if (!pax || pax < 1) pax = 1;
+
     hint.hidden = true; out.hidden = false;
 
     var nm = distanceNm(from, to);                 // great circle
@@ -284,7 +307,6 @@
     }
     $('teExt').textContent = ext;
 
-    var pax = parseInt($('tePax').value, 10) || 1;
     var rows = cats.map(function (c) {
       var e = estimate(c, track, !ret);
       var hrs = ret ? e.hours * 2 : e.hours;

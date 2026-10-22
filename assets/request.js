@@ -44,7 +44,21 @@
     if (e.target.closest('[data-close]')) close();
   });
   document.addEventListener('keydown', function (e) {
-    if (!wrap.hidden && e.key === 'Escape') close();
+    if (wrap.hidden) return;
+    if (e.key === 'Escape') { close(); return; }
+    if (e.key !== 'Tab') return;
+    /* Keep Tab inside the dialog. Shift+Tab twice from the first field used
+       to land on the page behind it - two steps back from Airport reached
+       the footer's Impressum link, and Enter left the page with the dialog
+       still open. */
+    var items = [].filter.call(
+      box.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'),
+      function (el) { return el.offsetWidth || el.offsetHeight || el.getClientRects().length; });
+    if (!items.length) return;
+    var first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    else if (!box.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
   });
 
   /* Who to reply to. Appended to every service form so the dialog is the
@@ -56,6 +70,38 @@
     { k: '_org',   label: 'Company',     t: 'text' }
   ];
 
+  /* A form that already asks for the name or the organisation must not ask
+     again down here. The trial form was showing two "Your name" boxes, and
+     when you pressed Continue with both empty it complained "Still needed:
+     Your name, Your name". */
+  function who() {
+    var have = (current && current.fields || []).map(function (x) {
+      return String(x.label || '').toLowerCase().replace(/\s*\(.*?\)\s*$/, '').trim();
+    });
+    return WHO.filter(function (f) {
+      if (f.k === '_name') return !have.some(function (l) { return /^(your |contact |full )?name$/.test(l); });
+      if (f.k === '_org')  return !have.some(function (l) { return /^(your )?(organisation|organization|company)$/.test(l); });
+      if (f.k === '_email') return !have.some(function (l) { return /^(your |contact )?e-?mail$/.test(l); });
+      if (f.k === '_tel')  return !have.some(function (l) { return /^(your |contact )?(telephone|phone|mobile)$/.test(l); });
+      return true;
+    });
+  }
+
+  /* "None" and "Not sure" answer the whole question, so they cannot stand
+     beside a specific choice. Ticking one clears the others and vice versa. */
+  var EXCLUSIVE = /^(none|not sure|no preference|none of these)$/i;
+  formEl.addEventListener('change', function (e) {
+    var box = e.target;
+    if (!box || box.type !== 'checkbox') return;
+    var group = formEl.querySelectorAll('[name="' + box.name + '"]');
+    if (group.length < 2) return;
+    var isExclusive = EXCLUSIVE.test(box.value);
+    [].forEach.call(group, function (other) {
+      if (other === box || !other.checked) return;
+      if (isExclusive || EXCLUSIVE.test(other.value)) other.checked = false;
+    });
+  });
+
   function open(id) {
     var f = forms && forms[id];
     if (!f) return false;
@@ -64,7 +110,7 @@
     wrap.querySelector('.rq-intro').textContent = f.intro || '';
     formEl.innerHTML = f.fields.map(field).join('') +
       '<p class="rq-sep rq-wide">Where to send the answer</p>' +
-      WHO.map(field).join('');
+      who().map(field).join('');
     wrap.querySelector('.rq-err').hidden = true;
     lastFocus = document.activeElement;
     wrap.hidden = false;
@@ -127,7 +173,7 @@
 
   formEl.addEventListener('submit', function (e) {
     e.preventDefault();
-    var all = current.fields.concat(WHO);
+    var all = current.fields.concat(who());
     var missing = all.filter(function (f) { return f.req && !value(f); });
     var err = wrap.querySelector('.rq-err');
 
@@ -154,7 +200,7 @@
 
     lines.push('');
     lines.push('Contact');
-    WHO.forEach(function (f) {
+    who().forEach(function (f) {
       var v = value(f);
       if (v) lines.push('- ' + f.label + ': ' + v);
     });

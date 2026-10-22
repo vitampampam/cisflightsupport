@@ -44,9 +44,8 @@
 
   /* utility bar */
   .util{position:sticky;top:0;z-index:51;background:var(--navy-x);color:#A9C7CB;font-size:14.5px}
-  .util .wrap{display:flex;align-items:center;gap:22px;height:40px}
+  .util .wrap{display:flex;align-items:center;justify-content:space-between;gap:22px;height:40px}
   .util a{color:#fff;text-decoration:none;font-weight:600}
-  .util .sp{margin-left:auto}
   @media(max-width:700px){.util .tag{display:none}}
 
   /* header */
@@ -2280,11 +2279,13 @@
 :root{color-scheme:light;--measure:1143px}
 input,select,textarea,button{color-scheme:light}
 
-/* ---- phone: photograph first, words on light ----
-   A dark hero filling a small screen shows little of the aircraft and
-   reads as heavy. On a phone the picture comes first at its own height,
-   then the headline and the lede sit on light ground beneath it. */
-@media(max-width:620px){
+/* ---- phone and tablet: photograph first, words on light ----
+   A dark hero filling the screen shows little of the aircraft and reads as
+   heavy, and with the words laid over the picture the two fight each other.
+   The picture comes first at its own height, then the headline and the lede
+   sit on light ground beneath it - the arrangement the CAW Academy site
+   uses. Desktop keeps the side-by-side grid from 1024px up. */
+@media(max-width:1023px){
   .hero{background:var(--white);color:var(--navy-d);padding-top:0}
   .hero .grid,.hero .blob{display:none}
   .hero .heroshot{position:relative;inset:auto;width:100%;height:264px;
@@ -2308,9 +2309,20 @@ input,select,textarea,button{color-scheme:light}
   .hero .herostats{border-top:1px solid var(--line)}
   .hero .herostats b{color:var(--navy-d)}
   .hero .herostats span{color:var(--navy)}
+}
+@media(max-width:620px){
   /* one obvious action, not a row of competing chrome */
   .util .wrap{height:34px;font-size:12px}
   .bar{height:62px}
+}
+
+/* the tablet has room for a taller picture than a phone, and for a little
+   more air under it before the headline */
+@media(min-width:621px) and (max-width:1023px){
+  .hero .heroshot{height:auto;aspect-ratio:16 / 9;max-height:460px;
+    border-radius:0 0 26px 26px}
+  .hero .heroshot img{object-position:55% 55%}
+  .hero .wrap{padding-top:34px;padding-bottom:26px}
 }
 
 /* ---- service card: picture first, one line of copy, one action ----
@@ -2795,3 +2807,24 @@ body,p,li,dd,input,select,textarea{font-size:17px}
   .te-opts input[type=number]{width:104px;height:46px;text-align:center}
   .te-go{width:100%}
 }
+
+/* the general enquiry form marks what it still needs */
+.form .f.bad input,.form .f.bad select,.form .f.bad textarea{
+  border-color:#C2443B !important;box-shadow:0 0 0 3px rgba(194,68,59,.12)}
+.form .rq-err{margin:0 0 12px;color:#C2443B;font-size:15px}
+.form .rq-sent h3{margin:0 0 10px}
+.form .rq-sent p{margin:0 0 14px}
+.form .rq-sent .rq-done{width:100%;margin-bottom:14px}
+
+/* A visible way out of the mobile menu. The panel sits above the header,
+   so the burger it replaced is underneath it and tapping where that icon
+   was did nothing; only a link or Escape closed the menu. */
+.sheetx{position:absolute;top:18px;right:20px;width:46px;height:46px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(6,42,56,.22);border-radius:50%;
+  background:#fff;color:var(--navy-d);font-size:26px;line-height:1;
+  cursor:pointer;z-index:2;-webkit-tap-highlight-color:transparent;
+  box-shadow:0 2px 10px -4px rgba(6,42,56,.35)}
+.sheetx:hover,.sheetx:focus-visible{background:var(--navy-d);color:#fff;
+  border-color:var(--navy-d)}
+@media(max-width:620px){.sheetx{top:14px;right:16px}}

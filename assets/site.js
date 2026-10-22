@@ -33,7 +33,7 @@
     document.body.style.overflow=open?'hidden':'';
   }
   burger.addEventListener('click',function(){ setSheet(sheet.hidden); });
-  sheet.addEventListener('click',function(e){ if(e.target===sheet||e.target.tagName==='A') setSheet(false); });
+  sheet.addEventListener('click',function(e){ if(e.target===sheet||e.target.tagName==='A'||e.target.closest('.sheetx')) setSheet(false); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!sheet.hidden) setSheet(false); });
 
   /* service filter */
@@ -336,7 +336,10 @@
     var fbar=document.querySelector('.filters');
     if(fbar) fbar.parentNode.insertBefore(count,fbar.nextSibling);
     function tell(b){
-      var n=visible().length, label=b?b.textContent.trim():'All services';
+      /* count the services, not the cards on the rail: the loop carries a
+         clone of every card on each side, so visible() returned three times
+         the real number - "9 technical services", "all 36 service lines" */
+      var n=reals().length, label=b?b.textContent.trim():'All services';
       count.textContent = (b && b.dataset.f!=='all')
         ? 'Showing '+n+' '+label.toLowerCase()+' service'+(n===1?'':'s')
         : 'Showing all '+n+' service lines';
@@ -674,4 +677,95 @@
      so the photos are there whenever they do arrive */
   if (window.requestIdleCallback) window.requestIdleCallback(warm, { timeout: 7000 });
   else setTimeout(warm, 5000);
+})();
+
+/* ---- the general enquiry form ----
+   Its button carried no handler: an empty form reported nothing and a
+   filled one went nowhere. There is no server behind this site, so the
+   enquiry leaves the way the per-service dialogs send theirs - as a
+   composed email - and the form now says what is missing first, marks
+   those fields and puts the cursor in the first of them. */
+(function () {
+  var REQ = [
+    { id: 'fn', label: 'First name' },
+    { id: 'em', label: 'Email' },
+    { id: 'ms', label: 'How can we assist' }
+  ];
+  var ALL = [
+    { id: 'fn', label: 'First name' }, { id: 'ln', label: 'Last name' },
+    { id: 'em', label: 'Email' },      { id: 'ph', label: 'Telephone' },
+    { id: 'sv', label: 'Service required' },
+    { id: 'ms', label: 'How can we assist' }
+  ];
+
+  [].forEach.call(document.querySelectorAll('.form'), function (form) {
+    var btn = form.querySelector('button');
+    if (!btn || !form.querySelector('#ms')) return;
+
+    var err = document.createElement('p');
+    err.className = 'rq-err';
+    err.setAttribute('role', 'alert');
+    err.hidden = true;
+    btn.parentNode.insertBefore(err, btn);
+
+    function val(id) {
+      var el = form.querySelector('#' + id);
+      return el ? el.value.trim() : '';
+    }
+    function box(id) {
+      var el = form.querySelector('#' + id);
+      return el ? el.closest('.f') : null;
+    }
+
+    btn.addEventListener('click', function () {
+      [].forEach.call(form.querySelectorAll('.f'), function (f) { f.classList.remove('bad'); });
+
+      var missing = REQ.filter(function (r) { return !val(r.id); });
+      var email = val('em');
+      var badEmail = !missing.some(function (m) { return m.id === 'em'; }) &&
+                     !/^[^@\s]+@[^@\s.]+\.[^@\s]+$/.test(email);
+
+      if (missing.length || badEmail) {
+        missing.forEach(function (m) { var d = box(m.id); if (d) d.classList.add('bad'); });
+        if (badEmail) { var d = box('em'); if (d) d.classList.add('bad'); }
+        err.textContent = missing.length
+          ? 'Still needed: ' + missing.map(function (m) { return m.label; }).join(', ') +
+            (badEmail ? ', and an email address we can reply to' : '')
+          : 'That email address does not look right.';
+        err.hidden = false;
+        var first = form.querySelector('.f.bad input,.f.bad select,.f.bad textarea');
+        if (first) first.focus();
+        return;
+      }
+
+      err.hidden = true;
+      var lines = ['Enquiry from the website', ''];
+      ALL.forEach(function (f) {
+        var v = val(f.id);
+        if (v) lines.push('- ' + f.label + ': ' + v);
+      });
+      var body = lines.join('\n');
+      window.location.href = 'mailto:ops@cisflightsupport.com' +
+        '?subject=' + encodeURIComponent('Enquiry from the website') +
+        '&body=' + encodeURIComponent(body);
+
+      var done = document.createElement('div');
+      done.className = 'rq-sent';
+      done.innerHTML = '<h3>Ready to send</h3>' +
+        '<p>Your email app should be opening with this enquiry in it. ' +
+        'If nothing happens, copy the text below and send it to ' +
+        'ops@cisflightsupport.com.</p>' +
+        '<textarea class="rq-done" readonly rows="10"></textarea>' +
+        '<button type="button" class="btn">Copy the text</button>';
+      done.querySelector('textarea').value = body;
+      done.querySelector('button').addEventListener('click', function () {
+        var t = done.querySelector('textarea');
+        t.select();
+        if (navigator.clipboard) navigator.clipboard.writeText(t.value);
+        this.textContent = 'Copied';
+      });
+      form.innerHTML = '';
+      form.appendChild(done);
+    });
+  });
 })();
