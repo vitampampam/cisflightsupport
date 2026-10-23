@@ -3739,3 +3739,114 @@ footer a{color:#F2F6FF}
 .te-via-itinerary{margin:12px 0 0;text-align:center;color:#35568E;
   font:600 13.5px/1.6 "Inter",Arial,sans-serif}
 @media(max-width:640px){.te-via-section{margin-top:10px}.te-via-wrap{max-width:none}}
+
+
+/* Airport chooser: keep suggestions above the intermediate stop and planning
+   controls only while a suggestion list is open. The inactive row stays below
+   the aircraft-model popup, so it cannot cause the reverse overlap. */
+.te-form{isolation:isolate;overflow:visible}
+.te-route{position:relative;z-index:2;overflow:visible}
+.te-route:has(.te-pick:not([hidden])){z-index:400}
+.te-route .te-field:has(.te-pick:not([hidden])){z-index:401}
+.te-via-section{z-index:3}
+.te-via-section:has(.te-pick:not([hidden])){z-index:400}
+.te-plan-fields{z-index:5}
+.te-pick:not([hidden]){
+  display:block;max-height:min(310px,45vh);overflow-y:auto;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;z-index:402;
+  background:#fff;border:1px solid #CBD8F0;border-top:3px solid #4C6FB2;
+  box-shadow:0 15px 35px rgba(25,42,75,.17);
+}
+.te-pick button{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  min-width:0;width:100%;text-align:left;padding:13px 14px;line-height:1.45;
+  border-bottom:1px solid #EDF1FA;color:#445674}
+.te-pick button:last-child{border-bottom:0}
+.te-pick .te-pick-copy{flex:1;min-width:0;overflow-wrap:anywhere}
+.te-pick .te-pick-copy b{white-space:normal;margin-right:6px}
+.te-pick .te-pick-name{font-weight:400;color:#53617B;white-space:normal}
+.te-pick button i{position:static;flex:none;display:inline-block;min-width:30px;
+  font:600 12px/1.4 "Inter",Arial,sans-serif;color:#5978BD;text-align:right}
+@media(max-width:560px){
+  .te-pick:not([hidden]){max-height:min(265px,40vh)}
+  .te-pick button{padding:11px 12px;font-size:13px;gap:7px}
+  .te-pick button b{font-size:13px}
+}
+
+/* Transparent sector-by-sector explanation (only when a stop is chosen). */
+.te-sector-breakdown[hidden]{display:none!important}
+.te-sector-breakdown{margin:20px 0 15px;border:1px solid #CFDBF0;border-radius:15px;
+  background:#FAFCFF;overflow:hidden;color:#263956;font-family:"Inter",Arial,sans-serif}
+.te-sector-breakdown>summary{display:flex;align-items:center;justify-content:space-between;
+  padding:17px 20px;gap:10px;cursor:pointer;list-style:none;
+  color:#2E5289;font:600 15px/1.5 "Inter",Arial,sans-serif}
+.te-sector-breakdown>summary::-webkit-details-marker{display:none}
+.te-sector-breakdown>summary::after{content:'+';font-size:23px;line-height:1;font-weight:400}
+.te-sector-breakdown[open]>summary::after{content:'−'}
+.te-sector-breakdown-content{padding:0 20px 20px}
+.te-breakdown-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+  gap:12px;margin:1px 0 15px;color:#53617B;font:500 13px/1.5 "Inter",Arial,sans-serif}
+.te-breakdown-head label{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.te-breakdown-select{max-width:100%;padding:10px 36px 10px 12px;border:1px solid #CFD9EF;
+  border-radius:9px;background:#fff;color:#263956;font:500 13px/1.45 "Inter",Arial,sans-serif}
+.te-breakdown-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #DFE7F5;border-radius:11px}
+.te-breakdown-table{width:100%;border-collapse:collapse;min-width:515px;font:400 13px/1.5 "Inter",Arial,sans-serif}
+.te-breakdown-table th{text-align:left;padding:11px 13px;background:#E9EFFB;color:#324E7D;font-weight:600}
+.te-breakdown-table td{padding:11px 13px;border-top:1px solid #E8EDF7;vertical-align:top;color:#3C4965}
+.te-breakdown-table th:not(:first-child),.te-breakdown-table td:not(:first-child){text-align:right}
+.te-breakdown-table td strong{font-weight:600;color:#253B5D}
+.te-breakdown-table td small{display:block;color:#728099;font-size:11px;margin-top:2px}
+.te-breakdown-table .te-breakdown-allowance td{background:#F4F7FF}
+.te-breakdown-table .te-breakdown-total td{background:#E9EFFB;font-weight:700;color:#253B5D}
+.te-breakdown-money{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
+  margin-top:14px;padding:14px 15px;background:#fff;border:1px solid #DFE7F5;border-radius:10px}
+.te-breakdown-money strong{color:#253B5D}
+.te-breakdown-money span{font-weight:600;color:#3E63A6}
+.te-breakdown-costs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 20px;
+  margin:14px 0 0;padding:0;list-style:none}
+.te-breakdown-costs li{display:flex;justify-content:space-between;gap:12px;padding:5px 0;
+  font-size:12.5px;color:#4E5E7C}
+.te-breakdown-costs li span:last-child{white-space:nowrap;text-align:right;color:#253B5D;font-weight:600}
+.te-breakdown-foot{font:400 12px/1.65 "Inter",Arial,sans-serif;color:#6A7891;margin:13px 0 0}
+@media(max-width:600px){
+  .te-sector-breakdown>summary{padding:14px 13px;font-size:13px}
+  .te-sector-breakdown-content{padding:0 12px 14px}
+  .te-breakdown-head{font-size:12px}
+  .te-breakdown-select{width:100%;min-width:0}
+  .te-breakdown-costs{grid-template-columns:1fr}
+  .te-breakdown-table{font-size:12px;min-width:0;width:100%}
+  .te-breakdown-table-wrap{overflow:visible}
+  .te-breakdown-table thead{display:none}
+  .te-breakdown-table tbody{display:block}
+  .te-breakdown-table tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+    column-gap:10px;row-gap:2px;padding:12px 11px;border-top:1px solid #E8EDF7}
+  .te-breakdown-table tr:first-child{border-top:0}
+  .te-breakdown-table td{border:0!important;min-width:0;padding:2px 0!important;text-align:left!important;
+    font-size:12px;overflow-wrap:anywhere}
+  .te-breakdown-table td:first-child{grid-column:1/-1;padding-bottom:8px!important}
+  .te-breakdown-table td:nth-child(2)::before,
+  .te-breakdown-table td:nth-child(3)::before,
+  .te-breakdown-table td:nth-child(4)::before{display:block;font-size:10px;font-weight:500;
+    color:#7180A0;margin-bottom:3px}
+  .te-breakdown-table td:nth-child(2)::before{content:'Distance'}
+  .te-breakdown-table td:nth-child(3)::before{content:'Flight time'}
+  .te-breakdown-table td:nth-child(4)::before{content:'Cost'}
+}
+
+/* 2026-10-23 hotfix: airport suggestion list must be fully opaque and always
+   sit above the intermediate-stop row and the planning controls below. */
+.te-via-section,.te-plan-fields,.te-aircraft-compare,.te-opts{position:relative}
+.te-route:has(.te-pick:not([hidden])){z-index:1200}
+.te-route .te-field:has(.te-pick:not([hidden])){z-index:1201}
+.te-via-section{z-index:10}
+.te-plan-fields,.te-aircraft-compare,.te-opts{z-index:5}
+.te-pick,.te-pick:not([hidden]){
+  opacity:1 !important;
+  background:#fff !important;
+  background-color:#fff !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  isolation:isolate;
+}
+.te-pick:not([hidden]){
+  box-shadow:0 18px 42px rgba(25,42,75,.18);
+}

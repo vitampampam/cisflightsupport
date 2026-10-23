@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=326">
+<link rel="stylesheet" href="assets/site.css?v=327">
 </head>
 <body>
 <div class="progress" id="progress" aria-hidden="true"></div>
@@ -162,6 +162,18 @@
           <tbody id="teRows"></tbody>
         </table>
 
+        <details class="te-sector-breakdown" id="teSectorBreakdown" hidden>
+          <summary>Flight time and cost by sector</summary>
+          <div class="te-sector-breakdown-content">
+            <div class="te-breakdown-head">
+              <span>How the multi-sector estimate is composed</span>
+              <label for="teBreakdownAircraft">Aircraft profile
+                <select id="teBreakdownAircraft" class="te-breakdown-select" aria-label="Aircraft profile for sector breakdown"></select>
+              </label>
+            </div>
+            <div id="teSectorBreakdownBody" aria-live="polite"></div>
+          </div>
+        </details>
         <p class="te-customer-note">Indicative estimate only. We'll confirm the route, availability and final price with an operator.</p>
         <details class="te-method">
           <summary>How this estimate works <span>Routing and pricing assumptions</span></summary>
@@ -229,6 +241,6 @@
 <script src="assets/request.js?v=210"></script>
 <script src="assets/fleet.js?v=207"></script>
 <script src="assets/route-model.js?v=326"></script>
-<script src="assets/trip.js?v=326"></script>
+<script src="assets/trip.js?v=327"></script>
 </body>
 </html>
