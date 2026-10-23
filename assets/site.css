@@ -4028,3 +4028,23 @@ footer a{color:#F2F6FF}
     object-position:50% 92% !important;
   }
 }
+
+
+/* iPad/touch-tablet calculator: give the primary Calculate action its own
+   full-width row. Leave the checkbox/passenger controls above it and preserve
+   the established desktop and phone layouts. */
+@media (min-width:621px) and (hover:none) and (pointer:coarse) {
+  .te-opts > .te-go {
+    flex:0 0 100%; width:100%; min-width:0;
+    margin:6px 0 0; display:flex;
+    flex-direction:column; align-items:stretch; gap:9px;
+  }
+  .te-opts > .te-go > .btn {
+    display:flex; align-items:center; justify-content:center;
+    flex:0 0 auto; width:100%; max-width:none; box-sizing:border-box;
+    min-height:56px; padding:16px 24px; text-align:center;
+  }
+  .te-opts > .te-go > .te-flag:not([hidden]) {
+    align-self:flex-start;
+  }
+}
