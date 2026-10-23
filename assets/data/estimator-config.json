@@ -7,7 +7,9 @@
     "fuel_stop_eur": 2500,
     "crew_overnight_eur_per_night": 1200,
     "one_way_positioning_h": 0.8,
-    "display_variation": 0.15
+    "display_variation": 0.15,
+    "ground_turnaround_minutes": 60,
+    "extra_stop_block_minutes": 30
   },
-  "note": "ALL cost allowances are illustrative EUR benchmarks, not actual airport or EUROCONTROL route charges. Weather endpoint must be authorized for commercial use."
+  "note": "ALL cost allowances are illustrative EUR benchmarks, not actual airport or EUROCONTROL route charges. Ground turnaround counts toward journey duration but is not billed as flight time. Additional technical landings incur explicit block-time operational allowances plus a composite fixed stop fee. Weather endpoint must be authorized for commercial use."
 }

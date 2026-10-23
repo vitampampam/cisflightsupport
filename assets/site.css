@@ -3850,3 +3850,61 @@ footer a{color:#F2F6FF}
 .te-pick:not([hidden]){
   box-shadow:0 18px 42px rgba(25,42,75,.18);
 }
+
+
+/* 2026-10-23 airport autocomplete: body-level opaque overlay.
+   The list is now portalled to <body> by trip.js instead of being painted
+   inside the form grid. It cannot share a stacking context with the stopover
+   button, model chooser, or date fields. */
+.te-pick.te-picker-overlay,
+.te-pick.te-picker-overlay:not([hidden]) {
+  position:fixed !important;
+  z-index:2147483000 !important;
+  opacity:1 !important;
+  background:#FFFFFF !important;
+  background-color:#FFFFFF !important;
+  background-image:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  isolation:isolate;
+  overflow-x:hidden;
+  overflow-y:auto;
+  border:1px solid #C9D6F0;
+  border-top:3px solid #4C6FB2;
+  border-radius:14px;
+  box-shadow:0 20px 48px rgba(25,42,75,.24);
+  font-family:"Inter",Arial,sans-serif;
+}
+.te-pick.te-picker-overlay[hidden]{display:none !important}
+.te-pick.te-picker-overlay button { background:#FFFFFF !important; }
+.te-pick.te-picker-overlay button.on,
+.te-pick.te-picker-overlay button:hover,
+.te-pick.te-picker-overlay button:focus-visible {
+  background:#EEF3FF !important;
+}
+
+/* Operationally separated technical-stop time and charges (October 2026). */
+.te-breakdown-summary{display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:8px 16px;padding:12px 14px;margin:0 0 12px;border-radius:10px;
+  background:#EAF0FC;color:#284879;font:500 13px/1.55 "Inter",Arial,sans-serif}
+.te-breakdown-summary strong{font-weight:700;color:#253B5D}
+.te-breakdown-summary span{color:#526789}
+.te-breakdown-table .te-breakdown-ground td{background:#F7F9FE;color:#5A6782}
+.te-breakdown-table .te-breakdown-ground td:last-child{color:#3D628F;font-weight:600}
+@media(max-width:600px){.te-breakdown-summary{flex-direction:column;align-items:flex-start}}
+
+
+/* iPhone & iPad: swipe the carousels instead of obscuring photos/cards
+   with left/right arrow buttons. Pagination dots remain visible. A
+   non-touch desktop retains the existing arrow controls. */
+@media (max-width:640px){
+  .cnav{display:none !important;}
+}
+@media (pointer:coarse){
+  .cnav{display:none !important;}
+}
+/* Tablet service rail has a legacy three-class `display:flex!important` rule.
+   Override it at higher specificity so arrows cannot reappear on iPad. */
+@media (pointer:coarse){
+  .sec.svc .svccar .cnav{display:none !important;}
+}
