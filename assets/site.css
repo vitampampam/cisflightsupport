@@ -4048,3 +4048,28 @@ footer a{color:#F2F6FF}
     align-self:flex-start;
   }
 }
+
+
+/* iPad/tablet return-date layout (October 2026).
+   Native date inputs on Safari have a large intrinsic width; placing two of
+   them beside the model selector in the old 3-column row caused the departure
+   and return-date controls to overlap. When Return trip is checked, give the
+   aircraft selector a separate full-width row and two equal date columns.
+   Without a return date, retain the familiar aircraft/date two-column row. */
+@media (min-width:621px) and (max-width:1180px) {
+  .te-plan-fields {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    column-gap:22px;
+    row-gap:17px;
+  }
+  .te-plan-fields:has(#teReturnDateWrap:not([hidden])) > .te-plan-field:first-child {
+    grid-column:1 / -1;
+  }
+  .te-plan-fields .te-plan-field,
+  .te-plan-fields .te-date-control,
+  .te-plan-fields .te-date-control > input[type="date"] {
+    box-sizing:border-box;
+    min-width:0;
+    max-width:100%;
+  }
+}
