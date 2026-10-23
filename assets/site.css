@@ -4074,8 +4074,10 @@ footer a{color:#F2F6FF}
     justify-self:start;align-self:start;
   }
   .te-plan-fields .te-date-field > label {
-    display:block;min-width:0;width:100%;margin:0 0 8px;
-    line-height:1.45;
+    /* Match the aircraft label: the flex parent already supplies an 8px gap.
+       A second margin-bottom added another 8px and shifted the date control. */
+    display:block;min-width:0;width:100%;margin:0;
+    line-height:1.4;
   }
   .te-plan-fields .te-date-control {
     position:relative;isolation:isolate;display:flex;align-items:center;
