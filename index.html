@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=335">
+<link rel="stylesheet" href="assets/site.css?v=336">
 <style>
 /* critical: gallery works even with a stale external stylesheet */
 .intro{align-items:start}
@@ -165,12 +165,22 @@
               <div class="te-model-list" id="teModelOptions" role="listbox" aria-label="Aircraft model" hidden></div>
             </div>
           </div>
-          <label class="te-plan-field" for="teDate">Departure date
-            <input type="date" id="teDate">
-          </label>
-          <label class="te-plan-field" id="teReturnDateWrap" for="teReturnDate" hidden>Return date
-            <input type="date" id="teReturnDate">
-          </label>
+          <div class="te-plan-field te-date-field">
+            <label for="teDate">Departure date</label>
+            <div class="te-date-control">
+              <span class="te-date-text" id="teDateText" aria-hidden="true">dd/mm/yyyy</span>
+              <span class="te-date-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false" aria-hidden="true"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M7.5 3v4M16.5 3v4M3.5 10h17"/></svg></span>
+              <input type="date" id="teDate" aria-label="Departure date">
+            </div>
+          </div>
+          <div class="te-plan-field te-date-field" id="teReturnDateWrap" hidden>
+            <label for="teReturnDate">Return date</label>
+            <div class="te-date-control">
+              <span class="te-date-text" id="teReturnDateText" aria-hidden="true">dd/mm/yyyy</span>
+              <span class="te-date-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false" aria-hidden="true"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M7.5 3v4M16.5 3v4M3.5 10h17"/></svg></span>
+              <input type="date" id="teReturnDate" aria-label="Return date">
+            </div>
+          </div>
         </div>
         <p class="te-empty" id="teHint" aria-live="polite">Choose your departure and destination, then press Calculate.</p>
         <details class="te-aircraft-compare" id="teAircraftCompare">
@@ -597,7 +607,7 @@
 <!-- Both the homepage widget and the standalone estimator use the same route model and calculator. -->
 <!-- calculator-compatible-homepage-v231 -->
 <script src="assets/route-model.js?v=326"></script>
-<script src="assets/trip.js?v=330"></script>
+<script src="assets/trip.js?v=336"></script>
 <script>
 /* critical: gallery controls, independent of the external bundle */
 (function(){

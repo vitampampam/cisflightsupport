@@ -3972,33 +3972,59 @@ footer a{color:#F2F6FF}
 }
 
 
-/* 2026-10-23 — iOS Safari: native date controls carry an intrinsic WebKit
-   width which can exceed a narrow calculator grid cell. Keep both departure
-   and return inputs fully within the card without affecting the aircraft menu. */
-.te-plan-field:has(> input[type="date"]){
-  min-width:0;
-  max-width:100%;
-  box-sizing:border-box;
+/* 2026-10-23: Keep the native HTML date input, but use a constrained visual
+   wrapper on narrow touch screens. Mobile Safari's intrinsic date-edit box can
+   otherwise paint OUTSIDE its CSS grid track and be cut at the right edge.
+   The actual input covers the control and remains keyboard/touch accessible. */
+.te-date-field {box-sizing:border-box; min-width:0; max-width:100%; width:100%;}
+.te-date-field > label {display:block;flex:none;min-width:0;max-width:100%;}
+.te-date-control {position:relative;min-width:0;width:100%;max-width:100%;box-sizing:border-box;}
+.te-date-control > input[type="date"] {
+  box-sizing:border-box;display:block;max-width:100%;min-width:0;width:100%;
+  min-height:54px;margin:0;
 }
-.te-plan-field > input[type="date"]{
-  display:block;
-  box-sizing:border-box !important;
-  inline-size:100% !important;
-  width:100% !important;
-  max-inline-size:100% !important;
-  max-width:100% !important;
-  min-inline-size:0 !important;
-  min-width:0 !important;
-  flex:0 1 auto;
-  font-size:16px;
+.te-date-text,.te-date-icon {display:none;}
+@media (max-width:620px) {
+  .te-plan-fields {grid-template-columns:minmax(0,1fr);}
+  .te-date-field {display:block;min-width:0;max-width:100%;width:100%;}
+  .te-date-field > label {margin-bottom:9px;line-height:1.45;}
+  .te-date-control {
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    height:54px;min-height:54px;max-width:100%;overflow:hidden;
+    padding:0 16px;
+    border:1px solid #DCE5F7;border-radius:12px;
+    background:#fff;color:#344762;
+  }
+  .te-date-control:focus-within {
+    border-color:#6A8CCF;
+    box-shadow:0 0 0 3px rgba(76,111,178,.13);
+  }
+  .te-date-text {
+    display:block;position:relative;z-index:1;flex:1;min-width:0;
+    color:#8195B9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    font:500 16px/1.45 "Inter",Arial,sans-serif;
+    letter-spacing:normal;text-transform:none;pointer-events:none;
+  }
+  .te-date-text.is-set {color:#344762;}
+  .te-date-icon {display:inline-flex;flex:none;position:relative;z-index:1;color:#4C6FB2;pointer-events:none;}
+  .te-date-control > input[type="date"] {
+    /* The invisible native control receives the tap and opens the iOS picker.
+       Absolute positioning removes WebKit's oversized native minimum width
+       from flexbox/grid layout without changing the input's value/semantics. */
+    position:absolute!important;inset:0!important;z-index:2;
+    display:block!important;width:100%!important;height:100%!important;
+    max-width:100%!important;min-width:0!important;min-height:0!important;
+    margin:0!important;padding:0!important;border:0!important;
+    background:transparent!important;opacity:0!important;
+    -webkit-appearance:none;appearance:none;cursor:pointer;
+  }
 }
-.te-plan-field > input[type="date"]::-webkit-date-and-time-value{
-  min-width:0;
-  text-align:left;
-}
-@media(max-width:540px){
-  .te-plan-fields{grid-template-columns:minmax(0,1fr)}
-  /* Clips buggy WebKit native-control painting, without clipping the custom
-     aircraft selector (which intentionally overlays nearby controls). */
-  .te-plan-field:has(> input[type="date"]){overflow:hidden;border-radius:12px}
+
+/* iPad portrait: shift framing DOWN within the photograph so the aircraft
+   moves UP in the visible crop. Removes excess sky but preserves the entire
+   nose gear and wheel without adding height or reducing CTA visibility. */
+@media (min-width:621px) and (max-width:1023px) and (orientation:portrait) {
+  .hero:not(.pagehead) .heroshot img {
+    object-position:50% 92% !important;
+  }
 }

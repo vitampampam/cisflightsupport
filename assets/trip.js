@@ -831,7 +831,24 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     $('teReturn').addEventListener('change', markStale);
     $('teAvoid').addEventListener('change', markStale);
     $('tePax').addEventListener('input', markStale);
-    ['teAircraft','teDate','teReturnDate'].forEach(function(id){$(id).addEventListener('change',markStale)});
+    // Synchronise the decorative mobile date display with the real HTML date
+    // input. Existing estimation, return-trip and URL logic keep using .value.
+    function syncDateDisplay(id) {
+      var input=$(id), display=$(id+'Text');
+      if(!input||!display)return;
+      var v=input.value;
+      var parts=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
+      display.textContent=parts ? parts[3]+'/'+parts[2]+'/'+parts[1] : 'dd/mm/yyyy';
+      display.classList.toggle('is-set',!!parts);
+    }
+    ['teAircraft','teDate','teReturnDate'].forEach(function(id){
+      $(id).addEventListener('change',markStale);
+      if(id!=='teAircraft'){
+        $(id).addEventListener('change',function(){syncDateDisplay(id)});
+        $(id).addEventListener('input',function(){syncDateDisplay(id)});
+        syncDateDisplay(id);
+      }
+    });
     $('teReturn').addEventListener('change',function(){
       $('teReturnDateWrap').hidden=!$('teReturn').checked;
     });
