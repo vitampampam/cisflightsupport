@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=331">
+<link rel="stylesheet" href="assets/site.css?v=332">
 <style>
 /* critical: gallery works even with a stale external stylesheet */
 .intro{align-items:start}
@@ -85,7 +85,7 @@
   <span class="blob b1" aria-hidden="true"></span>
   <span class="blob b2" aria-hidden="true"></span>
   <div class="heroshot" aria-hidden="true">
-    <img src="assets/img/hero-banner.jpg" alt="" fetchpriority="high">
+    <img src="assets/img/hero-banner.jpg?v=20261023b" alt="" fetchpriority="high">
   </div>
   <div class="wrap">
     <div class="col">
@@ -172,6 +172,7 @@
             <input type="date" id="teReturnDate">
           </label>
         </div>
+        <p class="te-empty" id="teHint" aria-live="polite">Choose your departure and destination, then press Calculate.</p>
         <details class="te-aircraft-compare" id="teAircraftCompare">
           <summary>Compare aircraft performance <span id="teCompareCount">and indicative charter rates</span></summary>
           <p class="te-aircraft-scroll-hint">Swipe sideways for cruise speed, range and hourly rate →</p>
@@ -198,8 +199,6 @@
           </span>
         </div>
       </div>
-
-      <p class="te-empty" id="teHint">Pick a departure and a destination, then press Calculate.</p>
 
       <div class="te-out" id="teOut" hidden>
         <p class="te-via-itinerary" id="teViaItinerary" hidden></p>
@@ -364,7 +363,7 @@
         <div class="gtrack" id="galTrack">
           <figure><img src="assets/img/ramp-turnaround.jpg" style="object-position:0% 50%" alt="Business jet under tow on the ramp at sunrise, handling crew alongside" loading="lazy">
             <figcaption>On the ramp — supervised turnaround at first light</figcaption></figure>
-          <figure><img src="assets/img/on-stand-sunset.jpg" style="object-position:0% 50%" alt="Large-cabin business jet on stand at sunset with airstair down" loading="lazy">
+          <figure><img src="assets/img/on-stand-sunset.jpg?v=20261023b" style="object-position:0% 50%" alt="White business jet on the apron with its passenger stairs open" loading="lazy">
             <figcaption>On stand — passengers boarding before departure</figcaption></figure>
           <figure><img src="assets/img/hangar.jpg" style="object-position:0% 50%" alt="Large-cabin business jet inside a hangar at dusk" loading="lazy">
             <figcaption>In the hangar — overnight parking and maintenance input</figcaption></figure>

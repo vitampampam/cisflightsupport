@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=331">
+<link rel="stylesheet" href="assets/site.css?v=332">
 </head>
 <body>
 <div class="progress" id="progress" aria-hidden="true"></div>
@@ -119,6 +119,7 @@
             <input type="date" id="teReturnDate">
           </label>
         </div>
+        <p class="te-empty" id="teHint" aria-live="polite">Choose your departure and destination, then press Calculate.</p>
         <details class="te-aircraft-compare" id="teAircraftCompare">
           <summary>Compare aircraft performance <span id="teCompareCount">and indicative charter rates</span></summary>
           <p class="te-aircraft-scroll-hint">Swipe sideways for cruise speed, range and hourly rate →</p>
@@ -145,8 +146,6 @@
           </span>
         </div>
       </div>
-
-      <p class="te-empty" id="teHint">Pick a departure and a destination, then press Calculate.</p>
 
       <div class="te-out" id="teOut" hidden>
         <p class="te-via-itinerary" id="teViaItinerary" hidden></p>
