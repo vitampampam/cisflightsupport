@@ -3931,7 +3931,7 @@ footer a{color:#F2F6FF}
     height:auto; aspect-ratio:8 / 5; max-height:none;
   }
   .hero:not(.pagehead) .heroshot img {
-    width:100%; height:100%; object-fit:cover; object-position:50% 28%;
+    width:100%; height:100%; object-fit:cover; object-position:50% 40%;
   }
 }
 
@@ -3969,4 +3969,36 @@ footer a{color:#F2F6FF}
 }
 @media (min-width:621px) and (max-width:1023px) {
   #estimator .te { margin-top:-14px !important; }
+}
+
+
+/* 2026-10-23 — iOS Safari: native date controls carry an intrinsic WebKit
+   width which can exceed a narrow calculator grid cell. Keep both departure
+   and return inputs fully within the card without affecting the aircraft menu. */
+.te-plan-field:has(> input[type="date"]){
+  min-width:0;
+  max-width:100%;
+  box-sizing:border-box;
+}
+.te-plan-field > input[type="date"]{
+  display:block;
+  box-sizing:border-box !important;
+  inline-size:100% !important;
+  width:100% !important;
+  max-inline-size:100% !important;
+  max-width:100% !important;
+  min-inline-size:0 !important;
+  min-width:0 !important;
+  flex:0 1 auto;
+  font-size:16px;
+}
+.te-plan-field > input[type="date"]::-webkit-date-and-time-value{
+  min-width:0;
+  text-align:left;
+}
+@media(max-width:540px){
+  .te-plan-fields{grid-template-columns:minmax(0,1fr)}
+  /* Clips buggy WebKit native-control painting, without clipping the custom
+     aircraft selector (which intentionally overlays nearby controls). */
+  .te-plan-field:has(> input[type="date"]){overflow:hidden;border-radius:12px}
 }
