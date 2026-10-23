@@ -153,7 +153,7 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     var enroute = geo.nm * (bandFactor(nm)-1);
     return {greatCircle:nm, geometry:geo.nm, detour:geo.detour, hit:geo.hit,
       enroute:enroute, terminal:terminal, track:geo.nm+enroute+terminal,
-      method:geo.method, path:geo.path};
+      approximate:!!geo.approximate, method:geo.method, path:geo.path};
   }
   /* A manually selected via airport splits the estimate into two independently
      estimated sectors. This does not recommend a real fuel stop or validate
@@ -287,6 +287,87 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     }).finally(function(){if(goButton){goButton.disabled=false;goButton.textContent='Calculate';}});
   }
 
+  function renderSectorBreakdown(route,aircraft,wind,returnTrip,pax,hasVia){
+    var details=$('teSectorBreakdown'),selector=$('teBreakdownAircraft'),body=$('teSectorBreakdownBody');
+    if(!details||!selector||!body)return;
+    if(!hasVia || !route.legs || route.legs.length<2){
+      details.hidden=true;details.open=false;body.innerHTML='';return;
+    }
+    details.hidden=false;
+    details.open=true;
+    var choices=aircraft.filter(function(c){
+      var e=estimate(c,route,wind,returnTrip);
+      return e.viable&&pax<=unitPax(c);
+    });
+    if(!choices.length){
+      selector.hidden=true;
+      body.innerHTML='<p class="te-breakdown-foot">No aircraft profile in the current selection meets the modelled range and passenger assumptions. Select another aircraft to view a leg-by-leg estimate.</p>';
+      return;
+    }
+    selector.hidden=false;
+    var prev=selector.value;
+    selector.innerHTML='';
+    choices.forEach(function(c){
+      var o=document.createElement('option');o.value=c.id;o.textContent=c.name;selector.appendChild(o);
+    });
+    if(choices.some(function(c){return c.id===prev}))selector.value=prev;
+    function euro(v){return '€'+Math.round(v).toLocaleString('en-GB');}
+    function show(){
+      var c=choices.filter(function(x){return x.id===selector.value})[0]||choices[0];
+      var e=estimate(c,route,wind,returnTrip),p=config.pricing;
+      var paths=[{legs:route.legs.slice(),codes:[from.i,via.i,to.i],speed:Math.max(c.tas*.65,c.tas+wind.out),heading:'Outbound'}];
+      if(returnTrip)paths.push({legs:route.legs.slice().reverse(),codes:[to.i,via.i,from.i],speed:Math.max(c.tas*.65,c.tas+wind.back),heading:'Return'});
+      var sumLegHours=0,sumLegCosts=0,stopsAutomatic=0;
+      var rows=[];
+      paths.forEach(function(direction){
+        direction.legs.forEach(function(leg,i){
+          var autoStops=Math.max(0,Math.ceil(leg.track/(c.range*USABLE))-1);
+          var time=leg.track/direction.speed+(TERMINAL_H+TAXI_H)/direction.legs.length+autoStops*STOP_H;
+          var cost=time*c.rate;
+          sumLegHours+=time;sumLegCosts+=cost;stopsAutomatic+=autoStops;
+          var stopLabel=autoStops?'Includes '+autoStops+' modelled fuel stop'+(autoStops>1?'s':''):'';
+          rows.push('<tr><td><strong>'+direction.codes[i]+' → '+direction.codes[i+1]+'</strong>'+
+            '<small>'+direction.heading+(stopLabel?' · '+stopLabel:'')+'</small></td>'+
+            '<td>'+Math.round(leg.track).toLocaleString('en-GB')+' nm</td>'+
+            '<td>'+hhmm(time)+'</td><td>'+euro(cost)+'</td></tr>');
+        });
+        rows.push('<tr class="te-breakdown-allowance"><td><strong>Stopover at '+via.i+'</strong>'+
+          '<small>Indicative turnaround time</small></td><td>—</td><td>'+hhmm(STOP_H)+'</td>'+
+          '<td>'+euro(STOP_H*c.rate)+'</td></tr>');
+      });
+      var viaHours=paths.length*STOP_H;
+      var totalHours=sumLegHours+viaHours;
+      var fees=e.positioning+e.stopFees+e.airport+e.nav+e.overnight;
+      var list=[
+        ['Aircraft positioning',e.positioning],
+        ['Stop / handling allowance ('+e.stops*paths.length+' stops)',e.stopFees],
+        ['Airport handling',e.airport],
+        ['Navigation allowance',e.nav],
+        ['Crew overnight allowance',e.overnight]
+      ];
+      var feeMarkup=list.filter(function(entry){return entry[1]>0}).map(function(entry){
+        return '<li><span>'+entry[0]+'</span><span>'+euro(entry[1])+'</span></li>';
+      }).join('');
+      var final=rows.join('')+'<tr class="te-breakdown-total"><td><strong>Flight-hour subtotal</strong>'+ 
+        '<small>Sector times + stopover turnarounds</small></td><td>'+Math.round(route.track*(returnTrip?2:1)).toLocaleString('en-GB')+' nm</td>'+
+        '<td>'+hhmm(e.hours)+'</td><td>'+euro(e.flying)+'</td></tr>';
+      body.innerHTML='<div class="te-breakdown-table-wrap"><table class="te-breakdown-table">'+
+        '<thead><tr><th>Sector / item</th><th>Distance</th><th>Block time</th><th>Flight cost</th></tr></thead>'+
+        '<tbody>'+final+'</tbody></table></div>'+
+        (feeMarkup?'<ul class="te-breakdown-costs">'+feeMarkup+'</ul>':'')+
+        '<div class="te-breakdown-money"><strong>Indicative '+(returnTrip?'return':'one-way')+' total: '+euro(e.cost)+'</strong>'+
+        '<span>Estimated price range: '+money(e.cost)+'</span></div>'+
+        '<p class="te-breakdown-foot">Based on '+c.name+' at '+euro(c.rate)+
+        '/flight hour. Sector block-time allowances total '+hhmm(totalHours)+
+        '; each planned stopover adds '+hhmm(STOP_H)+' of turnaround time. '+
+        (stopsAutomatic?'Additional modelled fuel stops are included in sector times. ':'')+
+        'Cost = flight hours ('+euro(e.flying)+') + other allowances ('+euro(fees)+'). '+
+        'Illustrative only; actual routes, fuel stops, availability, airport fees and operator rates need confirmation.</p>';
+    }
+    selector.onchange=show;
+    show();
+  }
+
   function render(wind) {
     var out = $('teOut'), hint = $('teHint');
     if (!from || !to) {
@@ -348,7 +429,7 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     if(route.blocked||route.unroutable){
       out.hidden=true;hint.hidden=false;$('teLegs').hidden=true;
       hint.textContent=route.blocked
-        ? 'Origin or destination is within an airspace area marked restricted in this simplified dataset. Route eligibility requires operator review.'
+        ? 'An airport in this itinerary is within an airspace area marked restricted in this simplified dataset. Route eligibility requires operator review.'
         : 'Unable to draw an indicative geometric detour around the marked restricted airspace. Please request a manually planned route.';
       return;
     }
@@ -391,6 +472,7 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
         (ret&&!invalid?'<span>Approx. '+money(e.cost/2)+' per flight</span>':'')+'</td></tr>';
     }).join('');
     $('teRows').innerHTML=rows;
+    renderSectorBreakdown(route,aircraft,windData,ret,pax,wantsStop);
     var hrsList=aircraft.map(function(c){
       var e=estimate(c,route,windData,ret);
       return (e.viable&&pax<=unitPax(c))?e.hours:null;
@@ -442,7 +524,8 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
       if (!list.length) { close(); return; }
       pick.innerHTML = list.map(function (a, n) {
         return '<button type="button" role="option" data-n="' + n + '">' +
-          '<b>' + airportLabel(a) + '</b> — ' + a.n +
+          '<span class="te-pick-copy"><b>' + airportLabel(a) + '</b>' +
+          '<span class="te-pick-name">— ' + a.n + '</span></span>' +
           (a.a ? '<i>' + a.a + '</i>' : '') + '</button>';
       }).join('');
       pick.hidden = false;
