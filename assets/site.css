@@ -3908,3 +3908,14 @@ footer a{color:#F2F6FF}
 @media (pointer:coarse){
   .sec.svc .svccar .cnav{display:none !important;}
 }
+
+
+/* Oct 2026: raise the AIRCRAFT CHOOSER'S ENTIRE GRID when open.
+   The preceding via row uses z-index:10, while the permanent planning grid
+   uses z-index:5. Raising only the popup child can never escape its parent's
+   stacking context, which caused the intermediate-stop label to paint OVER
+   the menu on iPhone/iPad. Keep the standard order when the menu is shut. */
+.te-form:has(.te-model-control.is-open){overflow:visible}
+.te-plan-fields:has(.te-model-control.is-open){position:relative;z-index:1600;overflow:visible;isolation:isolate}
+.te-plan-fields:has(.te-model-control.is-open) .te-plan-field.is-open{position:relative;z-index:1601;overflow:visible}
+.te-model-control.is-open .te-model-list:not([hidden]){background:#FFFFFF !important;opacity:1 !important;z-index:1602}
