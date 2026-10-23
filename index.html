@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=340">
+<link rel="stylesheet" href="assets/site.css?v=326">
 <style>
 /* critical: gallery works even with a stale external stylesheet */
 .intro{align-items:start}
@@ -138,6 +138,21 @@
             <p class="te-chosen" id="teToName"></p>
           </div>
         </div>
+        <div class="te-via-section">
+          <button class="te-via-toggle" id="teViaToggle" type="button" aria-expanded="false" aria-controls="teViaWrap">
+            <span class="te-via-plus" aria-hidden="true">+</span><span id="teViaToggleText">Add an intermediate stop</span>
+          </button>
+          <div class="te-via-wrap" id="teViaWrap" hidden>
+            <div class="te-field te-via-field">
+              <label for="teVia">Via / technical stop (optional)</label>
+              <input id="teVia" type="text" autocomplete="off" spellcheck="false"
+                     placeholder="Airport, city or ICAO" aria-describedby="teViaPick">
+              <div class="te-pick" id="teViaPick" role="listbox" hidden></div>
+              <p class="te-chosen" id="teViaName"></p>
+            </div>
+            <p class="te-via-help">Estimates both flight legs and an extra stop. Airport suitability and routing require operator confirmation.</p>
+          </div>
+        </div>
         <div class="te-plan-fields" aria-label="Planning details">
           <div class="te-plan-field">
             <label for="teAircraft">Aircraft model</label>
@@ -187,6 +202,7 @@
       <p class="te-empty" id="teHint">Pick a departure and a destination, then press Calculate.</p>
 
       <div class="te-out" id="teOut" hidden>
+        <p class="te-via-itinerary" id="teViaItinerary" hidden></p>
         <div class="te-dist te-dist-compact">
           <div><b id="teNm">—</b><span>Estimated distance (nm)</span><small class="te-subdistance"><span id="teKm">—</span> km</small></div>
           <div><b id="teDur">—</b><span>Estimated flight time</span></div>
@@ -569,8 +585,8 @@
 <script src="assets/fleet.js?v=207"></script>
 <!-- Both the homepage widget and the standalone estimator use the same route model and calculator. -->
 <!-- calculator-compatible-homepage-v231 -->
-<script src="assets/route-model.js?v=231"></script>
-<script src="assets/trip.js?v=243"></script>
+<script src="assets/route-model.js?v=326"></script>
+<script src="assets/trip.js?v=326"></script>
 <script>
 /* critical: gallery controls, independent of the external bundle */
 (function(){

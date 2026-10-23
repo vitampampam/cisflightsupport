@@ -11,7 +11,7 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
   var R_NM = 3440.065;                 // earth radius in nautical miles
   var airports = null, cats = null, legs = null, models = [], config = null, routing = null;
   var activeForecast = null, lastNotice = "";
-  var from = null, to = null;
+  var from = null, to = null, via = null;
   var fields = {};
 
   /* ---------- data ---------- */
@@ -155,6 +155,22 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
       enroute:enroute, terminal:terminal, track:geo.nm+enroute+terminal,
       method:geo.method, path:geo.path};
   }
+  /* A manually selected via airport splits the estimate into two independently
+     estimated sectors. This does not recommend a real fuel stop or validate
+     local permissions, opening hours, runway, duty time or operator range. */
+  function routeWithOptionalStop(a,b,stop) {
+    if (!stop) return routeEstimate(a,b);
+    var one=routeEstimate(a,stop),two=routeEstimate(stop,b);
+    if (one.blocked||one.unroutable) return one;
+    if (two.blocked||two.unroutable) return two;
+    var allHits=[],seen={};
+    [one,two].forEach(function(r){(r.hit||[]).forEach(function(h){if(!seen[h.id]){seen[h.id]=true;allHits.push(h);}});});
+    return {greatCircle:one.greatCircle+two.greatCircle,
+      geometry:one.geometry+two.geometry,detour:one.detour+two.detour,
+      enroute:one.enroute+two.enroute,terminal:one.terminal+two.terminal,
+      track:one.track+two.track,hit:allHits,approximate:!!(one.approximate||two.approximate),
+      legs:[one,two],intermediate:stop,method:'two advisory sectors via '+stop.i};
+  }
   function unitPax(c){return typeof c.pax === 'number' ? c.pax : parseInt(String(c.pax).split('–').pop(),10);}
   function selectedAircraft(){
     var id = $('teAircraft').value;
@@ -176,6 +192,10 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
   function outputWind(){
     var cfg=config||{},endpoint=String(cfg.wind_endpoint||'').trim();
     var departure=dateOnly('teDate'),returnDate=dateOnly('teReturnDate');
+    if (via && !$('teViaWrap').hidden) {
+      return Promise.resolve({out:0,back:0,active:false,
+        note:'Still-air estimate for both sectors via '+via.i+'. No separate wind forecast has been connected for this itinerary.'});
+    }
     if(!endpoint||!departure){
       return Promise.resolve({out:0,back:0,active:false,note:cfg.wind_notice||'Still-air calculation; wind data not connected.'});
     }
@@ -205,7 +225,11 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
   function estimate(cat, route, wind, returnTrip) {
     var p=config.pricing;
     var track=route.track;
-    var stops=Math.max(0,Math.ceil(track/(cat.range*USABLE))-1);
+    var legTracks=route.legs ? route.legs.map(function(r){return r.track}) : [track];
+    var automaticStops=legTracks.reduce(function(sum,leg){
+      return sum+Math.max(0,Math.ceil(leg/(cat.range*USABLE))-1);
+    },0);
+    var stops=automaticStops+(route.intermediate?1:0);
     function flightHours(tailwind){
       // Tailwind speeds up flight; headwind slows it down; bound model noise.
       var groundspeed=Math.max(cat.tas*0.65,cat.tas+tailwind);
@@ -221,7 +245,7 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     var overnight=returnTrip?nightsAway()*Number(p.crew_overnight_eur_per_night||0):0;
     return {stops:stops,hours:hrs,cost:flying+pos+stopsCost+airport+nav+overnight,
       flying:flying,positioning:pos,stopFees:stopsCost,airport:airport,nav:nav,overnight:overnight,
-      groundspeed:cat.tas+wind.out,viable:stops<=2};
+      groundspeed:cat.tas+wind.out,viable:automaticStops<=2};
   }
 
   function hhmm(h) {
@@ -251,6 +275,7 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     /* Resolve a city or code typed directly, even without opening the list. */
     if (fields.from) fields.from.resolve();
     if (fields.to) fields.to.resolve();
+    if (fields.via && !$('teViaWrap').hidden) fields.via.resolve();
     var out = $('teOut'), note = $('teNote');
     if (out) out.classList.remove('te-stale');
     if (note) note.hidden = true;
@@ -285,6 +310,20 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
       hint.textContent = 'Departure and destination are the same airport.';
       return;
     }
+    var wantsStop=!$('teViaWrap').hidden;
+    if(wantsStop){
+      var enteredVia=$('teVia').value.trim();
+      if(!enteredVia||!via){
+        out.hidden=true;hint.hidden=false;$('teLegs').hidden=true;
+        hint.textContent='Choose an intermediate airport from the suggestions, or remove the stop.';
+        return;
+      }
+      if(via.i===from.i||via.i===to.i){
+        out.hidden=true;hint.hidden=false;$('teLegs').hidden=true;
+        hint.textContent='The intermediate airport must be different from departure and destination.';
+        return;
+      }
+    }
     /* A negative or fractional passenger count used to calculate happily
        and then travel into the enquiry as "-2 passengers". */
     var paxRaw = $('tePax').value.trim();
@@ -305,7 +344,7 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
 
     hint.hidden = true; out.hidden = false;
 
-    var route=routeEstimate(from,to);
+    var route=routeWithOptionalStop(from,to,wantsStop?via:null);
     if(route.blocked||route.unroutable){
       out.hidden=true;hint.hidden=false;$('teLegs').hidden=true;
       hint.textContent=route.blocked
@@ -314,14 +353,22 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
       return;
     }
     var track=route.track,ret=$('teReturn').checked,shown=ret?track*2:track;
+    var itinerary=$('teViaItinerary');
+    itinerary.hidden=!wantsStop;
+    itinerary.textContent=wantsStop?
+      'Route estimate: '+from.i+' → '+via.i+' → '+to.i+(ret?' (return via '+via.i+')':''):'';
     $('teNm').textContent=Math.round(shown).toLocaleString('en-GB');
     $('teKm').textContent=Math.round(shown*1.852).toLocaleString('en-GB');
-    var ext='Geodesic distance '+Math.round(route.greatCircle)+' nm; '+
-      (route.detour>1 ? 'restricted-area geometric detour +'+Math.round(route.detour)+' nm; ' : '')+
+    var ext=(wantsStop?'Two-sector estimate via '+via.i+'. ':'')+
+      'Geodesic distance '+Math.round(route.greatCircle)+' nm; '+
+      (route.detour>1 ? (route.approximate ? 'indicative restricted-area bypass allowance +' :
+        'restricted-area geometric detour +')+Math.round(route.detour)+' nm; ' : '')+
       'en-route allowance +'+Math.round(route.enroute)+' nm; terminal/SID-STAR allowance +'+
       Math.round(route.terminal)+' nm. '+
       'Geometry uses coarse restricted-country polygons and a grid search, NOT published airways, actual SID/STAR tracks, NOTAMs or an approved AIRAC route.';
-    if(route.hit.length)ext+=' Simplified avoidance applied for '+route.hit.map(function(x){return x.name}).join(', ')+'.';
+    if(route.hit.length)ext+=' Simplified avoidance assumption for '+route.hit.map(function(x){return x.name}).join(', ')+'.';
+    if(wantsStop)ext+=' Stopover costs and flight times are indicative. Stop suitability, airport facilities, landing permissions, and any extra fuel stops require operator confirmation.';
+    if(route.approximate)ext+=' The geometric search cannot determine a corridor for this sector, so distance uses an illustrative bypass allowance only. No unobstructed route has been calculated or confirmed; actual routing, restrictions, technical stops and costs require an operator quotation.';
     $('teExt').textContent=ext;
     $('teCostHeading').textContent=ret?'Return-trip indicative total':'One-way indicative total';
     var aircraft=selectedAircraft(),p=config.pricing;
@@ -355,6 +402,7 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     }
     $('teSend').href='contact.html?service=Charter organisation&msg='+encodeURIComponent(
       'Quote request: '+from.i+' ('+(from.c||from.n)+') to '+to.i+' ('+(to.c||to.n)+')'+
+      (wantsStop?'; via '+via.i+' ('+(via.c||via.n)+')':'')+
       (ret?', return':', one way')+', '+pax+' passengers; '+
       'departure date '+(dateOnly('teDate')||'to confirm')+
       (ret?'; return date '+(dateOnly('teReturnDate')||'to confirm'):'')+
@@ -366,6 +414,7 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
 
   function showLegs() {
     var box = $('teLegs'), body = $('teLegsBody');
+    if(via && !$('teViaWrap').hidden){box.hidden=true;body.innerHTML='';return;}
     if (!legs) { box.hidden = true; return; }
     var match = legs.filter(function (l) {
       return (l.from === from.i && l.to === to.i) || (l.from === to.i && l.to === from.i);
@@ -603,6 +652,17 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
   function wire() {
     fields.from = attach('teFrom', 'teFromPick', 'teFromName', function (a) { from = a; });
     fields.to = attach('teTo', 'teToPick', 'teToName', function (a) { to = a; });
+    fields.via = attach('teVia', 'teViaPick', 'teViaName', function (a) { via = a; });
+    $('teViaToggle').addEventListener('click',function(){
+      var wrap=$('teViaWrap'),show=wrap.hidden;
+      wrap.hidden=!show;
+      $('teViaToggle').setAttribute('aria-expanded',String(show));
+      $('teViaToggleText').textContent=show?'Remove intermediate stop':'Add an intermediate stop';
+      $('teViaToggle').querySelector('.te-via-plus').textContent=show?'−':'+';
+      if(!show){via=null;$('teVia').value='';$('teViaName').textContent='';$('teViaPick').hidden=true;}
+      else $('teVia').focus();
+      markStale();
+    });
     $('teGo').addEventListener('click', calculate);
     $('teReturn').addEventListener('change', markStale);
     $('teAvoid').addEventListener('change', markStale);
@@ -653,6 +713,17 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
       if (k === 'from') { from = hit; $('teFrom').value = airportLabel(hit); $('teFromName').textContent = airportDetail(hit); }
       else { to = hit; $('teTo').value = airportLabel(hit); $('teToName').textContent = airportDetail(hit); }
     });
+    var viaParam=(p.get('via')||'').toUpperCase();
+    if(viaParam){
+      var stop=airports.filter(function(a){return a.i===viaParam||a.a===viaParam})[0];
+      if(stop){
+        via=stop;$('teViaWrap').hidden=false;
+        $('teViaToggle').setAttribute('aria-expanded','true');
+        $('teViaToggleText').textContent='Remove intermediate stop';
+        $('teViaToggle').querySelector('.te-via-plus').textContent='−';
+        $('teVia').value=airportLabel(stop);$('teViaName').textContent=airportDetail(stop);
+      }
+    }
     /* arriving with ?from=&to= is a request for the answer, so run it */
     if (from && to) calculate();
   }

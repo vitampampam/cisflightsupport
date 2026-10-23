@@ -3683,3 +3683,59 @@ footer a{color:#F2F6FF}
    Those panels create isolated stacking contexts; a child z-index alone
    cannot escape the estimator section. Requires no size/layout changes. */
 #estimator:has(.te-model-control.is-open){z-index:12}
+
+
+/* 2026-10-23: filtered service catalogue — centre a short selection on desktop
+   while preserving the regular 3/4-column grid for All Services and leaving
+   the iPhone/tablet touch carousel alone. The estimator carousel still sees
+   this as a grid: no duplicate rail or scroll snapping is introduced. */
+@media (min-width:700px){
+  .sec.svc .cards:has(> .card.hide){
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,255px),310px));
+    justify-content:center;
+  }
+}
+
+/* 2026-10-23: iPhone visual consistency. An older touch-only readability
+   patch used charcoal/pink and !important; bring those specific rules into
+   the current pure-white and cool-blue palette without changing sizing. */
+@media (max-width:640px) and (pointer:coarse){
+  body{background:#fff}
+  .hero:not(.pagehead){
+    background:linear-gradient(118deg,#FAFBFF 0%,#F0F5FF 62%,#E8F0FF 100%) !important;
+    color:#263956 !important;
+  }
+  .hero:not(.pagehead) h1{color:#263956 !important;text-shadow:none !important}
+  .hero:not(.pagehead) h1 .grad{
+    background:linear-gradient(100deg,#35568E,#6889CA) !important;
+    -webkit-background-clip:text !important;background-clip:text !important;
+    color:#4568A7 !important;-webkit-text-fill-color:transparent !important;
+  }
+  .hero:not(.pagehead) .col > p{color:#495D80 !important}
+  .callbar{background:rgba(248,250,255,.97) !important;
+    border-top:1px solid #DCE5F7 !important;
+    -webkit-backdrop-filter:none;backdrop-filter:none}
+  .callbar .s,.callbar .s:link,.callbar .s:visited{
+    background:#FFFFFF !important;color:#263956 !important;
+    -webkit-text-fill-color:#263956 !important;border-color:#ABBCE1 !important}
+  .callbar .p,.callbar .p:link,.callbar .p:visited{
+    background:#4C6FB2 !important;color:#fff !important;
+    -webkit-text-fill-color:#fff !important}
+}
+
+/* Optional intermediate stop — added without changing the base estimator layout. */
+.te-via-section{position:relative;z-index:25;margin:15px 0 2px}
+.te-via-toggle{display:inline-flex;align-items:center;gap:9px;min-height:38px;padding:6px 2px;
+  border:0;background:transparent;color:#3E63A6;cursor:pointer;text-align:left;
+  font:600 14px/1.45 "Inter",Arial,sans-serif}
+.te-via-toggle:hover,.te-via-toggle:focus-visible{color:#263956;text-decoration:underline;text-underline-offset:4px}
+.te-via-toggle:focus-visible{outline:2px solid #7F9DDB;outline-offset:4px;border-radius:4px}
+.te-via-plus{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;
+  border:1px solid #AFC3EA;border-radius:50%;color:#3E63A6;font-size:17px;line-height:1}
+.te-via-wrap{max-width:525px;padding:10px 0 7px}
+.te-via-wrap[hidden],.te-via-itinerary[hidden]{display:none!important}
+.te-via-field .te-pick{max-height:290px;overflow-y:auto;z-index:100}
+.te-via-help{margin:6px 2px 0;font:400 12px/1.6 "Inter",Arial,sans-serif;color:#61708B}
+.te-via-itinerary{margin:12px 0 0;text-align:center;color:#35568E;
+  font:600 13.5px/1.6 "Inter",Arial,sans-serif}
+@media(max-width:640px){.te-via-section{margin-top:10px}.te-via-wrap{max-width:none}}

@@ -121,7 +121,18 @@
     var hit=crossed(a,b,active);
     if(!hit.length)return {direct:direct,detour:0,nm:direct,hit:[],path:[a,b],method:'direct geometry; en-route allowances separate'};
     var geo=geometricDetour(a,b,active);
-    if(!geo)return {direct:direct,hit:hit,unroutable:true,method:'geometric detour unavailable',path:[a,b]};
+    if(!geo){
+      /* The coarse grid deliberately stops at 4,000 nm and cannot solve
+         some shorter corridors. Do not incorrectly classify those commercial
+         journeys as impossible. For public price estimates only, apply an
+         explicitly non-operational bypass allowance; this is NOT a plotted
+         airway, a restriction clearance, or evidence of route feasibility. */
+      var factor=1+Math.min(.30,.09+.035*hit.length);
+      var estimated=direct*factor;
+      return {direct:direct,nm:estimated,detour:estimated-direct,hit:hit,
+        approximate:true,method:'indicative non-operational avoidance allowance',
+        path:[a,b]};
+    }
     geo.direct=direct;geo.detour=Math.max(0,geo.nm-direct);geo.hit=hit;
     return geo;
   }
