@@ -127,7 +127,16 @@
          journeys as impossible. For public price estimates only, apply an
          explicitly non-operational bypass allowance; this is NOT a plotted
          airway, a restriction clearance, or evidence of route feasibility. */
-      var factor=1+Math.min(.30,.09+.035*hit.length);
+      /* Avoid applying a blanket 12.5% surcharge just for crossing one
+         country polygon: it exaggerated long East/SE Asia journeys. These
+         intentionally conservative, LOW-confidence distance bands only
+         communicate model uncertainty, not the geometry of a real route.
+         Ukraine-only crossings receive 4%; Belarus +4%; Russia +10%,
+         capped at 16%. Operational avoidance can differ substantially. */
+      var allowance=hit.reduce(function(total,r){
+        return total+(r.id==='RU'?.10:r.id==='UA'?.04:r.id==='BY'?.04:.04);
+      },0);
+      var factor=1+Math.min(.16,allowance);
       var estimated=direct*factor;
       return {direct:direct,nm:estimated,detour:estimated-direct,hit:hit,
         approximate:true,method:'indicative non-operational avoidance allowance',

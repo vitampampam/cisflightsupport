@@ -308,21 +308,25 @@
     "name": "Bombardier Global 6000",
     "category": "ulr",
     "pax": 13,
-    "tas": 470,
+    "tas": 488,
     "range": 6000,
     "rate_eur": 14500,
-    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission",
-    "popular_europe": true
+    "note": "Indicative plan. Bombardier Global 6000: Mach 0.85 typical, Mach 0.88 high speed. High-speed range reduction is an illustrative allowance, not a certified range.",
+    "popular_europe": true,
+    "fast_tas": 505,
+    "fast_range_factor": 0.89
   },
   {
     "id": "global7500",
     "name": "Bombardier Global 7500",
     "category": "ulr",
     "pax": 14,
-    "tas": 480,
-    "range": 7300,
-    "note": "Indicative planning profile, not certified performance",
-    "rate_eur": 18600
+    "tas": 488,
+    "range": 7700,
+    "note": "Indicative plan. Bombardier Global 7500 published 7,700 nm long-range at Mach 0.85 (NBAA IFR theoretical conditions); Mach 0.90 high-speed cruise. Model-specific high-speed reduction remains a conservative hypothetical planning assumption.",
+    "rate_eur": 18600,
+    "fast_tas": 516,
+    "fast_range_factor": 0.86
   },
   {
     "id": "falcon7x",
@@ -349,19 +353,23 @@
     "name": "Gulfstream G550",
     "category": "ulr",
     "pax": 14,
-    "tas": 470,
+    "tas": 459,
     "range": 6750,
     "rate_eur": 15300,
-    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission"
+    "note": "Indicative plan. Gulfstream G550: Mach 0.80 long-range, Mach 0.85 high speed. High-speed range reduction is an illustrative allowance, not a certified range.",
+    "fast_tas": 488,
+    "fast_range_factor": 0.88
   },
   {
     "id": "g650er",
     "name": "Gulfstream G650ER",
     "category": "ulr",
     "pax": 14,
-    "tas": 485,
+    "tas": 488,
     "range": 7500,
     "rate_eur": 18300,
-    "note": "Indicative charter planning profile; flight speed, usable range and aircraft fit vary by mission"
+    "note": "Indicative plan. Gulfstream G650ER: Mach 0.85 long-range, Mach 0.90 high speed. High-speed range reduction is an illustrative allowance, not a certified range.",
+    "fast_tas": 516,
+    "fast_range_factor": 0.86
   }
 ]

@@ -95,3 +95,23 @@ Expected endpoint JSON response:
 For validated available routes, published SID/STAR tracks, current AIRAC, weather-optimized cruise profiles, and reliable route charges, the next step is a properly licensed flight-planning/aviation-data provider and a server-side integration. EUROCONTROL NM B2B Flight Plan Preparation supports route proposals and validation but access requires stakeholder eligibility and formal processes; this package does **not** include NM connectivity or credentials. https://www.eurocontrol.int/service/network-manager-business-business-b2b-web-services
 
 Do not use the estimator to navigate aircraft, make airspace-compliance decisions, determine dispatch fuel, decide suitability of an aircraft, or claim verified charter prices. Confirm all trip calculations and fees with a qualified operator.
+
+
+### Airspace controls and long-range speed comparisons (October 2026)
+
+- Ukraine remains excluded in all estimates under the active civil airspace closure.
+- Separate Russia and Belarus checkbox assumptions are both enabled to avoid by default.
+  Unchecking either is only a *hypothetical distance/pricing comparison*. It never
+  establishes flight permissions or operator eligibility. Relevant regulatory,
+  insurance, and ATC requirements remain for the actual operator.
+- G550, G650ER, Global 6000, and Global 7500 have manufacturer-referenced
+  typical/long-range and high-speed cruise benchmarks. High-speed comparison is
+  opt-in and reduces indicative aircraft planning range; the exact range
+  multiplier is not certified or manufacturer quoted.
+- For long routings beyond the intentionally limited geometry search, the
+  website may apply a low-confidence *non-operational* distance allowance
+  proportional to the country polygons intersected by the direct line:
+  Ukraine 4%, Belarus 4%, Russia 10% (combined capped at 16%).
+  These percentages are assumptions, not published airways or real detours.
+  A displayed great-circle reference is not an allowed route. Do not use
+  these calculations for flight navigation or scheduling.

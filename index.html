@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=340">
+<link rel="stylesheet" href="assets/site.css?v=355">
 <style>
 /* critical: gallery works even with a stale external stylesheet */
 .intro{align-items:start}
@@ -182,6 +182,10 @@
             </div>
           </div>
         </div>
+        <label class="te-fast-cruise" id="teFastCruiseWrap" hidden>
+          <input type="checkbox" id="teFastCruise">
+          <span><strong>High-speed cruise estimate</strong><small>Faster cruise but potentially shorter nonstop range or an extra stop. Actual winds, fuel and prices require operator confirmation.</small></span>
+        </label>
         <p class="te-empty" id="teHint" aria-live="polite">Choose your departure and destination, then press Calculate.</p>
         <details class="te-aircraft-compare" id="teAircraftCompare">
           <summary>Compare aircraft performance <span id="teCompareCount">and indicative charter rates</span></summary>
@@ -194,12 +198,18 @@
           </div>
           <p class="te-aircraft-disclaimer">Illustrative European charter benchmarks, not live offers. Cruise speeds are planning assumptions; reference ranges are not guaranteed nonstop capability. Fuel-stop estimates apply an additional reserve margin. Availability, payload, winds and operator pricing vary.</p>
         </details>
+        <div class="te-airspace" aria-label="Airspace assumptions for indicative estimates">
+          <div class="te-airspace-heading">Airspace assumptions <span>for pricing estimates only</span></div>
+          <div class="te-airspace-choices">
+            <span class="te-airspace-fixed" title="Ukraine's civil airspace is closed and is excluded in every estimate."><span aria-hidden="true">&#128274;</span> Ukraine excluded (closed)</span>
+            <label class="te-airspace-choice"><input id="teAvoidRussia" type="checkbox" checked><span>Avoid Russia</span></label>
+            <label class="te-airspace-choice"><input id="teAvoidBelarus" type="checkbox" checked><span>Avoid Belarus</span></label>
+          </div>
+          <p class="te-airspace-note">Changing Russia or Belarus only compares indicative distances. It does not confirm safety, legal access, flight permissions or an operator's eligibility. EU/EASA restrictions and current NOTAMs still apply.</p>
+        </div>
         <div class="te-opts">
           <label class="te-inline"><input type="checkbox" id="teReturn"> Return trip</label>
-          <label class="te-inline te-avoid-label" title="Estimate a detour around Russia, Belarus and Ukraine. This is an approximate geographic model, not live airspace data.">
-            <input type="checkbox" id="teAvoid" checked aria-label="Avoid Russia, Belarus and Ukraine when estimating the route">
-            <span>Avoid Russia, Belarus &amp; Ukraine</span>
-          </label>
+
           <label class="te-inline">Passengers
             <input type="number" id="tePax" min="1" max="16" value="4" inputmode="numeric">
           </label>
@@ -217,6 +227,7 @@
           <div><b id="teDur">—</b><span id="teDurLabel">Estimated journey time (incl. stops)</span></div>
         </div>
 
+        <p class="te-route-caution" id="teRouteCaution" hidden></p>
         <table class="te-table">
           <thead>
             <tr><th>Aircraft category</th><th>Block time</th><th>Stops</th><th id="teCostHeading">Indicative cost</th></tr>
@@ -606,8 +617,8 @@
 <script src="assets/fleet.js?v=207"></script>
 <!-- Both the homepage widget and the standalone estimator use the same route model and calculator. -->
 <!-- calculator-compatible-homepage-v231 -->
-<script src="assets/route-model.js?v=326"></script>
-<script src="assets/trip.js?v=336"></script>
+<script src="assets/route-model.js?v=355"></script>
+<script src="assets/trip.js?v=355"></script>
 <script>
 /* critical: gallery controls, independent of the external bundle */
 (function(){
