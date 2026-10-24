@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=355">
+<link rel="stylesheet" href="assets/site.css?v=357">
 <style>
 /* critical: gallery works even with a stale external stylesheet */
 .intro{align-items:start}
@@ -230,16 +230,16 @@
         <p class="te-route-caution" id="teRouteCaution" hidden></p>
         <table class="te-table">
           <thead>
-            <tr><th>Aircraft category</th><th>Block time</th><th>Stops</th><th id="teCostHeading">Indicative cost</th></tr>
+            <tr><th>Aircraft category</th><th>Journey time</th><th>Stops</th><th id="teCostHeading">Indicative cost</th></tr>
           </thead>
           <tbody id="teRows"></tbody>
         </table>
 
         <details class="te-sector-breakdown" id="teSectorBreakdown" hidden>
-          <summary>Flight time and cost by sector</summary>
+          <summary>Flight time and stops by sector</summary>
           <div class="te-sector-breakdown-content">
             <div class="te-breakdown-head">
-              <span>How the multi-sector estimate is composed</span>
+              <span>Estimated flight time, fuel stops and ground turnaround</span>
               <label for="teBreakdownAircraft">Aircraft profile
                 <select id="teBreakdownAircraft" class="te-breakdown-select" aria-label="Aircraft profile for sector breakdown"></select>
               </label>
@@ -618,7 +618,7 @@
 <!-- Both the homepage widget and the standalone estimator use the same route model and calculator. -->
 <!-- calculator-compatible-homepage-v231 -->
 <script src="assets/route-model.js?v=355"></script>
-<script src="assets/trip.js?v=355"></script>
+<script src="assets/trip.js?v=357"></script>
 <script>
 /* critical: gallery controls, independent of the external bundle */
 (function(){

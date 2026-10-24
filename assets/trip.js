@@ -260,7 +260,11 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     var directionCount=returnTrip?2:1;
     var blockHours=outbound+inbound;
     var groundHours=directionCount*stops*groundStopH();
-    var pos=returnTrip?0:Number(p.one_way_positioning_h??0.8)*cat.rate;
+    /* Aircraft positioning is an optional cost allowance for a separate
+       empty ferry movement. It is NOT part of the passenger itinerary or
+       its block hours / journey duration. */
+    var positioningHours=returnTrip?0:Number(p.one_way_positioning_h??0.8);
+    var pos=positioningHours*cat.rate;
     var flying=blockHours*cat.rate;
     var stopRate=Number(p.fuel_stop_eur??2500);
     /* Stop fee is a single illustrative landing/handling/refuelling
@@ -276,7 +280,7 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
       hours:blockHours,journeyHours:blockHours+groundHours,groundHours:groundHours,
       outboundBlockHours:outbound,inboundBlockHours:inbound,
       cost:flying+pos+stopsCost+airport+nav+overnight,
-      flying:flying,positioning:pos,stopFees:stopsCost,
+      flying:flying,positioning:pos,positioningHours:positioningHours,stopFees:stopsCost,
       selectedStopFees:selectedStopFees,automaticStopFees:automaticStopFees,
       airport:airport,nav:nav,overnight:overnight,
       groundspeed:cat.tas+wind.out,viable:auto<=2};
@@ -321,12 +325,13 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     }).finally(function(){if(goButton){goButton.disabled=false;goButton.textContent='Calculate';}});
   }
 
+  /* Passenger-friendly journey timeline. Preserve the underlying pricing
+     and its audit data, but do not expose operator cost accounting or bill
+     idle ground hours at a flight-hour rate. */
   function renderSectorBreakdown(route,aircraft,wind,returnTrip,pax,hasVia){
     var details=$('teSectorBreakdown'),selector=$('teBreakdownAircraft'),body=$('teSectorBreakdownBody');
     if(!details||!selector||!body)return;
-    if(!hasVia || !route.legs || route.legs.length<2){
-      details.hidden=true;details.open=false;body.innerHTML='';return;
-    }
+    if(!route||!route.track){details.hidden=true;details.open=false;body.innerHTML='';return;}
     details.hidden=false;
     details.open=true;
     var choices=aircraft.filter(function(c){
@@ -335,89 +340,72 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     });
     if(!choices.length){
       selector.hidden=true;
-      body.innerHTML='<p class="te-breakdown-foot">No aircraft profile in the current selection meets the modelled range and passenger assumptions. Select another aircraft to view a leg-by-leg estimate.</p>';
+      body.innerHTML='<p class="te-breakdown-foot">No aircraft in the current selection meets the indicative range and passenger assumptions. Choose another aircraft to see sector times.</p>';
       return;
     }
     selector.hidden=false;
-    var prev=selector.value;
+    var previous=selector.value;
     selector.innerHTML='';
     choices.forEach(function(c){
-      var o=document.createElement('option');o.value=c.id;o.textContent=c.name;selector.appendChild(o);
+      var opt=document.createElement('option');opt.value=c.id;opt.textContent=c.name;selector.appendChild(opt);
     });
-    if(choices.some(function(c){return c.id===prev}))selector.value=prev;
-    function euro(v){return '€'+Math.round(v).toLocaleString('en-GB');}
+    if(choices.some(function(c){return c.id===previous}))selector.value=previous;
+
     function show(){
       var c=choices.filter(function(x){return x.id===selector.value})[0]||choices[0];
       var e=estimate(c,route,wind,returnTrip);
-      var paths=[{legs:route.legs.slice(),codes:[from.i,via.i,to.i],wind:wind.out,heading:'Outbound'}];
-      if(returnTrip)paths.push({legs:route.legs.slice().reverse(),codes:[to.i,via.i,from.i],wind:wind.back,heading:'Return'});
-      var sumBillableHours=0,sumGroundHours=0,sumLegCosts=0,automaticStops=0;
-      var rows=[];
-      paths.forEach(function(direction){
+      var legs=route.legs||[route];
+      var codes=route.intermediate?[from.i,route.intermediate.i,to.i]:[from.i,to.i];
+      var directions=[{legs:legs.slice(),codes:codes.slice(),wind:wind.out,label:'Outbound'}];
+      if(returnTrip)directions.push({legs:legs.slice().reverse(),codes:codes.slice().reverse(),wind:wind.back,label:'Return'});
+      var rows=[],billableHours=0,groundHours=0,flightCost=0,autoStops=0;
+      directions.forEach(function(direction){
         direction.legs.forEach(function(leg,i){
           var auto=techStopsInLeg(c,leg);
-          var time=legBlockHours(c,leg,direction.wind);
-          var cost=time*c.rate;
-          sumBillableHours+=time;sumLegCosts+=cost;automaticStops+=auto;
-          rows.push('<tr class="te-breakdown-flight" data-flight-hours="'+time.toFixed(8)+
-            '" data-flight-cost="'+cost.toFixed(8)+'"><td><strong>'+direction.codes[i]+' → '+direction.codes[i+1]+'</strong>'+
-            '<small>'+direction.heading+(auto?' · '+auto+' additional modelled fuel stop'+(auto>1?'s':''):'')+'</small></td>'+
-            '<td>'+Math.round(leg.track).toLocaleString('en-GB')+' nm</td>'+
-            '<td>'+hhmm(time)+'</td><td>'+euro(cost)+'</td></tr>');
-          if(auto){
-            var idle=auto*groundStopH();sumGroundHours+=idle;
-            rows.push('<tr class="te-breakdown-allowance te-breakdown-ground"><td><strong>Ground time: '+auto+' modelled fuel stop'+(auto>1?'s':'')+'</strong>'+
-              '<small>Indicative turnaround · airports not selected</small></td><td>—</td><td>'+hhmm(idle)+'</td>'+
-              '<td>€0 <small>Not billed as flight hours</small></td></tr>');
+          var block=legBlockHours(c,leg,direction.wind);
+          var idle=auto*groundStopH();
+          billableHours+=block;
+          groundHours+=idle;
+          flightCost+=block*c.rate;
+          autoStops+=auto;
+          rows.push('<tr class="te-breakdown-flight" data-flight-hours="'+block.toFixed(8)+'" data-flight-cost="'+(block*c.rate).toFixed(8)+'">'+
+            '<td><strong>'+direction.codes[i]+' → '+direction.codes[i+1]+'</strong><small>'+direction.label+' flight</small></td>'+
+            '<td><strong>'+hhmm(block)+'</strong></td>'+
+            '<td>'+(auto?'<strong>'+hhmm(idle)+'</strong><small>'+auto+' modelled fuel stop'+(auto>1?'s':'')+' · airports to be confirmed</small>':'<span class="te-breakdown-none">No fuel stop modelled</span>')+'</td></tr>');
+          if(route.intermediate&&i===0){
+            var selectedIdle=groundStopH();
+            groundHours+=selectedIdle;
+            rows.push('<tr class="te-breakdown-allowance te-breakdown-ground"><td><strong>Stop at '+route.intermediate.i+'</strong>'+ 
+              '<small>'+direction.label+' · selected intermediate airport</small></td>'+
+              '<td>—</td><td><strong>'+hhmm(selectedIdle)+'</strong><small>Ground turnaround / refuelling</small></td></tr>');
           }
         });
-        var viaIdle=groundStopH();sumGroundHours+=viaIdle;
-        rows.push('<tr class="te-breakdown-allowance te-breakdown-ground"><td><strong>Ground time at '+via.i+'</strong>'+
-          '<small>Selected technical stop · engines off / no flight-hour charge</small></td><td>—</td><td>'+hhmm(viaIdle)+'</td>'+
-          '<td>€0 <small>Stop-related fees shown below</small></td></tr>');
       });
-      /* The same flight-leg calculator drives the total and these rows. */
+      var totalStops=(e.automaticStops+e.selectedStops)*directions.length;
       var fees=e.positioning+e.stopFees+e.airport+e.nav+e.overnight;
-      var feeList=[
-        ['Aircraft positioning (one-way allowance)',e.positioning],
-        ['Selected stop at '+via.i+' ('+paths.length+' × illustrative €'+
-          Number(config.pricing.fuel_stop_eur??2500).toLocaleString('en-GB')+' fee)',e.selectedStopFees],
-        ['Other modelled fuel-stop fees ('+automaticStops+' stops)',e.automaticStopFees],
-        ['Origin/destination airport handling (excludes intermediate stops)',e.airport],
-        ['Navigation allowance',e.nav],
-        ['Crew overnight allowance',e.overnight]
-      ];
-      var feeMarkup=feeList.filter(function(entry){return entry[1]>0}).map(function(entry){
-        return '<li><span>'+entry[0]+'</span><span>'+euro(entry[1])+'</span></li>';
-      }).join('');
-      var subtotal=rows.join('')+
-        '<tr class="te-breakdown-total"><td><strong>Billable block-time subtotal</strong>'+
-        '<small>Flight legs and additional flight operations only</small></td><td>'+
-        Math.round(route.track*(returnTrip?2:1)).toLocaleString('en-GB')+' nm</td>'+
-        '<td>'+hhmm(e.hours)+'</td><td>'+euro(e.flying)+'</td></tr>';
-      body.innerHTML='<p class="te-breakdown-summary"><strong>Estimated journey time: '+hhmm(e.journeyHours)+
-        '</strong><span>'+hhmm(e.hours)+' billable block time + '+hhmm(e.groundHours)+
-        ' unbilled ground turnaround</span></p>'+
+      body.innerHTML='<p class="te-breakdown-summary"><strong>Estimated journey time: '+hhmm(e.journeyHours)+'</strong>'+
+        '<span>'+hhmm(e.hours)+' flight block time + '+hhmm(e.groundHours)+' ground turnaround</span></p>'+
         '<div class="te-breakdown-table-wrap"><table class="te-breakdown-table">'+
-        '<thead><tr><th>Sector / item</th><th>Distance</th><th>Time</th><th>Charter flight charge</th></tr></thead>'+
-        '<tbody>'+subtotal+'</tbody></table></div>'+
-        (feeMarkup?'<ul class="te-breakdown-costs">'+feeMarkup+'</ul>':'')+
-        '<div class="te-breakdown-money"><strong>Indicative '+(returnTrip?'return':'one-way')+' total: '+euro(e.cost)+'</strong>'+
-        '<span>Estimated price range: '+money(e.cost)+'</span></div>'+
-        '<p class="te-breakdown-foot">Aircraft: '+c.name+(c.fastCruise?' (high-speed cruise profile)':'')+' at '+euro(c.rate)+
-        '/billable block hour. Each flight leg includes '+hhmm(TAXI_H+TERMINAL_H)+
-        ' for terminal/taxi operations; each unlocated fuel stop additionally includes '+hhmm(extraStopBlockH())+
-        ' of billable flight operations. Ground turnaround ('+hhmm(sumGroundHours)+
-        ' across '+e.stops*paths.length+' stops) is shown in journey time but charged €0 at the hourly rate. '+
-        'One composite technical-stop fee per stop is separately estimated (landing, handling and refuelling services; fuel uplift itself may be charged separately by an operator). '+
-        'The base airport-handling allowance excludes technical stops. '+
-        'Cost = billable flight operations '+euro(e.flying)+' + positioning, stop and other allowances '+euro(fees)+
-        ' = '+euro(e.cost)+'. Illustrative only. Fuel-stop locations, fuel uplift, crew costs, airport tariffs and aircraft availability require operator confirmation.</p>';
-      /* Used by regression tests and by the browser's accessibility inspection:
-         the pricing result and the sector subtotals must agree. */
-      body.dataset.billableHours=sumBillableHours.toFixed(8);
-      body.dataset.groundHours=sumGroundHours.toFixed(8);
-      body.dataset.flightCost=sumLegCosts.toFixed(8);
+        '<thead><tr><th>Flight sector / stop</th><th>Flight time</th><th>Ground turnaround</th></tr></thead>'+
+        '<tbody>'+rows.join('')+'</tbody></table></div>'+
+        '<p class="te-breakdown-trip-note">'+
+        directions.length+' '+(directions.length===1?'direction':'directions')+' · '+
+        totalStops+' estimated '+(totalStops===1?'stop':'stops')+
+        (autoStops?' (including '+autoStops+' unlocated fuel '+(autoStops===1?'stop':'stops')+')':'')+'.</p>'+
+        '<div class="te-breakdown-money"><strong>Indicative '+(returnTrip?'return-trip':'one-way')+' price</strong>'+
+        '<span>'+money(e.cost)+'</span></div>'+
+        '<p class="te-breakdown-foot">Flight times include modelled taxi, climb and approach allowances. '+
+        'Ground turnaround is part of the passenger journey, but is not charged as flight time. '+
+        'The indicative price includes separate airport/stop fees and any aircraft positioning allowance; '+
+        '<strong>positioning does not add time to the passenger journey.</strong> '+
+        'Fuel stops are estimates, not confirmed airports or routings.</p>';
+      /* Keep the audit totals accessible to automated regression checks.
+         These figures are unchanged from the full cost breakdown. */
+      body.dataset.billableHours=billableHours.toFixed(8);
+      body.dataset.passengerJourneyHours=e.journeyHours.toFixed(8);
+      body.dataset.positioningHours=e.positioningHours.toFixed(8);
+      body.dataset.groundHours=groundHours.toFixed(8);
+      body.dataset.flightCost=flightCost.toFixed(8);
       body.dataset.totalCost=e.cost.toFixed(8);
       body.dataset.totalFees=fees.toFixed(8);
     }
@@ -536,7 +524,7 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     $('teWeather').textContent=windData.note;
     $('tePricing').textContent=(ret?
       'Return estimates include separate outbound and inbound billable block times, per-stop fees in each direction, base airport handling, navigation allowances and '+days+' assumed crew overnight(s). No one-way positioning allowance is added.' :
-      'One-way estimates include an indicative 0.8-hour aircraft positioning allowance, base airport handling and navigation allowances.')+
+      'One-way estimates include an indicative '+Number(p.one_way_positioning_h??0.8).toFixed(1)+'-hour separate aircraft positioning COST allowance, base airport handling and navigation allowances. Positioning is excluded from passenger block time and journey duration.')+
       ' Ground turnaround is included in journey time but NOT charged at the charter flight-hour rate. '+
       'Added takeoffs/approaches/taxi after assumed fuel stops are reflected in billable block time. '+
       'The composite €'+Number(p.fuel_stop_eur??2500).toLocaleString('en-GB')+
@@ -552,7 +540,8 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
         (e.stops?e.stops+(e.stops>1?' stops each way':' stop each way'):'non-stop');
       var price=invalid?'—':money(e.cost);
       return '<tr'+cls+'><td><b>'+c.name+'</b><span>Up to '+unitPax(c)+
-        ' passengers</span></td><td>'+hhmm(e.hours)+'</td><td>'+note+'</td><td>'+price+
+        ' passengers</span></td><td><strong>'+hhmm(e.journeyHours)+'</strong>'+
+        '<span>Billable flight block: '+hhmm(e.hours)+'</span></td><td>'+note+'</td><td>'+price+
         (ret&&!invalid?'<span>Approx. '+money(e.cost/2)+' per flight</span>':'')+'</td></tr>';
     }).join('');
     $('teRows').innerHTML=rows;
