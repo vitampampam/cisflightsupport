@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=357">
+<link rel="stylesheet" href="assets/site.css?v=358">
 </head>
 <body>
 <div class="progress" id="progress" aria-hidden="true"></div>
@@ -171,22 +171,22 @@
         <p class="te-via-itinerary" id="teViaItinerary" hidden></p>
         <div class="te-dist te-dist-compact">
           <div><b id="teNm">—</b><span>Estimated distance (nm)</span><small class="te-subdistance"><span id="teKm">—</span> km</small></div>
-          <div><b id="teDur">—</b><span id="teDurLabel">Estimated journey time (incl. stops)</span></div>
+          <div><b id="teDur">—</b><span id="teDurLabel">Passenger flight block time (excluding positioning)</span></div>
         </div>
 
         <p class="te-route-caution" id="teRouteCaution" hidden></p>
         <table class="te-table">
           <thead>
-            <tr><th>Aircraft category</th><th>Journey time</th><th>Stops</th><th id="teCostHeading">Indicative cost</th></tr>
+            <tr><th>Aircraft category</th><th>Block time</th><th>Stops</th><th id="teCostHeading">Indicative cost</th></tr>
           </thead>
           <tbody id="teRows"></tbody>
         </table>
 
         <details class="te-sector-breakdown" id="teSectorBreakdown" hidden>
-          <summary>Flight time and stops by sector</summary>
+          <summary>Block time and stops by sector</summary>
           <div class="te-sector-breakdown-content">
             <div class="te-breakdown-head">
-              <span>Estimated flight time, fuel stops and ground turnaround</span>
+              <span>Passenger flight time, fuel stops and ground turnaround</span>
               <label for="teBreakdownAircraft">Aircraft profile
                 <select id="teBreakdownAircraft" class="te-breakdown-select" aria-label="Aircraft profile for sector breakdown"></select>
               </label>
@@ -261,6 +261,6 @@
 <script src="assets/request.js?v=210"></script>
 <script src="assets/fleet.js?v=207"></script>
 <script src="assets/route-model.js?v=355"></script>
-<script src="assets/trip.js?v=357"></script>
+<script src="assets/trip.js?v=358"></script>
 </body>
 </html>

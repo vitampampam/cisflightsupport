@@ -4183,3 +4183,17 @@ footer a{color:#F2F6FF}
   .te-breakdown-money{display:block}
   .te-breakdown-money span{display:block;margin-top:4px}
 }
+
+/* Oct 2026: separate passenger flight block from optional aircraft positioning.
+   Display positioning only with the indicative price; no effect on time cards. */
+.te-breakdown-positioning {
+  margin:9px 2px 0;
+  color:#526789;
+  font:400 12.5px/1.55 "Inter",Arial,sans-serif;
+}
+.te-breakdown-positioning strong {font-weight:600;color:#354E78}
+.te-dist #teDurLabel {line-height:1.35}
+@media(max-width:600px){
+  .te-breakdown-positioning{font-size:12px}
+  .te-breakdown-table td:nth-child(2)::before{content:'Block time'}
+}

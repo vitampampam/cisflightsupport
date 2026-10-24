@@ -383,10 +383,10 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
       });
       var totalStops=(e.automaticStops+e.selectedStops)*directions.length;
       var fees=e.positioning+e.stopFees+e.airport+e.nav+e.overnight;
-      body.innerHTML='<p class="te-breakdown-summary"><strong>Estimated journey time: '+hhmm(e.journeyHours)+'</strong>'+
-        '<span>'+hhmm(e.hours)+' flight block time + '+hhmm(e.groundHours)+' ground turnaround</span></p>'+
+      body.innerHTML='<p class="te-breakdown-summary"><strong>Passenger block time: '+hhmm(e.hours)+'</strong>'+
+        '<span>'+hhmm(e.groundHours)+' ground turnaround · '+hhmm(e.journeyHours)+' total journey time</span></p>'+
         '<div class="te-breakdown-table-wrap"><table class="te-breakdown-table">'+
-        '<thead><tr><th>Flight sector / stop</th><th>Flight time</th><th>Ground turnaround</th></tr></thead>'+
+        '<thead><tr><th>Flight sector / stop</th><th>Block time</th><th>Ground turnaround</th></tr></thead>'+
         '<tbody>'+rows.join('')+'</tbody></table></div>'+
         '<p class="te-breakdown-trip-note">'+
         directions.length+' '+(directions.length===1?'direction':'directions')+' · '+
@@ -394,10 +394,13 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
         (autoStops?' (including '+autoStops+' unlocated fuel '+(autoStops===1?'stop':'stops')+')':'')+'.</p>'+
         '<div class="te-breakdown-money"><strong>Indicative '+(returnTrip?'return-trip':'one-way')+' price</strong>'+
         '<span>'+money(e.cost)+'</span></div>'+
-        '<p class="te-breakdown-foot">Flight times include modelled taxi, climb and approach allowances. '+
-        'Ground turnaround is part of the passenger journey, but is not charged as flight time. '+
-        'The indicative price includes separate airport/stop fees and any aircraft positioning allowance; '+
-        '<strong>positioning does not add time to the passenger journey.</strong> '+
+        (e.positioningHours>0 ?
+          '<p class="te-breakdown-positioning"><strong>Pricing allowance · aircraft positioning:</strong> '+
+          hhmm(e.positioningHours)+' (approx. €'+Math.round(e.positioning).toLocaleString('en-GB')+
+          ' included in the price). This separate ferry movement is not part of passenger block time or journey time.</p>' :
+          '<p class="te-breakdown-positioning">No extra positioning time is assumed for this return itinerary.</p>')+
+        '<p class="te-breakdown-foot">Passenger block time is the sum of the flight sectors, including modelled taxi, climb and approach. '+
+        'Ground turnaround adds elapsed journey time but is not charged as flight time. '+
         'Fuel stops are estimates, not confirmed airports or routings.</p>';
       /* Keep the audit totals accessible to automated regression checks.
          These figures are unchanged from the full cost breakdown. */
@@ -540,17 +543,17 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
         (e.stops?e.stops+(e.stops>1?' stops each way':' stop each way'):'non-stop');
       var price=invalid?'—':money(e.cost);
       return '<tr'+cls+'><td><b>'+c.name+'</b><span>Up to '+unitPax(c)+
-        ' passengers</span></td><td><strong>'+hhmm(e.journeyHours)+'</strong>'+
-        '<span>Billable flight block: '+hhmm(e.hours)+'</span></td><td>'+note+'</td><td>'+price+
+        ' passengers</span></td><td><strong>'+hhmm(e.hours)+'</strong>'+
+        '<span>Journey incl. ground stops: '+hhmm(e.journeyHours)+'</span></td><td>'+note+'</td><td>'+price+
         (ret&&!invalid?'<span>Approx. '+money(e.cost/2)+' per flight</span>':'')+'</td></tr>';
     }).join('');
     $('teRows').innerHTML=rows;
     renderSectorBreakdown(route,aircraft,windData,ret,pax,wantsStop);
     var hrsList=aircraft.map(function(c){
       var e=estimate(c,route,windData,ret);
-      return (e.viable&&pax<=unitPax(c))?e.journeyHours:null;
+      return (e.viable&&pax<=unitPax(c))?e.hours:null;
     }).filter(function(v){return v!==null});
-    $('teDurLabel').textContent='Estimated journey time (incl. stops)';
+    $('teDurLabel').textContent='Passenger flight block time (excluding positioning)';
     if(!hrsList.length)$('teDur').textContent='—';
     else {
       var lo=Math.min.apply(null,hrsList),hi=Math.max.apply(null,hrsList);
