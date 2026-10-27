@@ -636,8 +636,16 @@
     if (head + STEP * n > cap) step = Math.max(0, (cap - head) / n);
     if (head > cap) { base = cap; step = 0; }
 
+    /* The homepage's first two panels overlap. Their left edges must align:
+       making the hero 9px narrower exposed a tiny square at the rounded
+       corner of the assistance card. Keep the fan steps everywhere else. */
+    var joinedHero = document.body.classList.contains('home-stack') &&
+      panels[0] && panels[0].classList.contains('hero') &&
+      panels[1] && panels[1].classList.contains('doorbar');
+    function targetWidth(i) { return base + ((joinedHero && i === 0) ? step : i * step); }
+
     panels.forEach(function (el, i) {
-      el.style.setProperty('--w', (((base + i * step) - c[i]) / m[i]).toFixed(2) + 'px');
+      el.style.setProperty('--w', ((targetWidth(i) - c[i]) / m[i]).toFixed(2) + 'px');
     });
 
     /* Then correct against what actually came out. The probe is taken with
@@ -647,7 +655,7 @@
     for (var pass = 0; pass < 4; pass++) {
       var worst = 0;
       var err = panels.map(function (el, i) {
-        var e = (base + i * step) - el.getBoundingClientRect().width;
+        var e = targetWidth(i) - el.getBoundingClientRect().width;
         if (Math.abs(e) > worst) worst = Math.abs(e);
         return e;
       });
