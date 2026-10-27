@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>CIS Flight Support — estimator and responsive UI update (23 October 2026) | cisflightsupport</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="CIS Flight Support — estimator and responsive UI update (23 October 2026)" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="cis flight support website mockup" />
+<meta property="og:description" content="cis flight support website mockup" />
+<link rel="canonical" href="https://vitampampam.github.io/cisflightsupport/REGRESSION-FIX-2026-10-23.html" />
+<meta property="og:url" content="https://vitampampam.github.io/cisflightsupport/REGRESSION-FIX-2026-10-23.html" />
+<meta property="og:site_name" content="cisflightsupport" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="CIS Flight Support — estimator and responsive UI update (23 October 2026)" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"cis flight support website mockup","headline":"CIS Flight Support — estimator and responsive UI update (23 October 2026)","url":"https://vitampampam.github.io/cisflightsupport/REGRESSION-FIX-2026-10-23.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/cisflightsupport/assets/css/style.css?v=e4aaf98ac1c9538463f3dacf56c9b77a7b4a254f">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/cisflightsupport/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://vitampampam.github.io/cisflightsupport/">cisflightsupport</a></h1>
+      
+
+      <h1 id="cis-flight-support--estimator-and-responsive-ui-update-23-october-2026">CIS Flight Support — estimator and responsive UI update (23 October 2026)</h1>
+
+<h2 id="root-cause-and-change">Root cause and change</h2>
+<ul>
+  <li>Valid European-to-Southeast-Asian routes such as Amsterdam–Singapore failed with <code class="language-plaintext highlighter-rouge">unroutable</code> because the simplified geometry routine deliberately refuses sectors longer than 4,000 nm that cross a restricted-country polygon. The UI treated the <em>limitation of the heuristic</em> as evidence the journey could not be calculated.</li>
+  <li>The public commercial estimator now uses an explicitly labelled, non-operational <strong>bypass-distance allowance</strong> only when the limited geometric search cannot find a corridor. It still blocks endpoints inside a marked restricted polygon. This is <strong>not a cleared or validated air route</strong>; operators must confirm airspace, route, approvals, costs and aircraft suitability.</li>
+  <li>Interactive model rates, 35 aircraft models, departure/arrival search, and earlier dropdown fixes remain.</li>
+  <li>On iPhone an older <code class="language-plaintext highlighter-rouge">!important</code> touch CSS rule kept charcoal/pink instead of the cool blue and white mobile branding; it is overridden, with no change to font size or layout.</li>
+  <li>With the services filter active, CSS Grid now shrinks to available visible cards and centres them on desktop; unfiltered grid and touch carousel remain as before.</li>
+</ul>
+
+<h2 id="files-changed">Files changed</h2>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">assets/route-model.js</code>, <code class="language-plaintext highlighter-rouge">assets/trip.js</code>, <code class="language-plaintext highlighter-rouge">assets/site.css</code>, <code class="language-plaintext highlighter-rouge">index.html</code>, <code class="language-plaintext highlighter-rouge">trip-estimator.html</code>.</li>
+</ul>
+
+<h2 id="safety-notice">Safety notice</h2>
+<p>Estimated track distances and cost ranges are indicative only and must not be used to plan or authorize a flight. Route distance is not based on actual airways, NOTAMs, NOTAM acceptance, SID/STAR, or AIRAC data. No wind forecast is connected.</p>
+
+<h2 id="optional-intermediate-stop">Optional intermediate stop</h2>
+<ul>
+  <li>Collapsible “Add an intermediate stop” airport selector on both pages; autocomplete and ?via=ICAO supported.</li>
+  <li>Both sectors are estimated independently, with each leg checked against indicative aircraft range, and one additional planned stop per direction included in indicative duration and cost.</li>
+  <li>Stopovers are <strong>not automatically recommended or confirmed</strong>; suitability and flight plans require operator confirmation.</li>
+  <li>Invalid/missing/same-as-origin stop is rejected, and the enquiry includes the via airport.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Aircraft models &amp; pricing reference (October 2026) | cisflightsupport</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Aircraft models &amp; pricing reference (October 2026)" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="cis flight support website mockup" />
+<meta property="og:description" content="cis flight support website mockup" />
+<link rel="canonical" href="https://vitampampam.github.io/cisflightsupport/AIRCRAFT-DATA-SOURCES.html" />
+<meta property="og:url" content="https://vitampampam.github.io/cisflightsupport/AIRCRAFT-DATA-SOURCES.html" />
+<meta property="og:site_name" content="cisflightsupport" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Aircraft models &amp; pricing reference (October 2026)" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"cis flight support website mockup","headline":"Aircraft models &amp; pricing reference (October 2026)","url":"https://vitampampam.github.io/cisflightsupport/AIRCRAFT-DATA-SOURCES.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/cisflightsupport/assets/css/style.css?v=e4aaf98ac1c9538463f3dacf56c9b77a7b4a254f">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/cisflightsupport/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://vitampampam.github.io/cisflightsupport/">cisflightsupport</a></h1>
+      
+
+      <h1 id="aircraft-models--pricing-reference-october-2026">Aircraft models &amp; pricing reference (October 2026)</h1>
+
+<p>This website carries <strong>35 indicative aircraft profiles</strong>, prioritizing aircraft regularly active in European business aviation. The <code class="language-plaintext highlighter-rouge">popular_europe</code> marker is a navigation aid: it marks representative aircraft belonging to frequently observed model families, <strong>not an availability claim</strong> or ranking of individual variants.</p>
+
+<h2 id="activity-basis">Activity basis</h2>
+<ul>
+  <li>AVI-GO European business aviation flight activity July 2026: https://ai.avi-go.com/news/ai-news-center/reports/2026-07/67</li>
+  <li>Embraer delivery summary, February 2026: https://embraer.com/media-center/pt?detail=24354&amp;mediatype=NEWS</li>
+</ul>
+
+<h2 id="aircraft-specification-reference-points">Aircraft specification reference points</h2>
+<ul>
+  <li>Textron Aviation product tables: https://www.textron.com/assets/FB/2023/textron-aviation.html</li>
+  <li>Textron Citation Latitude specifications: https://customer.cessna.com/sitecore/content/cessnaweb/home/citation/latitude?sc_lang=en</li>
+  <li>Embraer Praetor 500 and 600 manufacturer ranges: https://embraer.com/media-center/en/?detail=14002&amp;mediatype=NEWS</li>
+  <li>Embraer Phenom 100EX brochure: https://embraer.com/media/03xjembo/114-2024-brochure-phenom-100ex-40-fb-digital.pdf</li>
+  <li>Pilatus PC-24 brochure (range depends on passenger load): https://www.pilatus-aircraft.com/assets/files/Brochures/PC-24/Pilatus-Aircraft-PC-24-Brochure.pdf</li>
+  <li>Gulfstream G280 manufacturer’s spec sheet: https://assets.gulfstream.aero/downloads/g280_spec_sheet_english_web_v02.pdf</li>
+  <li>Dassault Falcon 2000LXS: https://www.dassaultfalcon.com/businessjets/falcon-2000lxs/</li>
+  <li>Dassault aircraft range comparison: https://www.dassaultfalcon.com/aircraft/compare-aircraft/?id_aircraft=143</li>
+</ul>
+
+<p><strong>Do not use the table as certified performance or operational flight-planning data.</strong> <code class="language-plaintext highlighter-rouge">tas</code> is simplified average cruise true airspeed, not maximum cruise speed; <code class="language-plaintext highlighter-rouge">range</code> is an indicative reference range and the calculator plans fuel stops at 88% of that range. Typical charter passenger counts may be below the certified maximum and vary by cabin configuration, luggage and weather. Older aircraft variant values are approximate and should be individually checked against operator documents before quoting.</p>
+
+<h2 id="charter-hourly-rates">Charter hourly rates</h2>
+<p><code class="language-plaintext highlighter-rouge">rate_eur</code> values are editable <strong>indicative European charter planning benchmarks</strong> (EUR/block hour), not verified rates for particular airframes or operators. Pricing references include:</p>
+<ul>
+  <li>https://bbac.aero/blog/how-much-does-a-private-jet-charter-cost</li>
+  <li>https://www.aircontact.com/en/private-jet-charter-everything-you-need-to-know-about-pricing-flexibility-and-choosingthe-right-aircraft/</li>
+  <li>https://www.menkoraviation.com/en/news/private-jet-cost-2026-europe-africa/</li>
+</ul>
+
+<p>These references show wide overlapping class ranges. Actual prices require an operator quote and depend on base, ferry legs, season, crew, taxes, actual fees and schedule.</p>
+
+<h2 id="updating">Updating</h2>
+<p>Edit <code class="language-plaintext highlighter-rouge">assets/data/aircraft-models.json</code> and run <code class="language-plaintext highlighter-rouge">python tools/rebuild-estimator-data.py</code>. The self-contained <code class="language-plaintext highlighter-rouge">assets/trip.js</code> bundle MUST be rebuilt for GitHub Pages. Category averages in <code class="language-plaintext highlighter-rouge">assets/data/aircraft.json</code> can still be edited through <code class="language-plaintext highlighter-rouge">admin.html</code>; model-specific <code class="language-plaintext highlighter-rouge">rate_eur</code> values are edited in the JSON, and override category averages <strong>only when that model is selected</strong>.</p>
+
+<h3 id="2026-10-24-jet-speed-update">2026-10-24 jet speed update</h3>
+
+<p>The Global 7500 now uses Bombardier’s 7,700 nm maximum long-range benchmark
+under NBAA IFR theoretical conditions at Mach 0.85. The typical/high-speed
+planning speeds for selected Global and Gulfstream models are 488/516 kt TAS
+(Global 7500, G650ER), 488/505 kt (Global 6000), and 459/488 kt (G550).
+These TAS conversions are planning approximations, not certified charts.
+High-speed range multipliers are disclosed <em>estimator assumptions</em> and not
+manufacturer-published values; published aircraft range already incorporates
+NBAA IFR fuel reserves, so the additional general 7% range contingency is a
+rough payload/weather allowance rather than an extra IFR reserve.</p>
+
+<p>Sources for performance context:</p>
+<ul>
+  <li>https://www.globaljets.net/specs/global7500brochure.pdf</li>
+  <li>https://assets.gulfstream.aero/downloads/22_464552_G650ER_Product_Sheet_PROD_DAM.pdf</li>
+  <li>https://resources.globalair.com/specs/aircraftbrochures/1935_g550_spec_sheet.pdf</li>
+  <li>https://www.easa.europa.eu/en/domains/air-operations/czibs/czib-2022-01r14</li>
+  <li>https://www.easa.europa.eu/en/domains/air-operations/czibs/2025-01-r2</li>
+  <li>https://www.easa.europa.eu/en/newsroom-and-events/news/easa-issues-safety-directive-calling-member-states-mandate-avoidance</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
