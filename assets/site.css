@@ -4286,3 +4286,45 @@ footer a{color:#F2F6FF}
     transform:none;
   }
 }
+
+
+/* 2026-10-27 refinement: the full-width hairline is the only divider.
+   Remove the extra 36px decorative blue stroke before each new category. */
+@media (min-width:1151px){
+  .nav .drop .menu .mmore::before { content:none !important; display:none !important; }
+}
+
+/* Hero editorial headline: word-by-word inline-block animation cuts the
+   descender of the final “g” in WebKit/Safari even when h1 overflow is visible.
+   Render the animated spans as ordinary inline text, retaining the blue
+   gradient but removing the clipping-prone per-word box. */
+.hero:not(.pagehead) h1 {
+  overflow:visible !important;
+  line-height:1.2 !important;
+  padding-bottom:.16em !important;
+}
+.hero:not(.pagehead) h1 .w {
+  display:inline !important;
+  opacity:1 !important;
+  transform:none !important;
+  animation:none !important;
+  overflow:visible !important;
+}
+
+/* Desktop hero / service-card transition:
+   The banner had a top-only radius, so its lower-left corner ended in a
+   visible square above the overlaid white ask panel. Round the banner at
+   its lower edge and keep the ask panel painting above the banner. */
+@media (min-width:1024px){
+  .hero:not(.pagehead){
+    border-radius:26px !important;
+    overflow:hidden !important;
+    isolation:isolate;
+  }
+  .hero:not(.pagehead) .heroshot{border-bottom-left-radius:26px;}
+  .doorbar{
+    position:relative;
+    z-index:8;
+    border-radius:26px 26px 0 0 !important;
+  }
+}
