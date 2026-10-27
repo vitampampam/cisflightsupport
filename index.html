@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=358">
+<link rel="stylesheet" href="assets/site.css?v=360">
 <style>
 /* critical: gallery works even with a stale external stylesheet */
 .intro{align-items:start}
@@ -45,7 +45,7 @@
 <div class="util">
   <div class="wrap">
     <span class="tag">Ground handling &middot; Dispatch &middot; Charters &middot; Transactions &middot; Advisory</span>
-    <a class="aog" href="tel:+491622684626"><b>AOG &amp; short notice</b>+49 162 268 4626</a>
+    <span class="aog"><b>AOG &amp; short notice</b>+49 162 268 4626</span>
   </div>
 </div>
 
@@ -199,13 +199,13 @@
           <p class="te-aircraft-disclaimer">Illustrative European charter benchmarks, not live offers. Cruise speeds are planning assumptions; reference ranges are not guaranteed nonstop capability. Fuel-stop estimates apply an additional reserve margin. Availability, payload, winds and operator pricing vary.</p>
         </details>
         <div class="te-airspace" aria-label="Airspace assumptions for indicative estimates">
-          <div class="te-airspace-heading">Airspace assumptions <span>for pricing estimates only</span></div>
+          <div class="te-airspace-heading">Operator routing profile <span>for indicative estimates</span></div>
           <div class="te-airspace-choices">
-            <span class="te-airspace-fixed" title="Ukraine's civil airspace is closed and is excluded in every estimate."><span aria-hidden="true">&#128274;</span> Ukraine excluded (closed)</span>
-            <label class="te-airspace-choice"><input id="teAvoidRussia" type="checkbox" checked><span>Avoid Russia</span></label>
-            <label class="te-airspace-choice"><input id="teAvoidBelarus" type="checkbox" checked><span>Avoid Belarus</span></label>
+            <label class="te-airspace-choice te-operator-profile"><input id="teEuUsAircraft" type="checkbox" checked><span>EU/US-registered aircraft</span></label>
+            <input id="teAvoidRussia" type="checkbox" checked hidden aria-hidden="true" tabindex="-1">
+            <input id="teAvoidBelarus" type="checkbox" checked hidden aria-hidden="true" tabindex="-1">
           </div>
-          <p class="te-airspace-note">Changing Russia or Belarus only compares indicative distances. It does not confirm safety, legal access, flight permissions or an operator's eligibility. EU/EASA restrictions and current NOTAMs still apply.</p>
+          <p class="te-airspace-note">Checked by default for conservative routing assumptions. Unchecking compares an alternative profile only; aircraft registration alone does not determine permission to fly. Closed airspace remains excluded. Actual routes depend on operator authorisations, current notices and restrictions.</p>
         </div>
         <div class="te-opts">
           <label class="te-inline"><input type="checkbox" id="teReturn"> Return trip</label>
@@ -361,7 +361,7 @@
         <div class="cshot"><img src="assets/img/caw-card.jpg?v=207" alt="CAW Academy — airworthiness made learnable, shown on iPhone, iPad and MacBook" width="760" height="475" decoding="async" loading="eager" fetchpriority="low"><span class="ctag">Training</span></div>
         <h3>CAW Academy</h3>
         <p>Accessible, structured airworthiness training across major aviation frameworks.</p>
-        <a href="https://caw-academy.com">See the platform <i aria-hidden="true">&#8599;</i></a>
+        <a href="https://caw-academy.com/" target="_blank" rel="noopener noreferrer">Explore CAW Academy website <i aria-hidden="true">&#8599;</i></a>
       </div>
       </div>
       <div class="cdots" id="svcDots"></div>
@@ -480,9 +480,9 @@
     
   </div>
   <div class="wrap">
-    <a class="cawbanner" href="https://caw-academy.com" target="_blank" rel="noopener">
+    <div class="cawbanner">
       <img src="assets/img/caw-banner.jpg?v=207" alt="CAW Academy — airworthiness made learnable. Plain-language airworthiness training across the EASA, UK CAA, UAE GCAA and FAA frameworks, built for teams from beginners to industry leaders. Shown running on iPhone, iPad and MacBook, with 75+ courses, 1,600+ lessons, 10,500+ flashcards and 24,000+ exam questions. Coming soon on the App Store and Google Play.">
-    </a>
+    </div>
 
     <div class="cawband">
       <div class="cawtext">
@@ -490,8 +490,7 @@
         <p>CAW Academy is our training platform, focused on continuing airworthiness and asset management. Available for the EASA, FAA, GCAA and UK CAA frameworks.</p>
       </div>
       <p class="cawcta">
-        <a class="btn" href="https://caw-academy.com" target="_blank" rel="noopener"
-           data-request="academy-trial">Request a free trial</a>
+        <a class="btn" href="https://caw-academy.com/" target="_blank" rel="noopener noreferrer">Explore CAW Academy website</a>
       </p>
     </div>
   </div>
@@ -618,7 +617,7 @@
 <!-- Both the homepage widget and the standalone estimator use the same route model and calculator. -->
 <!-- calculator-compatible-homepage-v231 -->
 <script src="assets/route-model.js?v=355"></script>
-<script src="assets/trip.js?v=358"></script>
+<script src="assets/trip.js?v=360"></script>
 <script>
 /* critical: gallery controls, independent of the external bundle */
 (function(){

@@ -494,10 +494,9 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
         'restricted-area geometric detour +')+Math.round(route.detour)+' nm; ' : '')+
       'en-route allowance +'+Math.round(route.enroute)+' nm; terminal/SID-STAR allowance +'+
       Math.round(route.terminal)+' nm. '+
-      'Ukraine is always excluded in the model. Russia '+($('teAvoidRussia').checked?'excluded':'not excluded')+
-      '; Belarus '+($('teAvoidBelarus').checked?'excluded':'not excluded')+'. '+
-      'Geometry uses coarse country polygons and a grid search, NOT published airways, actual SID/STAR tracks, NOTAMs or an approved AIRAC route. Permissions are not checked.';
-    if(route.hit.length)ext+=' Simplified avoidance assumption for '+route.hit.map(function(x){return x.name}).join(', ')+'.';
+      'Selected indicative operator profile: '+($('teEuUsAircraft').checked?'EU/US-registered aircraft (conservative routing assumptions)':'alternative routing comparison')+'. '+
+      'Closed airspace is excluded. Geometry uses coarse polygons and a grid search, NOT published airways, actual SID/STAR tracks, NOTAMs or an approved AIRAC route. Permissions are not checked.';
+    if(route.hit.length)ext+=' Simplified restricted-area avoidance assumption applied.';
     if(wantsStop)ext+=' Stopover costs and flight times are indicative. Stop suitability, airport facilities, landing permissions, and any extra fuel stops require operator confirmation.';
     if(route.approximate)ext+=' The geometric search cannot determine a corridor for this sector, so distance uses an illustrative bypass allowance only. No unobstructed route has been calculated or confirmed; actual routing, restrictions, technical stops and costs require an operator quotation.';
     $('teExt').textContent=ext;
@@ -505,14 +504,10 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     var aircraft=selectedAircraft(),p=config.pricing;
     var caution=$('teRouteCaution');
     if(caution){
-      var includeRU=!$('teAvoidRussia').checked,includeBY=!$('teAvoidBelarus').checked;
-      caution.hidden=!(route.approximate||includeRU||includeBY);
-      var scenarios=[];
-      if(includeRU)scenarios.push('Russia');
-      if(includeBY)scenarios.push('Belarus');
-      var warning=scenarios.length ?
-        'Comparison scenario allows straight-line geometry across '+scenarios.join(' and ')+
-        ', but this does NOT establish airspace access or operator eligibility. EU/EASA operators face restrictions or safety advisories; current NOTAMs, sanctions, authorities, ATC and insurer requirements apply. Ukraine is always excluded. ' : '';
+      var alternateProfile=!$('teEuUsAircraft').checked;
+      caution.hidden=!(route.approximate||alternateProfile);
+      var warning=alternateProfile ?
+        'This alternative profile is a hypothetical distance comparison, NOT confirmation of legal airspace access, flight permissions or operator eligibility. Registration, operator status, current notices and insurer requirements must all be checked before a flight. Closed airspace remains excluded. ' : '';
       if(route.approximate){
         var typical=aircraft[0];
         var directReference=(route.greatCircle/Math.max(1,typical.tas)+TAXI_H+TERMINAL_H)*(ret?2:1);
@@ -567,8 +562,7 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
       (ret?'; return date '+(dateOnly('teReturnDate')||'to confirm'):'')+
       '; requested aircraft '+($('teAircraft').selectedOptions[0].textContent||'compare all')+
       (aircraft.some(function(c){return c.fastCruise;})?'; high-speed cruise requested (subject to operator approval)':'')+
-      '; model excludes Ukraine; Russia '+($('teAvoidRussia').checked?'excluded':'overflight comparison requested')+
-      '; Belarus '+($('teAvoidBelarus').checked?'excluded':'overflight comparison requested')+
+      '; routing profile '+($('teEuUsAircraft').checked?'EU/US-registered aircraft (conservative estimate)':'alternative indicative comparison')+
       '; estimated '+Math.round(shown)+' nm, non-operational routing; ground turnaround excluded from billable flight hours (subject to legal and operational approval).');
 
     showLegs();
@@ -859,8 +853,18 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     });
     $('teGo').addEventListener('click', calculate);
     $('teReturn').addEventListener('change', markStale);
-    $('teAvoidRussia').addEventListener('change', markStale);
-    $('teAvoidBelarus').addEventListener('change', markStale);
+    /* One neutral, customer-facing aircraft profile drives the two internal
+       avoidance assumptions; UA closed airspace remains excluded in routeEstimate.
+       Registration alone never certifies route or operator eligibility. */
+    var operatorProfile=$('teEuUsAircraft');
+    function syncOperatorProfile(){
+      $('teAvoidRussia').checked=operatorProfile.checked;
+      $('teAvoidBelarus').checked=operatorProfile.checked;
+      markStale();
+    }
+    operatorProfile.addEventListener('change',syncOperatorProfile);
+    $('teAvoidRussia').checked=operatorProfile.checked;
+    $('teAvoidBelarus').checked=operatorProfile.checked;
     $('tePax').addEventListener('input', markStale);
     // Synchronise the decorative mobile date display with the real HTML date
     // input. Existing estimation, return-trip and URL logic keep using .value.

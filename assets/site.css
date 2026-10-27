@@ -2258,6 +2258,12 @@
 
 /* ---- the ask panel under the banner ---- */
 .doorbar{background:var(--white);padding:34px 0 38px}
+/* On desktop the ask panel sits slightly into the banner below edge so the
+   hero visibly tucks underneath it instead of ending with a detached white gap. */
+@media (min-width:1024px){
+  .doorbar{padding-top:0;margin-top:-30px;position:relative;z-index:3}
+  .doorcard{position:relative;margin-top:0}
+}
 /* the panel spans the same width as the estimator below it, so the page
    keeps one measure from top to bottom */
 .doorcard{background:var(--ice);border:1px solid rgba(39,39,42,.07);border-radius:22px;
@@ -4197,3 +4203,33 @@ footer a{color:#F2F6FF}
   .te-breakdown-positioning{font-size:12px}
   .te-breakdown-table td:nth-child(2)::before{content:'Block time'}
 }
+
+
+/* October 2026 navigation polish: stronger group hierarchy, crisp blue square
+   service markers consistent with the ticks elsewhere on the website. */
+@media (min-width:1151px) {
+  .nav .drop .menu {padding:18px 22px 20px;border-radius:0 0 22px 22px;min-width:600px;}
+  .nav .drop .menu .mlab {padding:0 14px 10px;color:#4668A8;font-weight:700;letter-spacing:.17em;}
+  .nav .drop .menu .mmore {margin-top:16px;padding-top:16px;border-top:1px solid #D5E0F3;}
+  .nav .drop .menu .mmore::before {content:"";display:block;height:2px;width:36px;background:#7998D3;margin:-17px 0 14px 14px;}
+  .nav .drop .menu .mgrid {column-gap:18px;row-gap:3px;}
+  .nav .drop .menu .mgrid a {position:relative;padding:11px 10px 11px 27px;white-space:normal;line-height:1.45;border-radius:7px;}
+  .nav .drop .menu .mgrid a::before {content:"";position:absolute;left:11px;top:50%;width:7px;height:7px;background:#4C6FB2;transform:translateY(-50%);border-radius:1px;}
+  .nav .drop .menu .mgrid a:hover,.nav .drop .menu .mgrid a:focus-visible {background:#F1F5FD;color:#294879;}
+}
+/* Match the menu indicators in the touch navigation as well. */
+.sheetin .sub > a {position:relative;padding-left:17px;}
+.sheetin .sub > a::before {content:"";position:absolute;left:1px;top:50%;width:6px;height:6px;background:#4C6FB2;transform:translateY(-50%);border-radius:1px;}
+.sheetin .sub .mlab:not(:first-child){border-top-color:#D4E0F3;margin-top:14px;padding-top:14px;}
+/* Turnaround timeline colors now use the same palette as the legend. */
+.gantt .seg.ops,.gantt .gkey i.ops {background:#344C70 !important;}
+.gantt .seg.pax,.gantt .gkey i.pax {background:#5679BD !important;}
+.gantt .seg.fuel,.gantt .gkey i.fuel {background:#9CB5E2 !important;}
+.gantt .seg.fuel em {color:#1F3A5D;opacity:1;font-weight:700;}
+.gantt .gkey i{width:16px;height:10px;flex:none;border-radius:2px;}
+/* The CAW image is a static artwork; navigation is available only via CTAs. */
+.cawbanner{cursor:default;transition:none !important;}
+.cawbanner:hover{transform:none !important;box-shadow:0 30px 70px -34px rgba(60,60,120,.45) !important;}
+.util .aog{cursor:default;user-select:text;}
+.te-airspace-choices > input[hidden]{display:none !important;}
+.te-operator-profile span{font-weight:650;color:#354F7B;}
