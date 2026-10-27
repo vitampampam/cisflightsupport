@@ -4442,3 +4442,25 @@ footer a{color:#F2F6FF}
    inside a section can still use its own reveal animation. */
 .home-stack > section.sec.stk,
 .home-stack > .dual.stk{transform:none !important;}
+
+
+/* 2026-10-27: preserve the full nose gear and give the hero caption air.
+   The extended assistance-card lap was hiding the last part of the tyre
+   and left the caption almost touching the new white rounded edge.
+   Use the existing hero foot to conceal almost all of the 114px lap:
+   the white assistance panel still overlaps the photograph by 6px,
+   so the formerly exposed square corner cannot return. The shorter
+   visible photo crop loses some extra sky rather than the landing gear.
+   Do not apply these desktop-only refinements to phone/tablet layouts. */
+@media (min-width:1024px){
+  .home-stack > .hero:not(.pagehead){
+    padding-bottom:calc(var(--stack-lap) + 50px) !important;
+  }
+  .home-stack > .hero:not(.pagehead) > .wrap{
+    padding-bottom:46px !important;
+  }
+  .home-stack > .hero:not(.pagehead) .heroshot img{
+    transform:scale(1.035);
+    transform-origin:36% 100%;
+  }
+}

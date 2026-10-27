@@ -1,12 +1,17 @@
 CIS Flight Support — complete website package (2026-10-27)
 
-Homepage visual fix:
+Homepage visual fixes:
 - On desktop (1024px and up), the white assistance panel beneath the
   aircraft hero now overlaps upward by 40px more.
 - This puts its rounded upper-left corner above the hero bottom edge,
   eliminating the rectangular notch shown in the supplied screenshot.
-- Responsive layouts below 1024px retain their original rules.
-- index.html stylesheet version increased to v=367 to bust old CSS cache.
+- Desktop photo framing now reveals the entire nose wheel and chock;
+  a subtle scale adjustment trims excess sky from the top.
+- The introductory caption now has approximately 50px clearance above
+  the overlapping assistance card at the checked desktop widths.
+- The rounded overlap remains, so no square left corner reappears.
+- Phone and tablet layouts below 1024px retain their original rules.
+- index.html stylesheet version increased to v=368 to bust old CSS cache.
 
 Site contents:
 - HTML pages, JavaScript, CSS, artwork, aircraft/airport estimator data,
