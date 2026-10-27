@@ -4366,3 +4366,79 @@ footer a{color:#F2F6FF}
   padding-bottom:.12em !important;
   margin-bottom:.24em !important;
 }
+
+
+/* 2026-10-27: same soft edge depth at hero → assistance card as the later
+   assistance → calculator / calculator → services transitions.
+   The second surface sits above the hero and casts a subtle shadow back
+   onto the hero photo; keep its rounded upper corners and existing lap. */
+@media (min-width:1024px){
+  .hero:not(.pagehead) + .doorbar {
+    box-shadow: 0 -14px 32px -13px rgba(27, 42, 70, .32) !important;
+  }
+}
+
+
+/* 2026-10-27 — one uninterrupted lower-card surface and correct layer order.
+   Every later desktop section is in FRONT of the preceding section, never
+   under it. The old scroll reveal translated .stk sections by up to 46px,
+   making the overlaps appear/disappear as you scrolled. Disable that
+   translation only for the big stacked panels, not individual card reveals. */
+@media (min-width:1024px){
+  .home-stack > :is(.hero,.doorbar,section.sec,.dual,footer){
+    position:relative;
+  }
+  .home-stack > .hero{z-index:1 !important;border-radius:var(--stack-radius) var(--stack-radius) 0 0 !important;}
+  .home-stack > .hero + .doorbar{z-index:2 !important;}
+  .home-stack > #estimator{z-index:3 !important;}
+  .home-stack > #services{z-index:4 !important;}
+  .home-stack > #services + section.sec{z-index:5 !important;}
+  .home-stack > section.sec.turn{z-index:6 !important;}
+  .home-stack > section.sec.turn + .dual{z-index:7 !important;}
+  .home-stack > #prebuy{z-index:8 !important;}
+  .home-stack > #academy{z-index:9 !important;}
+  .home-stack > section.sec.cred{z-index:10 !important;}
+  .home-stack > #contact{z-index:11 !important;}
+  .home-stack > footer{z-index:12 !important;}
+  /* Expanded pickers should remain above the downstream service panel. */
+  .home-stack > #estimator:has(.te-model-control.is-open){z-index:40 !important;}
+
+  /* Static overlapping geometry. In particular, removing the 46px
+     translate fixes the calculator/services junction at first approach. */
+  .home-stack > section.sec.stk,
+  .home-stack > .dual.stk{transform:none !important;}
+
+  /* The old .doorbar grid background was visible as a horizontal band,
+     while .doorcard started lower with its own separate white gradient.
+     Make the whole second panel a SINGLE white-to-blue surface. */
+  .home-stack > .hero + .doorbar{
+    background:linear-gradient(180deg,#FFFFFF 0%,#FAFCFF 60%,#EDF3FF 100%) !important;
+    padding-top:0 !important;
+    border-radius:var(--stack-radius) var(--stack-radius) 0 0 !important;
+    overflow:hidden !important;
+  }
+  .home-stack > .hero + .doorbar::before{display:none !important;}
+  .home-stack > .hero + .doorbar .doorcard{
+    background:transparent !important;
+    border:0 !important;
+    border-radius:0 !important;
+    padding-top:25px !important;
+  }
+
+  /* Each LOWER panel's upper rounded corners are the visible edge.
+     A subtle upward shadow separates it from the previous one. */
+  .home-stack > .doorbar,
+  .home-stack > section.sec,
+  .home-stack > .dual,
+  .home-stack > footer{
+    box-shadow:0 -13px 28px -17px rgba(27,42,70,.32) !important;
+    border-radius:var(--stack-radius) var(--stack-radius) 0 0 !important;
+  }
+  .home-stack > .doorbar{box-shadow:0 -14px 32px -14px rgba(27,42,70,.30) !important;}
+  .home-stack > footer{border-radius:var(--stack-radius) !important;}
+}
+/* All viewport sizes: the section stack itself must never shift vertically
+   while entering, because that creates a temporary exposed seam. Content
+   inside a section can still use its own reveal animation. */
+.home-stack > section.sec.stk,
+.home-stack > .dual.stk{transform:none !important;}
