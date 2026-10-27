@@ -4328,3 +4328,41 @@ footer a{color:#F2F6FF}
     border-radius:26px 26px 0 0 !important;
   }
 }
+
+
+/* --- 2026-10-27 hero overlap and title descender fix --- */
+@media (min-width:1024px){
+  /* The hero should finish square at the bottom so the next panel can lap
+     over it and own the visible rounded top corners. */
+  .hero{
+    border-radius:var(--stack-radius) var(--stack-radius) 0 0 !important;
+    overflow:hidden !important;
+    padding-bottom:46px !important;
+  }
+  .hero::before,
+  .hero .heroshot,
+  .hero .heroshot img{
+    border-radius:var(--stack-radius) var(--stack-radius) 0 0 !important;
+  }
+
+  /* Pull the white help card slightly higher so its own rounded top corners
+     visibly overlap the hero instead of starting underneath it. */
+  .doorbar{
+    margin-top:calc((var(--stack-lap) + 16px) * -1) !important;
+    padding-top:56px !important;
+    border-radius:var(--stack-radius) var(--stack-radius) 0 0 !important;
+  }
+  .doorbar::before{
+    border-radius:var(--stack-radius) var(--stack-radius) 0 0 !important;
+  }
+}
+
+/* The hero heading must not clip descenders such as the “g” in “ground”. */
+.hero h1,
+.hero:not(.pagehead) h1,
+.hero .col h1{
+  overflow:visible !important;
+  line-height:1.12 !important;
+  padding-bottom:.12em !important;
+  margin-bottom:.24em !important;
+}
