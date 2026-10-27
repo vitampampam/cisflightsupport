@@ -4244,3 +4244,45 @@ footer a{color:#F2F6FF}
 .util .aog{cursor:default;user-select:text;}
 .te-airspace-choices > input[hidden]{display:none !important;}
 .te-operator-profile span{font-weight:650;color:#354F7B;}
+
+
+/* 2026-10-27: preserve descenders in the homepage editorial heading.
+   Legacy kinetic-type overflow:hidden clipped the tail of the “g” in ground.
+   Additional line-height protects serif descenders, including Safari rendering. */
+.hero:not(.pagehead) h1 {
+  overflow:visible !important;
+  line-height:1.13 !important;
+  padding-bottom:.045em;
+}
+
+/* 2026-10-27: balanced Services mega-menu.
+   The square is now a true flex item, centred next to the entire text block,
+   even where names wrap. Divider headings and their accent rules are centred. */
+@media (min-width:1151px) {
+  .nav .drop .menu .mlab {
+    display:block;
+    width:100%;
+    box-sizing:border-box;
+    padding:0 0 10px;
+    text-align:center;
+  }
+  .nav .drop .menu .mmore::before {
+    margin:-17px auto 14px;
+  }
+  .nav .drop .menu .mgrid a {
+    display:flex;
+    align-items:center;
+    column-gap:13px;
+    padding:10px 10px;
+    min-width:0;
+  }
+  .nav .drop .menu .mgrid a::before {
+    position:static;
+    display:block;
+    flex:0 0 7px;
+    width:7px;
+    height:7px;
+    margin:0;
+    transform:none;
+  }
+}
