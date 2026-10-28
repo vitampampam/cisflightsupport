@@ -4480,3 +4480,34 @@ footer a{color:#F2F6FF}
 
 /* v4 clean service cards: remove category pills from service-card photos */
 .card .ctag{display:none !important;}
+
+
+/* v5: consistent, restrained zoom across every service card on hover.
+   The earlier desktop grid explicitly disabled card transforms on hover,
+   even though the carousel/card styles still included hover scaling.
+   Apply a single interaction to all twelve cards, without changing touch
+   behaviour or the catalogue's four-column geometry. */
+@media (min-width:700px) and (hover:hover) and (pointer:fine){
+  #svcTrack .card{
+    position:relative;
+    transform-origin:center center;
+    transition:transform .32s cubic-bezier(.22,.75,.32,1),
+      opacity .32s ease,box-shadow .32s ease;
+  }
+  #svcTrack .card .cshot img{
+    transform:scale(1);
+    transition:transform .45s cubic-bezier(.2,.75,.3,1);
+  }
+  #svcTrack .card:hover{
+    z-index:4;
+    transform:translateY(-6px) scale(1.05) !important;
+    box-shadow:0 20px 40px -20px rgba(28,49,83,.32) !important;
+  }
+  #svcTrack .card:hover .cshot img{
+    transform:scale(1.06);
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  #svcTrack .card,
+  #svcTrack .card .cshot img{transition:none !important}
+}

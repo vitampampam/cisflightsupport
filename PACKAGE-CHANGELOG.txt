@@ -40,3 +40,9 @@ Installation:
 2026-10-28 v4
 - Removed category pills (e.g. "Ground operations", "Commercial", "Technical", "Training") from service card images on homepage and services page.
 - Bumped stylesheet cache version to v=370.
+
+2026-10-28 v5
+- Uniform desktop hover zoom for all twelve service cards (5% card scale, 6% photo zoom, slight lift and shadow).
+- Applies to both the homepage and services page, including filtered card views.
+- Keeps mobile/touch behavior unchanged and respects reduced-motion preferences.
+- Updated stylesheet cache bust to v=371 across website pages.
