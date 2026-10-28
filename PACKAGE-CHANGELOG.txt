@@ -50,3 +50,9 @@ Installation:
 2026-10-28 v6
 - All page headers: CIS Flight Support GmbH on the first line, Germany on the second line.
 - Responsive logo size adjustment for narrow mobile layouts; stylesheet v=372.
+
+2026-10-28 v7: CAW Academy image refreshed on CIS Flight Support website.
+- Academy section banner now matches the updated CAW Academy hero image and shows the aircraft landing gear and wheel chock fully.
+- Reused the original clean Academy logo band and unobstructed course statistics.
+- Bumped the CAW banner asset query string to v=209.
+- No changes to the service-card carousel, navigation, other sections, or functionality.
