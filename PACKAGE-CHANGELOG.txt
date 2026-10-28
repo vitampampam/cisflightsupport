@@ -46,3 +46,7 @@ Installation:
 - Applies to both the homepage and services page, including filtered card views.
 - Keeps mobile/touch behavior unchanged and respects reduced-motion preferences.
 - Updated stylesheet cache bust to v=371 across website pages.
+
+2026-10-28 v6
+- All page headers: CIS Flight Support GmbH on the first line, Germany on the second line.
+- Responsive logo size adjustment for narrow mobile layouts; stylesheet v=372.

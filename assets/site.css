@@ -4511,3 +4511,10 @@ footer a{color:#F2F6FF}
   #svcTrack .card,
   #svcTrack .card .cshot img{transition:none !important}
 }
+
+
+/* v6 — keep the legal suffix on the company name line.
+   A slightly smaller mobile lockup leaves room for the menu control. */
+@media (max-width:520px){
+  header .logo b{font-size:clamp(15px,4.7vw,19px);letter-spacing:.012em}
+}
