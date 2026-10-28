@@ -36,3 +36,7 @@ Installation:
   assets/ directory intact. Use index.html as the entry point.
 - No build step is required for the static pages.
 - The contact form still requires a submission backend before production use.
+
+2026-10-28 v4
+- Removed category pills (e.g. "Ground operations", "Commercial", "Technical", "Training") from service card images on homepage and services page.
+- Bumped stylesheet cache version to v=370.

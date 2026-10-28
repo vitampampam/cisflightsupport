@@ -4476,3 +4476,7 @@ footer a{color:#F2F6FF}
     border-radius:22px var(--stack-radius) 0 0 !important;
   }
 }
+
+
+/* v4 clean service cards: remove category pills from service-card photos */
+.card .ctag{display:none !important;}
