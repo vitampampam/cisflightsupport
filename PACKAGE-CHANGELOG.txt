@@ -1,4 +1,16 @@
-CIS Flight Support — complete website package (2026-10-27)
+CIS Flight Support — complete website package (2026-10-28)
+
+Latest homepage finish (v369):
+- Fixed the left rectangular notch by ensuring the white assistance panel
+  overlaps the actual aircraft photograph enough to cover its top-left radius.
+- Adjusted the assistance panel lap to 137 CSS px at desktop and its left
+  corner radius to 22 CSS px; its full right corner remains rounded.
+- Preserved the landing gear and wheel chock framing as well as the caption
+  clearance from the preceding version.
+- Refined desktop only (1024px and up). Mobile/tablet styles are untouched.
+- Raised the homepage CSS cache version to v369.
+
+Previously applied (2026-10-27):
 
 Homepage visual fixes:
 - On desktop (1024px and up), the white assistance panel beneath the

@@ -4464,3 +4464,15 @@ footer a{color:#F2F6FF}
     transform-origin:36% 100%;
   }
 }
+
+/* 2026-10-28 — final hero-to-help panel junction.
+   The previous 6px photo overlap was shorter than the 26px card corner,
+   revealing a hard rectangular left edge at its radius. Let the help panel
+   lap 28px into the real photograph and make its left radius fit completely
+   inside that lap. This leaves the visible gear/chock and copy above it. */
+@media (min-width:1024px) {
+  .home-stack > .hero:not(.pagehead) + .doorbar {
+    margin-top:calc((var(--stack-lap) + 79px) * -1) !important;
+    border-radius:22px var(--stack-radius) 0 0 !important;
+  }
+}
