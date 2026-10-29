@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=372">
+<link rel="stylesheet" href="assets/site.css?v=374">
 <style>
 /* critical: gallery works even with a stale external stylesheet */
 .intro{align-items:start}
@@ -125,7 +125,7 @@
           <div class="te-field">
             <label for="teFrom">From</label>
             <input id="teFrom" type="text" autocomplete="off" spellcheck="false"
-                   placeholder="Airport, city or ICAO" aria-describedby="teFromPick">
+                   placeholder="Country, city, airport or code" aria-describedby="teFromPick">
             <div class="te-pick" id="teFromPick" role="listbox" hidden></div>
             <p class="te-chosen" id="teFromName"></p>
           </div>
@@ -133,7 +133,7 @@
           <div class="te-field">
             <label for="teTo">To</label>
             <input id="teTo" type="text" autocomplete="off" spellcheck="false"
-                   placeholder="Airport, city or ICAO" aria-describedby="teToPick">
+                   placeholder="Country, city, airport or code" aria-describedby="teToPick">
             <div class="te-pick" id="teToPick" role="listbox" hidden></div>
             <p class="te-chosen" id="teToName"></p>
           </div>
@@ -146,7 +146,7 @@
             <div class="te-field te-via-field">
               <label for="teVia">Via / technical stop (optional)</label>
               <input id="teVia" type="text" autocomplete="off" spellcheck="false"
-                     placeholder="Airport, city or ICAO" aria-describedby="teViaPick">
+                     placeholder="Country, city, airport or code" aria-describedby="teViaPick">
               <div class="te-pick" id="teViaPick" role="listbox" hidden></div>
               <p class="te-chosen" id="teViaName"></p>
             </div>
@@ -187,6 +187,17 @@
           <span><strong>High-speed cruise estimate</strong><small>Faster cruise but potentially shorter nonstop range or an extra stop. Actual winds, fuel and prices require operator confirmation.</small></span>
         </label>
         <p class="te-empty" id="teHint" aria-live="polite">Choose your departure and destination, then press Calculate.</p>
+        <div class="te-opts">
+          <label class="te-inline"><input type="checkbox" id="teReturn"> Return trip</label>
+
+          <label class="te-inline">Passengers
+            <input type="number" id="tePax" min="1" max="16" value="4" inputmode="numeric">
+          </label>
+          <span class="te-go">
+            <span class="te-flag" id="teNote" hidden>Something changed</span>
+            <button type="button" class="btn" id="teGo">Calculate</button>
+          </span>
+        </div>
         <details class="te-aircraft-compare" id="teAircraftCompare">
           <summary>Compare aircraft performance <span id="teCompareCount">and indicative charter rates</span></summary>
           <p class="te-aircraft-scroll-hint">Swipe sideways for cruise speed, range and hourly rate →</p>
@@ -207,23 +218,14 @@
           </div>
           <p class="te-airspace-note">Checked by default for conservative routing assumptions. Unchecking compares an alternative profile only; aircraft registration alone does not determine permission to fly. Closed airspace remains excluded. Actual routes depend on operator authorisations, current notices and restrictions.</p>
         </div>
-        <div class="te-opts">
-          <label class="te-inline"><input type="checkbox" id="teReturn"> Return trip</label>
-
-          <label class="te-inline">Passengers
-            <input type="number" id="tePax" min="1" max="16" value="4" inputmode="numeric">
-          </label>
-          <span class="te-go">
-            <span class="te-flag" id="teNote" hidden>Something changed</span>
-            <button type="button" class="btn" id="teGo">Calculate</button>
-          </span>
-        </div>
       </div>
 
-      <div class="te-out" id="teOut" hidden>
+      <div class="te-out" id="teOut" hidden aria-label="Your flight estimate">
+        <div class="te-result-head"><div><span class="te-result-kicker">Your results</span><h3>Your flight estimate</h3></div><button id="teEditRoute" type="button">Edit route ↑</button></div>
+        <p id="teResultStatus" class="te-result-announcement" role="status" aria-live="polite"></p>
         <p class="te-via-itinerary" id="teViaItinerary" hidden></p>
         <div class="te-dist te-dist-compact">
-          <div><b id="teNm">—</b><span>Estimated distance (nm)</span><small class="te-subdistance"><span id="teKm">—</span> km</small></div>
+          <div><b id="teNm">—</b><span>Estimated distance</span><small class="te-subdistance"><span id="teKm">—</span> km</small></div>
           <div><b id="teDur">—</b><span id="teDurLabel">Passenger flight block time (excluding positioning)</span></div>
         </div>
 
@@ -617,7 +619,7 @@
 <!-- Both the homepage widget and the standalone estimator use the same route model and calculator. -->
 <!-- calculator-compatible-homepage-v231 -->
 <script src="assets/route-model.js?v=355"></script>
-<script src="assets/trip.js?v=360"></script>
+<script src="assets/trip.js?v=374"></script>
 <script>
 /* critical: gallery controls, independent of the external bundle */
 (function(){

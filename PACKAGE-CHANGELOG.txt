@@ -56,3 +56,5 @@ Installation:
 - Reused the original clean Academy logo band and unobstructed course statistics.
 - Bumped the CAW banner asset query string to v=209.
 - No changes to the service-card carousel, navigation, other sections, or functionality.
+
+2026-10-29 — v11: Move the primary Calculate button / return / passenger row immediately beneath route and aircraft/date details, before optional comparison and airspace assumptions. Fits within the estimator initial viewport on laptop screens. Stylesheet v374.

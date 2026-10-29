@@ -44,7 +44,7 @@
       <h2 id="homepage-calculator-repair--october-22-2026">Homepage calculator repair — October 22, 2026</h2>
 
 <p>ROOT CAUSE: <code class="language-plaintext highlighter-rouge">index.html</code> was still using the old calculator markup and loaded
-<code class="language-plaintext highlighter-rouge">assets/trip.js?v=207</code> without <code class="language-plaintext highlighter-rouge">assets/route-model.js</code>. The newer trip.js
+<code class="language-plaintext highlighter-rouge">assets/trip.js?v=374</code> without <code class="language-plaintext highlighter-rouge">assets/route-model.js</code>. The newer trip.js
 requires <code class="language-plaintext highlighter-rouge">#teAircraft</code>, <code class="language-plaintext highlighter-rouge">#teDate</code>, <code class="language-plaintext highlighter-rouge">#teReturnDate</code>, <code class="language-plaintext highlighter-rouge">#teWeather</code>,
 <code class="language-plaintext highlighter-rouge">#tePricing</code>, and <code class="language-plaintext highlighter-rouge">#teCostHeading</code>. On the homepage <code class="language-plaintext highlighter-rouge">wire()</code> threw a
 <code class="language-plaintext highlighter-rouge">Cannot read properties of null (reading addEventListener)</code> exception;
@@ -86,7 +86,7 @@ manual airport inputs, and return trips have regression tests.</p>
 
 <p><strong>After publishing:</strong> Both <code class="language-plaintext highlighter-rouge">assets/trip.js</code> and <code class="language-plaintext highlighter-rouge">trip-estimator.html</code> must be
 uploaded together. The stylesheet, routing model, and airport JSON files remain
-in the package. The page uses <code class="language-plaintext highlighter-rouge">assets/trip.js?v=224</code> so iPhone Safari and
+in the package. The page uses <code class="language-plaintext highlighter-rouge">assets/trip.js?v=374</code> so iPhone Safari and
 GitHub Pages should fetch the updated script rather than a cached old version.
 If the live page still says “Unavailable,” check whether GitHub Pages has
 finished deploying the new versions.</p>

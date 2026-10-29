@@ -68,6 +68,28 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     return out;
   }
 
+  /* Offline country directory: country names supplement ICAO/IATA and city
+     lookup; no third-party geocoding service or network request is required. */
+  var COUNTRY_LABELS = {"AE":"United Arab Emirates","AF":"Afghanistan","AG":"Antigua and Barbuda","AI":"Anguilla","AL":"Albania","AM":"Armenia","AO":"Angola","AQ":"Antarctica","AR":"Argentina","AS":"American Samoa","AT":"Austria","AU":"Australia","AW":"Aruba","AZ":"Azerbaijan","BA":"Bosnia and Herzegovina","BB":"Barbados","BD":"Bangladesh","BE":"Belgium","BF":"Burkina Faso","BG":"Bulgaria","BH":"Bahrain","BI":"Burundi","BJ":"Benin","BL":"Saint Barthélemy","BM":"Bermuda","BN":"Brunei","BO":"Bolivia","BQ":"Bonaire, Sint Eustatius and Saba","BR":"Brazil","BS":"Bahamas","BT":"Bhutan","BW":"Botswana","BY":"Belarus","BZ":"Belize","CA":"Canada","CC":"Cocos (Keeling) Islands","CD":"DR Congo","CF":"Central African Republic","CG":"Congo","CH":"Switzerland","CI":"Côte d’Ivoire","CK":"Cook Islands","CL":"Chile","CM":"Cameroon","CN":"China","CO":"Colombia","CR":"Costa Rica","CU":"Cuba","CV":"Cabo Verde","CW":"Curaçao","CX":"Christmas Island","CY":"Cyprus","CZ":"Czechia","DE":"Germany","DJ":"Djibouti","DK":"Denmark","DM":"Dominica","DO":"Dominican Republic","DZ":"Algeria","EC":"Ecuador","EE":"Estonia","EG":"Egypt","EH":"Western Sahara","ER":"Eritrea","ES":"Spain","ET":"Ethiopia","FI":"Finland","FJ":"Fiji","FK":"Falkland Islands (Malvinas)","FM":"Micronesia, Federated States of","FO":"Faroe Islands","FR":"France","GA":"Gabon","GB":"United Kingdom","GD":"Grenada","GE":"Georgia","GF":"French Guiana","GG":"Guernsey","GH":"Ghana","GI":"Gibraltar","GL":"Greenland","GM":"Gambia","GN":"Guinea","GP":"Guadeloupe","GQ":"Equatorial Guinea","GR":"Greece","GT":"Guatemala","GU":"Guam","GW":"Guinea-Bissau","GY":"Guyana","HK":"Hong Kong","HN":"Honduras","HR":"Croatia","HT":"Haiti","HU":"Hungary","ID":"Indonesia","IE":"Ireland","IL":"Israel","IM":"Isle of Man","IN":"India","IO":"British Indian Ocean Territory","IQ":"Iraq","IR":"Iran","IS":"Iceland","IT":"Italy","JE":"Jersey","JM":"Jamaica","JO":"Jordan","JP":"Japan","KE":"Kenya","KG":"Kyrgyzstan","KH":"Cambodia","KI":"Kiribati","KM":"Comoros","KN":"Saint Kitts and Nevis","KP":"North Korea","KR":"South Korea","KW":"Kuwait","KY":"Cayman Islands","KZ":"Kazakhstan","LA":"Laos","LB":"Lebanon","LC":"Saint Lucia","LK":"Sri Lanka","LR":"Liberia","LS":"Lesotho","LT":"Lithuania","LU":"Luxembourg","LV":"Latvia","LY":"Libya","MA":"Morocco","MD":"Moldova","ME":"Montenegro","MF":"Saint Martin (French part)","MG":"Madagascar","MH":"Marshall Islands","MK":"North Macedonia","ML":"Mali","MM":"Myanmar","MN":"Mongolia","MO":"Macao","MP":"Northern Mariana Islands","MQ":"Martinique","MR":"Mauritania","MS":"Montserrat","MT":"Malta","MU":"Mauritius","MV":"Maldives","MW":"Malawi","MX":"Mexico","MY":"Malaysia","MZ":"Mozambique","NA":"Namibia","NC":"New Caledonia","NE":"Niger","NF":"Norfolk Island","NG":"Nigeria","NI":"Nicaragua","NL":"Netherlands","NO":"Norway","NP":"Nepal","NR":"Nauru","NU":"Niue","NZ":"New Zealand","OM":"Oman","PA":"Panama","PE":"Peru","PF":"French Polynesia","PG":"Papua New Guinea","PH":"Philippines","PK":"Pakistan","PL":"Poland","PM":"Saint Pierre and Miquelon","PR":"Puerto Rico","PT":"Portugal","PW":"Palau","PY":"Paraguay","QA":"Qatar","RE":"Réunion","RO":"Romania","RS":"Serbia","RU":"Russia","RW":"Rwanda","SA":"Saudi Arabia","SB":"Solomon Islands","SC":"Seychelles","SD":"Sudan","SE":"Sweden","SG":"Singapore","SH":"Saint Helena, Ascension and Tristan da Cunha","SI":"Slovenia","SK":"Slovakia","SL":"Sierra Leone","SN":"Senegal","SO":"Somalia","SR":"Suriname","SS":"South Sudan","ST":"Sao Tome and Principe","SV":"El Salvador","SX":"Sint Maarten (Dutch part)","SY":"Syria","SZ":"Eswatini","TC":"Turks and Caicos Islands","TD":"Chad","TG":"Togo","TH":"Thailand","TJ":"Tajikistan","TL":"Timor-Leste","TM":"Turkmenistan","TN":"Tunisia","TO":"Tonga","TR":"Türkiye","TT":"Trinidad and Tobago","TV":"Tuvalu","TW":"Taiwan","TZ":"Tanzania","UA":"Ukraine","UG":"Uganda","UM":"United States Minor Outlying Islands","US":"United States","UY":"Uruguay","UZ":"Uzbekistan","VC":"Saint Vincent and the Grenadines","VE":"Venezuela","VG":"Virgin Islands, British","VI":"Virgin Islands, U.S.","VN":"Vietnam","VU":"Vanuatu","WF":"Wallis and Futuna","WS":"Samoa","XK":"Kosovo","YE":"Yemen","YT":"Mayotte","ZA":"South Africa","ZM":"Zambia","ZW":"Zimbabwe","PS":"Palestine"};
+  var COUNTRY_ALIASES = {uae:'AE',emirates:'AE',uk:'GB',britain:'GB',england:'GB',
+    usa:'US',america:'US',holland:'NL',deutschland:'DE',germany:'DE',
+    thai:'TH',turkey:'TR',czech:'CZ',russian:'RU',korea:'KR'};
+  var countryList = [];
+  function countryName(code) {return COUNTRY_LABELS[code] || code;}
+  function prepareCountries(){
+    var seen = {};
+    airports.forEach(function(a){if(a.k)seen[a.k]=true;});
+    countryList=Object.keys(seen).sort(function(a,b){return countryName(a).localeCompare(countryName(b));});
+  }
+  function countriesForText(text){
+    var q=fold((text||'').trim());
+    if(q.length<2)return [];
+    return countryList.filter(function(code){
+      var f=fold(countryName(code));
+      return f.indexOf(q)===0 || fold(code)===q || COUNTRY_ALIASES[q]===code;
+    }).slice(0,5);
+  }
+
   function score(a, q) {
     var f = folded(a);
     var icao = f.i, iata = f.a;
@@ -309,7 +331,17 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     if (note) note.hidden = !(out && !out.hidden);
   }
 
-  function calculate() {
+  function revealResult() {
+    var out=$('teOut'), hint=$('teHint');
+    var target=out&&!out.hidden?out:hint;
+    if(!target)return;
+    if(out&&!out.hidden){
+      var status=$('teResultStatus');if(status)status.textContent='Your flight estimate is ready below.';
+    }
+    var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    requestAnimationFrame(function(){target.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});});
+  }
+  function calculate(shouldScroll) {
     /* Resolve a city or code typed directly, even without opening the list. */
     if (fields.from) fields.from.resolve();
     if (fields.to) fields.to.resolve();
@@ -317,11 +349,12 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     var out = $('teOut'), note = $('teNote');
     if (out) out.classList.remove('te-stale');
     if (note) note.hidden = true;
-    if (!from || !to) { render(null); return; }
+    if (!from || !to) { render(null); if(shouldScroll)revealResult(); return; }
     if (goButton) {goButton.disabled=true;goButton.textContent='Calculating…';}
     outputWind().then(function(wind){
       activeForecast=wind;
       render(wind);
+      if(shouldScroll)revealResult();
     }).finally(function(){if(goButton){goButton.disabled=false;goButton.textContent='Calculate';}});
   }
 
@@ -486,7 +519,7 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     itinerary.hidden=!wantsStop;
     itinerary.textContent=wantsStop?
       'Route estimate: '+from.i+' → '+via.i+' → '+to.i+(ret?' (return via '+via.i+')':''):'';
-    $('teNm').textContent=Math.round(shown).toLocaleString('en-GB');
+    $('teNm').textContent=Math.round(shown).toLocaleString('en-GB')+' nm';
     $('teKm').textContent=Math.round(shown*1.852).toLocaleString('en-GB');
     var ext=(wantsStop?'Two-sector estimate via '+via.i+'. ':'')+
       'Geodesic distance '+Math.round(route.greatCircle)+' nm; '+
@@ -588,110 +621,270 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
 
   /* ---------- inputs ---------- */
   function attach(inputId, pickId, nameId, set) {
-    var input = $(inputId), pick = $(pickId), name = $(nameId);
-    var idx = -1, items = [];
+    var input=$(inputId), pick=$(pickId), name=$(nameId), idx=-1,items=[];
+    /* Anchor suggestions beneath the text field, floating over the remaining
+       form instead of moving the form down. */
+    pick.classList.add('te-picker-inline');
+    pick.setAttribute('aria-label','Airport suggestions');
+    input.setAttribute('aria-autocomplete','list');
+    input.setAttribute('aria-expanded','false');
+    input.setAttribute('aria-controls',pickId);
 
-    /* Airport results need their own top-level layer. Keeping the list inside
-       .te-route caused later controls to draw through it when reveal/stacking
-       contexts changed. A body-level fixed overlay also avoids iOS clipping. */
-    pick.classList.add('te-picker-overlay');
-    document.body.appendChild(pick);
+    var browse=document.createElement('button');
+    browse.type='button';browse.className='te-country-toggle';
+    browse.textContent='Or choose by country';
+    browse.setAttribute('aria-expanded','false');
+    browse.setAttribute('aria-controls',inputId+'Browse');
+    var browser=document.createElement('div');browser.className='te-country-browser te-country-browser-v9';
+    browser.id=inputId+'Browse';browser.hidden=true;
+    var head=document.createElement('p');head.className='te-country-heading';
+    head.textContent='Choose a country, then search by city or airport';
+    /* Keep the panel compact: the labels already explain the two fields. */
 
-    function placePicker() {
-      if (pick.hidden) return;
-      var rect = input.getBoundingClientRect();
-      var vw = document.documentElement.clientWidth || window.innerWidth;
-      var vh = window.innerHeight;
-      var left = Math.max(8, Math.min(vw - 64, rect.left));
-      var max = Math.min(310, Math.round(vh * 0.43));
-      var below = Math.max(0, vh - rect.bottom - 14);
-      var above = Math.max(0, rect.top - 14);
-      var upwards = below < Math.min(190, max) && above > below;
-      var available = (upwards ? above : below) - 4;
-      pick.style.left = left + 'px';
-      pick.style.width = Math.max(56, Math.min(rect.width, vw - left - 8)) + 'px';
-      pick.style.maxHeight = Math.max(50, Math.min(max, available)) + 'px';
-      pick.style.top = upwards ? 'auto' : (rect.bottom + 7) + 'px';
-      pick.style.bottom = upwards ? (vh - rect.top + 7) + 'px' : 'auto';
+    /* Lightweight progressive disclosure: exactly TWO controls inside this
+       optional browser — Country + a SINGLE City or airport combobox.
+       Free typing and choosing from results both happen in that one field. */
+    function makeCombo(label,placeholder){
+      var field=document.createElement('div');field.className='te-location-control te-combo';
+      var caption=document.createElement('label');caption.textContent=label;
+      var id=inputId+'Browse'+label.replace(/\s/g,'');
+      caption.htmlFor=id;field.appendChild(caption);
+      var wrap=document.createElement('div');wrap.className='te-combo-wrap';
+      var editor=document.createElement('input');editor.type='text';editor.id=id;
+      editor.className='te-combo-input';editor.autocomplete='off';editor.spellcheck=false;
+      editor.placeholder=placeholder;editor.setAttribute('role','combobox');
+      editor.setAttribute('aria-autocomplete','list');editor.setAttribute('aria-expanded','false');
+      editor.setAttribute('aria-controls',id+'Options');
+      var arrow=document.createElement('button');arrow.type='button';arrow.className='te-combo-arrow';
+      arrow.setAttribute('aria-label','Show '+label.toLowerCase()+' options');arrow.setAttribute('aria-controls',id+'Options');
+      var list=document.createElement('div');list.id=id+'Options';
+      list.className='te-combo-list';list.setAttribute('role','listbox');list.hidden=true;
+      wrap.appendChild(editor);wrap.appendChild(arrow);field.appendChild(wrap);field.appendChild(list);
+      browser.appendChild(field);
+      var items=[],highlight=-1;
+      function hide(){list.hidden=true;highlight=-1;editor.setAttribute('aria-expanded','false');editor.removeAttribute('aria-activedescendant');}
+      function paint(active){
+        var btns=list.querySelectorAll('button[role="option"]');
+        if(!btns.length)return;
+        highlight=(active+btns.length)%btns.length;
+        btns.forEach(function(b,i){
+          b.classList.toggle('is-active',i===highlight);
+          b.setAttribute('aria-selected',String(i===highlight));
+        });
+        editor.setAttribute('aria-activedescendant',btns[highlight].id);
+        btns[highlight].scrollIntoView({block:'nearest'});
+      }
+      function render(rows,choose,emptyText){
+        items=rows;list.textContent='';highlight=-1;
+        if(!rows.length){
+          var empty=document.createElement('p');empty.className='te-combo-empty';
+          empty.textContent=emptyText||'No matches';list.appendChild(empty);
+        }
+        rows.forEach(function(row,i){
+          var b=document.createElement('button');b.type='button';b.id=id+'Opt'+i;
+          b.setAttribute('role','option');b.setAttribute('aria-selected','false');
+          b.textContent=row.label;
+          if(row.note){var small=document.createElement('small');small.textContent=row.note;b.appendChild(small);}
+          b.addEventListener('click',function(){choose(row);hide();});
+          list.appendChild(b);
+        });
+        list.hidden=false;editor.setAttribute('aria-expanded','true');
+      }
+      editor.addEventListener('keydown',function(e){
+        if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+          e.preventDefault();e.stopPropagation();
+          if(list.hidden)arrow.click();
+          var buttons=list.querySelectorAll('button[role="option"]');
+          if(buttons.length)paint(highlight+(e.key==='ArrowDown'?1:-1));
+        }else if(e.key==='Enter'){
+          if(!list.hidden){
+            e.preventDefault();e.stopPropagation();
+            var btns=list.querySelectorAll('button[role="option"]');
+            if(btns.length)btns[highlight<0?0:highlight].click();
+          }
+        }else if(e.key==='Escape'){
+          if(!list.hidden){e.preventDefault();e.stopPropagation();hide();}
+        }else if(e.key==='Tab'){hide();}
+      });
+      editor.addEventListener('blur',function(){
+        /* The actual list choice is handled by click before the document
+           handler closes menus; delayed focus is not needed. */
+      });
+      return {box:field,input:editor,arrow:arrow,list:list,hide:hide,render:render};
     }
-    function close() { pick.hidden = true; idx = -1; }
-
-    function open(list) {
-      items = list;
-      if (!list.length) { close(); return; }
-      pick.innerHTML = list.map(function (a, n) {
-        return '<button type="button" role="option" data-n="' + n + '">' +
-          '<span class="te-pick-copy"><b>' + airportLabel(a) + '</b>' +
-          '<span class="te-pick-name">— ' + a.n + '</span></span>' +
-          (a.a ? '<i>' + a.a + '</i>' : '') + '</button>';
-      }).join('');
-      pick.hidden = false;
-      placePicker();
+    var countryCombo=makeCombo('Country','Type or choose a country');
+    var placeCombo=makeCombo('City or airport','City, airport name, IATA or ICAO');
+    var selectedCountry='',countryAirports=[];
+    placeCombo.box.hidden=true;
+    function shutMenus(except){
+      [countryCombo,placeCombo].forEach(function(c){if(c!==except)c.hide();});
     }
-
-    /* Keep the floating results aligned while scrolling or changing screens. */
-    window.addEventListener('scroll', function (e) {
-      if (!pick.hidden && e.target !== pick) placePicker();
-    }, true);
-    window.addEventListener('resize', placePicker);
-    if (window.visualViewport) window.visualViewport.addEventListener('resize', placePicker);
-
-    function choose(a) {
-      if (!a) return;
-      set(a);
-      input.value = airportLabel(a);
-      name.textContent = airportDetail(a);
-      close();
-      markStale();
+    function visibleCountryRows(q){
+      q=fold(q.trim());
+      return countryList.filter(function(code){
+        return !q||fold(countryName(code)).indexOf(q)!==-1||fold(code)===q||COUNTRY_ALIASES[q]===code;
+      }).sort(function(a,b){
+        function rank(code){
+          var name=fold(countryName(code));
+          if(name===q||fold(code)===q||COUNTRY_ALIASES[q]===code)return 0;
+          if(name.indexOf(q)===0)return 1;
+          return 2;
+        }
+        return rank(a)-rank(b)||countryName(a).localeCompare(countryName(b));
+      }).slice(0,35).map(function(code){return {value:code,label:countryName(code),note:code};});
     }
-
-    function resolve() {
-      if (!input.value.trim()) return;
-      var match = resolveAirport(input.value);
-      if (match) choose(match);
-      else open(search(input.value)); // let the visitor pick an ambiguous airport
+    function chooseCountry(row){
+      selectedCountry=row.value;
+      countryCombo.input.value=countryName(row.value);
+      countryAirports=airports.filter(function(a){return a.k===row.value;});
+      placeCombo.box.hidden=false;
+      placeCombo.input.value='';
+      shutMenus();set(null);input.value='';name.textContent='';markStale();
+      /* No extra City and Airport steps: go straight to the combined lookup. */
+      placeCombo.input.focus({preventScroll:true});
+      showPlaceRows('');
     }
-
-    input.addEventListener('input', function () {
-      set(null); name.textContent = '';
-      open(search(input.value));
-      markStale();
-    });
-    /* On leaving a field, normalize a valid city or code to City (ICAO),
-       even if the visitor never selected an autocomplete suggestion. */
-    input.addEventListener('change', function () {
-      var match = resolveAirport(input.value);
-      if (match) choose(match);
-    });
-    /* Reopen suggestions when returning to an unresolved field; otherwise
-       a Calculate click on an ambiguous city could leave them dismissed. */
-    function reopenPicker() {
-      if (!resolveAirport(input.value)) open(search(input.value));
+    function showCountryRows(q){
+      shutMenus(countryCombo);
+      countryCombo.render(visibleCountryRows(q),chooseCountry,'No country found');
     }
-    input.addEventListener('focus', reopenPicker);
-    input.addEventListener('click', reopenPicker);
-    input.addEventListener('keydown', function (e) {
-      if (pick.hidden) return;
-      var btns = pick.querySelectorAll('button');
-      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-        e.preventDefault();
-        idx += (e.key === 'ArrowDown' ? 1 : -1);
-        if (idx < 0) idx = btns.length - 1;
-        if (idx >= btns.length) idx = 0;
-        btns.forEach(function (b, n) { b.classList.toggle('on', n === idx); });
-      } else if (e.key === 'Enter') {
-        e.preventDefault();
-        choose(idx > -1 ? items[idx] : (resolveAirport(input.value) || items[0]));
-      } else if (e.key === 'Escape') { close(); }
+    function showPlaceRows(q){
+      if(!selectedCountry)return;
+      shutMenus(placeCombo);
+      var text=fold((q||'').trim());
+      var variations=text?expand(text):[];
+      var ranked=countryAirports.map(function(a){
+        if(!text)return {airport:a,rank:10};
+        var rank=99;
+        variations.forEach(function(variant){
+          var value=score(a,variant);
+          if(value!==-1&&value<rank)rank=value;
+        });
+        return {airport:a,rank:rank};
+      }).filter(function(item){return item.rank!==99;});
+      ranked.sort(function(x,y){
+        return x.rank-y.rank||(y.airport.t||0)-(x.airport.t||0)||
+          (x.airport.c||'').localeCompare(y.airport.c||'')||x.airport.n.localeCompare(y.airport.n);
+      });
+      var rows=ranked.slice(0,40).map(function(item){
+        var a=item.airport;
+        return {value:a,label:(a.c||'Airport')+' — '+a.n,
+          note:a.i+(a.a?' · '+a.a:'')};
+      });
+      placeCombo.render(rows,function(row){choose(row.value);},'No matching airports in '+countryName(selectedCountry));
+    }
+    countryCombo.input.addEventListener('input',function(){
+      selectedCountry='';countryAirports=[];
+      placeCombo.box.hidden=true;placeCombo.input.value='';
+      showCountryRows(countryCombo.input.value);
     });
-    pick.addEventListener('click', function (e) {
-      var b = e.target.closest('button');
-      if (b) choose(items[+b.dataset.n]);
+    countryCombo.input.addEventListener('focus',function(){showCountryRows(countryCombo.input.value);});
+    countryCombo.arrow.addEventListener('click',function(){
+      if(!countryCombo.list.hidden)countryCombo.hide();
+      else {showCountryRows(countryCombo.input.value);countryCombo.input.focus({preventScroll:true});}
     });
-    document.addEventListener('click', function (e) {
-      if (!pick.contains(e.target) && e.target !== input) close();
+    placeCombo.input.addEventListener('input',function(){showPlaceRows(placeCombo.input.value);});
+    placeCombo.input.addEventListener('focus',function(){showPlaceRows(placeCombo.input.value);});
+    placeCombo.arrow.addEventListener('click',function(){
+      if(!placeCombo.list.hidden)placeCombo.hide();
+      else {showPlaceRows(placeCombo.input.value);placeCombo.input.focus({preventScroll:true});}
     });
-    return {resolve: resolve};
+    function setBrowser(open,code){
+      close();browser.hidden=!open;input.parentElement.classList.toggle('te-browsing',open);browse.setAttribute('aria-expanded',String(open));
+      if(!open){shutMenus();return;}
+      if(code)chooseCountry({value:code});
+      else {countryCombo.input.focus({preventScroll:true});showCountryRows(countryCombo.input.value);}
+    }
+    browse.addEventListener('click',function(){setBrowser(browser.hidden);});
+    name.insertAdjacentElement('afterend',browse);
+    browse.insertAdjacentElement('afterend',browser);
+    document.addEventListener('pointerdown',function(e){
+      if(!browser.contains(e.target)){shutMenus();}
+      else if(!e.target.closest('.te-combo'))shutMenus();
+      else {
+        var inCombo=e.target.closest('.te-combo');
+        [countryCombo,placeCombo].forEach(function(c){if(c.box!==inCombo)c.hide();});
+      }
+    });
+
+    function close(){pick.hidden=true;idx=-1;input.setAttribute('aria-expanded','false');}
+    function addSuggestion(item,index){
+      var btn=document.createElement('button');btn.type='button';btn.setAttribute('role','option');
+      btn.dataset.n=String(index);
+      if(item.type==='country'){
+        btn.className='te-country-suggestion';
+        var big=document.createElement('b');big.textContent=countryName(item.value);
+        var sub=document.createElement('span');sub.textContent='Choose city and airport';
+        btn.appendChild(big);btn.appendChild(sub);
+      }else{
+        var a=item.value;
+        var text=document.createElement('span');text.className='te-pick-copy';
+        var bold=document.createElement('b');bold.textContent=airportLabel(a);
+        var sub=document.createElement('span');sub.className='te-pick-name';sub.textContent=' — '+a.n;
+        text.appendChild(bold);text.appendChild(sub);btn.appendChild(text);
+        if(a.a){var code=document.createElement('i');code.textContent=a.a;btn.appendChild(code);}
+      }
+      pick.appendChild(btn);
+    }
+    function openForText(query){
+      var q=(query||'').trim();
+      var airportsFound=search(q).map(function(a){return {type:'airport',value:a};});
+      var countriesFound=countriesForText(q).map(function(code){return {type:'country',value:code};});
+      /* A complete country name should propose the guided selection first. */
+      var exactCountry=countriesFound.some(function(item){return fold(countryName(item.value))===fold(q);});
+      items=(exactCountry?countriesFound.concat(airportsFound):airportsFound.concat(countriesFound)).slice(0,9);
+      pick.textContent='';
+      if(!items.length){close();return;}
+      items.forEach(addSuggestion);
+      /* Position the list just beneath its input, outside normal layout
+         flow. The small gap keeps the typed query completely visible. */
+      pick.style.setProperty('--te-picker-top',(input.offsetTop+input.offsetHeight+6)+'px');
+      idx=-1;pick.hidden=false;input.setAttribute('aria-expanded','true');
+    }
+    function choose(a){
+      if(!a)return;
+      set(a);input.value=airportLabel(a);name.textContent=airportDetail(a);
+      close();browser.hidden=true;input.parentElement.classList.remove('te-browsing');browse.setAttribute('aria-expanded','false');shutMenus();markStale();
+    }
+    function selectSuggestion(item){
+      if(!item)return;
+      if(item.type==='country')setBrowser(true,item.value);
+      else choose(item.value);
+    }
+    function resolve(){
+      if(!input.value.trim())return;
+      var a=resolveAirport(input.value);
+      if(a)choose(a);
+      else if(browser.hidden)openForText(input.value);
+    }
+    input.addEventListener('input',function(){
+      set(null);name.textContent='';browser.hidden=true;input.parentElement.classList.remove('te-browsing');browse.setAttribute('aria-expanded','false');
+      openForText(input.value);markStale();
+    });
+    input.addEventListener('change',function(){
+      var match=resolveAirport(input.value);if(match)choose(match);
+    });
+    function reopen(){if(!resolveAirport(input.value)&&browser.hidden)openForText(input.value);}
+    input.addEventListener('focus',reopen);
+    input.addEventListener('click',reopen);
+    input.addEventListener('keydown',function(e){
+      if(pick.hidden)return;
+      var btns=pick.querySelectorAll('button');
+      if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+        e.preventDefault();idx+=(e.key==='ArrowDown'?1:-1);
+        if(idx<0)idx=btns.length-1;if(idx>=btns.length)idx=0;
+        btns.forEach(function(b,n){b.classList.toggle('on',n===idx);});
+      }else if(e.key==='Enter'){
+        e.preventDefault();e.stopPropagation();selectSuggestion(items[idx>-1?idx:0]);
+      }else if(e.key==='Escape'){close();}
+    });
+    pick.addEventListener('click',function(e){
+      var b=e.target.closest('button');if(b)selectSuggestion(items[+b.dataset.n]);
+    });
+    document.addEventListener('click',function(e){
+      if(!input.parentElement.contains(e.target))close();
+    });
+    return {resolve:resolve};
   }
 
 
@@ -851,7 +1044,7 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
       else $('teVia').focus();
       markStale();
     });
-    $('teGo').addEventListener('click', calculate);
+    $('teGo').addEventListener('click', function(){calculate(true);});
     $('teReturn').addEventListener('change', markStale);
     /* One neutral, customer-facing aircraft profile drives the two internal
        avoidance assumptions; UA closed airspace remains excluded in routeEstimate.
@@ -909,11 +1102,16 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
     var formEl = document.querySelector('.te-form');
     formEl && formEl.addEventListener('keydown', function (e) {
       if (e.key !== 'Enter') return;
-      if (e.target.closest && e.target.closest('.te-model-control')) return;
+      if (e.target.closest && e.target.closest('.te-model-control, .te-country-browser, .te-picker-inline, .te-country-toggle')) return;
       var open = document.querySelector('.te-pick:not([hidden])');
       if (open) return;
       e.preventDefault();
-      calculate();
+      calculate(true);
+    });
+    var editRoute=$('teEditRoute');
+    if(editRoute)editRoute.addEventListener('click',function(){
+      $('teFrom').scrollIntoView({behavior:'smooth',block:'center'});
+      $('teFrom').focus({preventScroll:true});
     });
     $('teSwap').addEventListener('click', function () {
       // Swap the visible text as well as the selected airport objects. This
@@ -970,6 +1168,7 @@ var CIS_ESTIMATOR_EMBEDDED = {"airports":[{"i":"AGGH","a":"HIR","n":"Honiara  In
         !d.routing || !Array.isArray(d.routing.bands) ||
         !d.config || !d.config.pricing) throw new Error('Incomplete estimator reference data');
     airports = d.airports;
+    prepareCountries();
     cats = d.aircraft;
     routing = d.routing;
     models = d.models;
